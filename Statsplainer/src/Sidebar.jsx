@@ -23,6 +23,7 @@ export default function Sidebar() {
                 flexDirection: "column",
                 p: 2,
             }}
+            spacing={2}
         >
         {/* response section */}
 
