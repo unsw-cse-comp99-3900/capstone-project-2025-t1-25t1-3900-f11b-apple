@@ -12,12 +12,12 @@ export default function Sidebar() {
             container
         sx={{
             position: "fixed",
-            right:0,
+            right:30,
             top: NAVBAR_HEIGHT,
-            height:"100vh",
+            height:"90vh",
             width: 400,
-            borderLeft: "2px solid #ddd",
-            backgroundColor: "#fff",
+            borderRadius: "20px",
+            backgroundColor: "#464646",
             flexDirection: "column",
         }}
         >
