@@ -1,4 +1,4 @@
-import { Paper, TextField } from '@mui/material';
+import { Button, Paper, TextField } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import {useState} from "react";
 
@@ -25,8 +25,26 @@ export default function Sidebar() {
             }}
             spacing={2}
         >
-        {/* response section */}
 
+        {/* Toggleable AI prompt Button */}
+        <Grid 
+            item
+        >
+            <button variant="contained">
+                Basic Definition
+            </button>
+
+            <button variant="contained">
+                Real world Analogy
+            </button>
+
+            <button variant="contained">
+                ELI5
+            </button>
+            
+        </Grid>
+
+        {/* response section */}
         <Grid
             item
             sx={{
