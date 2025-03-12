@@ -1,4 +1,4 @@
-import { TextField } from '@mui/material';
+import { Paper, TextField } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import {useState} from "react";
 
@@ -21,12 +21,32 @@ export default function Sidebar() {
                 borderRadius: "20px",
                 backgroundColor: "#464646",
                 flexDirection: "column",
+                p: 2,
             }}
         >
         {/* response section */}
 
+        <Grid
+            item
+            sx={{
+                flex: 1,
+                overflowY: "auto",
+                backgroundColor: '#464646',
+                borderRadius: "inherit",
+                height: "inherit",
+                
+            }}
+        >
+            <Paper 
+                sx={{
+                    height: "inherit"
+                }}>
+                
+                response section ...
+            </Paper>
 
-        
+        </Grid>
+
         {/* chat box input section */}
         <Grid item 
             sx={{
