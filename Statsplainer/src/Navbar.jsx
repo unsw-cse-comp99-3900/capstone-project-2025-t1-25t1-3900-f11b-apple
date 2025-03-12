@@ -22,6 +22,9 @@ export const NavBar = ({ page }) => {
   } else {
     nav = (
       <>
+        <Button color="inherit" variant="contained" component={Link} to="/Dashboard" sx={buttonStyles}>
+          Dashboard
+        </Button>
         <Button color="inherit" variant="contained" component={Link} to="/" sx={buttonStyles}>
           ADD
         </Button>
