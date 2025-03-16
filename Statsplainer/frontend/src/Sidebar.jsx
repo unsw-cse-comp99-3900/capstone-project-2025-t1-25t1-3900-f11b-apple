@@ -49,7 +49,7 @@ export default function Sidebar() {
         >
 
         {/* Toggleable AI prompt Button */}
-        <PromptButtonSelector selectedChat={selectedChat} setSelectButton={{setSelectedChat}}/>
+        <PromptButtonSelector selectedChat={selectedChat} setSelectedChat={setSelectedChat}/>
 
         {/* response section */}
         <ChatResponseSection messages={messages} />
@@ -189,7 +189,7 @@ const ChatMessageInput = ({addMessage}) => {
 
 // Toggleable AI Prompt Button 
 
-const PromptButtonSelector = ({ selectedChat, setSelectButton }) => {
+const PromptButtonSelector = ({ selectedChat, setSelectedChat }) => {
     return (
         <Box
             
@@ -200,21 +200,21 @@ const PromptButtonSelector = ({ selectedChat, setSelectButton }) => {
               }}
         >
            <Button 
-                onClick={() => setSelectButton("Definition")}
+                onClick={() => setSelectedChat("Definition")}
                 sx={{color: "#35343E", backgroundColor: "#D9D9D9", opacity: selectedChat === "Definition" ? 1:0.6}}
             >
               Defintion
            </Button>
 
            <Button  
-                onClick={() => setSelectButton("Real world analogy")}
+                onClick={() => setSelectedChat("Real world analogy")}
                 sx={{color: "#35343E", backgroundColor: "#D9D9D9", opacity: selectedChat === "Real world analogy" ? 1:0.6}}
             >
               Real world analogy
            </Button>
 
            <Button 
-                onClick={() => setSelectButton("ELI5")}
+                onClick={() => setSelectedChat("ELI5")}
                 sx={{color: "#35343E", backgroundColor: "#D9D9D9", opacity: selectedChat === "ELI5" ? 1:0.6}}
             >
               ELI5
