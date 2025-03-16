@@ -1,0 +1,22 @@
+version: "3.9"
+
+services:
+  frontend:
+    build: ./frontend
+    container_name: statsplainer_frontend
+    ports:
+      - "80:80"     # Host port 80 -> container's port 80
+    # depends_on:
+      # - backend     # Ensure backend is started first
+    # environment:
+    #   - REACT_APP_API_URL=http://localhost:5000
+    # (Add environment variables if your frontend needs them)
+
+  # backend:
+  #   build: ./backend
+  #   container_name: statsplainer_backend
+  #   ports:
+  #     - "5000:5000" # Host port 5000 -> container's port 5000
+  #   # environment:
+  #   #   - PORT=5000
+  #   # (Add any backend environment variables here)

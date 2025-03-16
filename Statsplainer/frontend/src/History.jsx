@@ -9,6 +9,7 @@ export const HistoryPage = () => {
   //   flexGrow: 1,
   //   paddingY: 2,
   //   fontSize: '1.25rem',
+  
   // };
 
   // Used https://kovart.github.io/dashed-border-generator/ for dashed border
