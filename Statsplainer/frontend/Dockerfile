@@ -1,22 +1,21 @@
-# ---- Stage 1: Build the React app ----
+# --- Stage 1: Build the React app ---
     FROM node:18-alpine AS build
 
-    # Create and change to the app directory
     WORKDIR /app
     
-    # Copy package and lock files
+    # Copy package and lock files first for better caching
     COPY package*.json ./
     
     # Install dependencies
     RUN npm install
     
-    # Copy the rest of your project files
+    # Copy the rest of the frontend code
     COPY . .
     
-    # Build the production version of your app
+    # Build the production version (Vite's default output is /dist)
     RUN npm run build
     
-    # ---- Stage 2: Serve the built app with NGINX ----
+    # --- Stage 2: Serve the built app with NGINX ---
     FROM nginx:stable-alpine
     
     # Copy build output to NGINX's html folder
