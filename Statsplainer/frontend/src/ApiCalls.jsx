@@ -5,7 +5,7 @@ export const apiCallPost = (path, pdfFile) => {
       fetch(`http://localhost:${BACKEND_PORT}/` + path, {
         method: 'POST',
         headers: {
-          'Content-type': 'application/pdf',
+          'pdf': 'application/pdf',
         },
         body: pdfFile
       })
@@ -26,7 +26,7 @@ export const apiCallPost = (path, pdfFile) => {
       fetch(`http://localhost:${BACKEND_PORT}/` + path + '?' + queryString, {
         method: 'GET',
         headers: {
-          'Content-type': 'application/pdf',
+          'pdf': 'application/pdf',
         },
       }).then((response) => {
         if (response.status !== 200) {
