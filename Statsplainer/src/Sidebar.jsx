@@ -62,18 +62,8 @@ export default function Sidebar() {
         
 
         {/* chat box input section */}
-        <Grid item 
-            sx={{
-                backgroundColor: "#4B4C50",
-                borderRadius : "10px",
-            }}>            
-            <TextField
-                fullWidth
-                placeholder="Ask Anything"
-                variant="outlined"
-                color='#26252C'
-            />
-        </Grid>
+        <ChatMessageInput />
+        
 
 
         </Grid>
@@ -134,5 +124,63 @@ const ChatResponseSection = ({ messages }) => {
 
         </Box>
         
+    )
+}
+
+
+// chat messageInputFunction
+
+const ChatMessageInput = () => {
+
+    // store chat messages
+    const [messages, setMessages] = useState([]); 
+
+    // store current input inside the message box
+    const [userMessageInput, setUserMessageInput] = useState("");
+
+    // send message function
+    const sendMessage = () => {
+        // if message is not empty then we send the message
+        if (userMessageInput.trim()) {
+            setUserMessageInput(prevMessages => [
+                ...prevMessages,
+                {text: userMessageInput, sender: "user"}
+            ]);
+
+            //clear send message section once user send the message by pressing enter key
+            setUserMessageInput("");
+        }
+    };
+
+    // checkEnterKey is pressed
+
+    const checkEnterKey = (event) => {
+        // if user pressed enter key we send the message 
+        if (event.key === "Enter") {
+            sendMessage();
+        }
+    };
+
+
+
+
+    return (
+        <Grid item 
+            sx={{
+                backgroundColor: "#4B4C50",
+                borderRadius : "10px",
+            }}>            
+            <TextField
+                fullWidth
+                placeholder="Ask Anything"
+                variant="outlined"
+                color='#26252C'
+                value={userMessageInput}
+                onChange={(e) => setUserMessageInput(e.target.value)}
+                onKeyDown={checkEnterKey}
+
+
+            />
+        </Grid>
     )
 }
