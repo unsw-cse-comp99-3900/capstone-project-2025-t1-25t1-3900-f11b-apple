@@ -10,10 +10,17 @@ const NAVBAR_HEIGHT = 60;
 export default function Sidebar() {
 
 
-    const test = [
+    /*const test = [
         {text: "hello", sender:"user"},
         {text: "Hi this is AI", sender: "AI"}    
     ];
+    */
+
+    const [messages, setMessages] = useState([]);
+
+    const addMessage = (message) => {
+        setMessages(prevMessages => [...prevMessages, message]);
+    }
     
     
     return (
@@ -58,11 +65,13 @@ export default function Sidebar() {
 
         {/* response section */}
 
-        <ChatResponseSection messages={test} />
+        <ChatResponseSection messages={messages} />
         
 
         {/* chat box input section */}
-        <ChatMessageInput />
+        <ChatMessageInput 
+            addMessage={addMessage}
+        />
         
 
 
@@ -74,7 +83,7 @@ export default function Sidebar() {
 // Chat message container function
 const ChatResponseSection = ({ messages }) => {
     // interaction to be complete
-
+    
     return (
         <Box
             item
@@ -130,10 +139,7 @@ const ChatResponseSection = ({ messages }) => {
 
 // chat messageInputFunction
 
-const ChatMessageInput = () => {
-
-    // store chat messages
-    const [messages, setMessages] = useState([]); 
+const ChatMessageInput = ({addMessage}) => {
 
     // store current input inside the message box
     const [userMessageInput, setUserMessageInput] = useState("");
@@ -142,10 +148,8 @@ const ChatMessageInput = () => {
     const sendMessage = () => {
         // if message is not empty then we send the message
         if (userMessageInput.trim()) {
-            setUserMessageInput(prevMessages => [
-                ...prevMessages,
-                {text: userMessageInput, sender: "user"}
-            ]);
+            //append message to the end of the message array
+            addMessage({text: userMessageInput, sender: "user"});
 
             //clear send message section once user send the message by pressing enter key
             setUserMessageInput("");
@@ -158,6 +162,8 @@ const ChatMessageInput = () => {
         // if user pressed enter key we send the message 
         if (event.key === "Enter") {
             sendMessage();
+
+           // update message storage  
         }
     };
 
