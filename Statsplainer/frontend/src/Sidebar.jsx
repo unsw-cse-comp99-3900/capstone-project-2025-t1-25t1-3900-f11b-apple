@@ -15,8 +15,6 @@ export default function Sidebar() {
         {text: "Hi this is AI", sender: "AI"}    
     ];
     */
-    // store messages send from user and AI
-    const [messages, setMessages] = useState([]);
 
     //store messages for definition
     const [messageDefinition, setMessageDefinition] = useState([]);
@@ -52,12 +50,19 @@ export default function Sidebar() {
         <PromptButtonSelector selectedChat={selectedChat} setSelectedChat={setSelectedChat}/>
 
         {/* response section */}
-        <ChatResponseSection messages={messages} />
+        <ChatResponseSection 
+            messages={
+            selectedChat === "Definition" ? messageDefinition :
+            selectedChat === "Real world analogy" ? messageRealWorldAnalogy : messageELI5  
+            } />
         
 
         {/* chat box input section */}
         <ChatMessageInput 
-            addMessage={setMessages}
+            addMessage={
+            selectedChat === "Definition" ? setMessageDefinition :
+            selectedChat === "Real world analogy" ? setMessageRealWorldAnalogy : setMessageELI5
+            }
         />
         
         </Grid>
