@@ -1,6 +1,6 @@
 import { Box, Button, Paper, TextField } from '@mui/material';
 import Grid from '@mui/material/Grid2';
-import {useState} from "react";
+import {useState, useRef, useEffect} from "react";
 
 // Sidebar Function
 
@@ -15,13 +15,21 @@ export default function Sidebar() {
         {text: "Hi this is AI", sender: "AI"}    
     ];
     */
-
+    // store messages send from user and AI
     const [messages, setMessages] = useState([]);
 
-    const addMessage = (message) => {
-        setMessages(prevMessages => [...prevMessages, message]);
-    }
-    
+    //store messages for definition
+    const [messageDefinition, setMessageDefinition] = useState([]);
+
+    //store message for real world analogy
+    const [messageRealWorldAnalogy, setMessageRealWorldAnalogy] = useState([]);
+
+    //store message for ELI5
+    const [messageELI5, setMessageELI5] = useState([]);
+
+    // store which chat is currently selected  (default Defintion)
+    const [selectedChat, setSelectedChat] = useState("Definition"); 
+
     
     return (
         <Grid
@@ -41,20 +49,17 @@ export default function Sidebar() {
         >
 
         {/* Toggleable AI prompt Button */}
-        <PromptButtonSelector />
+        <PromptButtonSelector selectedChat={selectedChat} setSelectButton={{setSelectedChat}}/>
 
         {/* response section */}
-
         <ChatResponseSection messages={messages} />
         
 
         {/* chat box input section */}
         <ChatMessageInput 
-            addMessage={addMessage}
+            addMessage={setMessages}
         />
         
-
-
         </Grid>
     )
 };
@@ -63,7 +68,16 @@ export default function Sidebar() {
 // Chat message container function
 const ChatResponseSection = ({ messages }) => {
     // interaction to be complete
+    const messagesEndRef = useRef(null);
+
+    useEffect(() => {
+        if (messagesEndRef.current) {
+            messagesEndRef.current.scrollIntoView({behavior: "smooth"});
+        }
+    },[messages]);
     
+
+
     return (
         <Box
             item
@@ -73,6 +87,7 @@ const ChatResponseSection = ({ messages }) => {
                 borderRadius: "inherit",
                 height: "inherit",
                 padding: "10px",
+                position: "relative",
             }}
         >
 
@@ -110,7 +125,7 @@ const ChatResponseSection = ({ messages }) => {
 
             </Box>
         ))}
-
+        <div ref={messagesEndRef} />
         </Box>
         
     )
@@ -129,7 +144,8 @@ const ChatMessageInput = ({addMessage}) => {
         // if message is not empty then we send the message
         if (userMessageInput.trim()) {
             //append message to the end of the message array
-            addMessage({text: userMessageInput, sender: "user"});
+            addMessage(prevMessages => [...prevMessages, {text: userMessageInput, sender: "user"}]);
+            
 
             //clear send message section once user send the message by pressing enter key
             setUserMessageInput("");
@@ -146,7 +162,6 @@ const ChatMessageInput = ({addMessage}) => {
            // update message storage  
         }
     };
-
 
 
 
@@ -174,10 +189,10 @@ const ChatMessageInput = ({addMessage}) => {
 
 // Toggleable AI Prompt Button 
 
-const PromptButtonSelector = ({ selectedChat, setSelectedChat }) => {
+const PromptButtonSelector = ({ selectedChat, setSelectButton }) => {
     return (
         <Box
-            container
+            
             sx={{
                 display: "flex",
                 justifyContent: "space-Between",
@@ -185,24 +200,21 @@ const PromptButtonSelector = ({ selectedChat, setSelectedChat }) => {
               }}
         >
            <Button 
-                variant={selectedChat === "Definition" ? "contained" : "outlined"}
-                onClick={() => setSelectedChat("Definition")}
+                onClick={() => setSelectButton("Definition")}
                 sx={{color: "#35343E", backgroundColor: "#D9D9D9", opacity: selectedChat === "Definition" ? 1:0.6}}
             >
               Defintion
            </Button>
 
-           <Button 
-                variant={selectedChat === "Real world analogy" ? "contained" : "outlined"}
-                onClick={() => setSelectedChat("Real world analogy")}
+           <Button  
+                onClick={() => setSelectButton("Real world analogy")}
                 sx={{color: "#35343E", backgroundColor: "#D9D9D9", opacity: selectedChat === "Real world analogy" ? 1:0.6}}
             >
               Real world analogy
            </Button>
 
            <Button 
-                variant={selectedChat === "ELI5" ? "contained" : "outlined"}
-                onClick={() => setSelectedChat("ELI5")}
+                onClick={() => setSelectButton("ELI5")}
                 sx={{color: "#35343E", backgroundColor: "#D9D9D9", opacity: selectedChat === "ELI5" ? 1:0.6}}
             >
               ELI5
