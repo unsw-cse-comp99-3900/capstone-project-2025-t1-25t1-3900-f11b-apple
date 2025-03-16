@@ -41,27 +41,7 @@ export default function Sidebar() {
         >
 
         {/* Toggleable AI prompt Button */}
-        <Box
-            container
-            sx={{
-                display: "flex",
-                justifyContent: "space-Between",
-                gap: 2,
-              }}
-        >
-           <Button sx={{color: "#35343E", backgroundColor: "#D9D9D9"}}>
-              Defintion
-           </Button>
-
-           <Button sx={{color: "#35343E", backgroundColor: "#D9D9D9",opacity: "60%"}}>
-              Real world analogy
-           </Button>
-
-           <Button sx={{color: "#35343E", backgroundColor: "#D9D9D9",opacity: "60%"}}>
-              ELI5
-           </Button>
-            
-        </Box>
+        <PromptButtonSelector />
 
         {/* response section */}
 
@@ -188,5 +168,34 @@ const ChatMessageInput = ({addMessage}) => {
 
             />
         </Grid>
+    )
+}
+
+
+// Toggleable AI Prompt Button 
+
+const PromptButtonSelector = () => {
+    return (
+        <Box
+            container
+            sx={{
+                display: "flex",
+                justifyContent: "space-Between",
+                gap: 2,
+              }}
+        >
+           <Button sx={{color: "#35343E", backgroundColor: "#D9D9D9"}}>
+              Defintion
+           </Button>
+
+           <Button sx={{color: "#35343E", backgroundColor: "#D9D9D9",opacity: "60%"}}>
+              Real world analogy
+           </Button>
+
+           <Button sx={{color: "#35343E", backgroundColor: "#D9D9D9",opacity: "60%"}}>
+              ELI5
+           </Button>
+            
+        </Box>
     )
 }
