@@ -174,7 +174,7 @@ const ChatMessageInput = ({addMessage}) => {
 
 // Toggleable AI Prompt Button 
 
-const PromptButtonSelector = () => {
+const PromptButtonSelector = ({ selectedChat, setSelectedChat }) => {
     return (
         <Box
             container
@@ -184,15 +184,27 @@ const PromptButtonSelector = () => {
                 gap: 2,
               }}
         >
-           <Button sx={{color: "#35343E", backgroundColor: "#D9D9D9"}}>
+           <Button 
+                variant={selectedChat === "Definition" ? "contained" : "outlined"}
+                onClick={() => setSelectedChat("Definition")}
+                sx={{color: "#35343E", backgroundColor: "#D9D9D9", opacity: selectedChat === "Definition" ? 1:0.6}}
+            >
               Defintion
            </Button>
 
-           <Button sx={{color: "#35343E", backgroundColor: "#D9D9D9",opacity: "60%"}}>
+           <Button 
+                variant={selectedChat === "Real world analogy" ? "contained" : "outlined"}
+                onClick={() => setSelectedChat("Real world analogy")}
+                sx={{color: "#35343E", backgroundColor: "#D9D9D9", opacity: selectedChat === "Real world analogy" ? 1:0.6}}
+            >
               Real world analogy
            </Button>
 
-           <Button sx={{color: "#35343E", backgroundColor: "#D9D9D9",opacity: "60%"}}>
+           <Button 
+                variant={selectedChat === "ELI5" ? "contained" : "outlined"}
+                onClick={() => setSelectedChat("ELI5")}
+                sx={{color: "#35343E", backgroundColor: "#D9D9D9", opacity: selectedChat === "ELI5" ? 1:0.6}}
+            >
               ELI5
            </Button>
             
