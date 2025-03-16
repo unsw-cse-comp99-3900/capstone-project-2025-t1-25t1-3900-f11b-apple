@@ -16,7 +16,7 @@ export default function Router() {
   const location = useLocation();
 
   const [pdfUploaded, setPdfUploaded] = useState(false);
-
+  const [uploadedFile, setUploadedFile] = useState(null);
   
   return (
     <Grid
@@ -31,9 +31,9 @@ export default function Router() {
         width: '100vw'
       }}
     >
-      <NavBar pdfUploaded={pdfUploaded} page={location.pathname}/>
+      <NavBar pdfUploaded={pdfUploaded} setPdfUploaded={setPdfUploaded} setUploadedFile={setUploadedFile} page={location.pathname}/>
       <Routes>
-        <Route path='/' element={<LandingPage setPdfUploaded={setPdfUploaded}/>}/>
+        <Route path='/' element={<LandingPage setPdfUploaded={setPdfUploaded} setUploadedFile={setUploadedFile} uploadedFile={uploadedFile}/>}/>
           
         <Route path='/dashboard' element={<DashboardPage />}/>
 
