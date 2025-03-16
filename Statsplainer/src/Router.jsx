@@ -1,4 +1,4 @@
-// import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
   Routes,
   Route,
@@ -14,6 +14,9 @@ import Grid from '@mui/material/Grid2';
 
 export default function Router() {
   const location = useLocation();
+
+  const [pdfUploaded, setPdfUploaded] = useState(false);
+
   
   return (
     <Grid
@@ -25,12 +28,12 @@ export default function Router() {
         textAlign: 'center',
         bgcolor: '#1F2023',
         height: '100vh',
-
+        width: '100vw'
       }}
     >
-      <NavBar page={location.pathname}/>
+      <NavBar pdfUploaded={pdfUploaded} page={location.pathname}/>
       <Routes>
-        <Route path='/' element={<LandingPage />}/>
+        <Route path='/' element={<LandingPage setPdfUploaded={setPdfUploaded}/>}/>
           
         <Route path='/dashboard' element={<DashboardPage />}/>
 
