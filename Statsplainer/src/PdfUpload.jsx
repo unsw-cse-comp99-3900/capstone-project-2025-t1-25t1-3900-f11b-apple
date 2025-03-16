@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useState, useRef } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import { Typography, Button, Box } from '@mui/material';
 import Grid from '@mui/material/Grid2';
@@ -14,17 +14,6 @@ export const PdfUpload = ({ file }) => {
   const pdfRef = useRef(null);
 
   const [pageScale, setPageScale] = useState(1);
-
-  useEffect(() => {
-    if (file) {
-      if (pdfRef.current) {
-        pdfRef.current.destroy().catch(console.warn);
-        pdfRef.current = null;
-      }
-
-      setPageNumber(1);
-    }
-  }, [file]);
 
   const onDocumentLoadSuccess = ({ numPages, pdf }) => {
     setNumPages(numPages);
@@ -43,7 +32,7 @@ export const PdfUpload = ({ file }) => {
 
   return (
     <Grid sx={{ position: 'relative', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', borderRadius: 7, width: containerWidth, height: containerHeight}}>
-      
+
       <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', overflow: 'scroll', width: '95%', height: '95%'}}>
         <Document
           file={file}

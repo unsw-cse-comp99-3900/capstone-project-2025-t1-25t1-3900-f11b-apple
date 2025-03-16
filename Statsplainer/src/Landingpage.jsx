@@ -1,28 +1,32 @@
-import { useState, useRef } from 'react';
+import { useCallback } from 'react';
 import { Typography, Button, Box } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { PdfUpload } from "./PdfUpload";
+import { useDropzone } from 'react-dropzone'
 
-export const LandingPage = ({ setPdfUploaded }) => {
-  const [uploadedFile, setUploadedFile] = useState(null);
-  const fileInputRef = useRef(null);
 
-  const handleFileChange = (e) => {
-    const file = e.target.files?.[0];
+
+export const LandingPage = ({ uploadedFile, setPdfUploaded, setUploadedFile }) => {
+
+  const onDrop = useCallback(acceptedFiles => {
+    const file = acceptedFiles[0];
     if (file && file.type === 'application/pdf') {
       setUploadedFile(file);
       setPdfUploaded(true);
     }
-  };
+  }, []);
 
-  const triggerFileInput = () => {
-    fileInputRef.current?.click();
-  };
-
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: { 'application/pdf': ['.pdf'] },
+    multiple: false,
+  });
+  
   return (
     <>
       {!uploadedFile ? (
         <Grid
+          {...getRootProps()}
           sx={{
             display: 'flex',
             flexDirection: 'column',
@@ -40,25 +44,19 @@ export const LandingPage = ({ setPdfUploaded }) => {
             gap: 2,
           }}
         >
-          
+          <input {...getInputProps()} />
+
           <Typography color="white">
-            Upload PDF
+            {isDragActive ? 'Drop the PDF here...' : 'Upload PDF'}
           </Typography>
           <Typography color="gray">
             Drag and drop or choose a file to upload
           </Typography>
 
-          <Button variant="outlined" onClick={triggerFileInput} sx={{ color: 'white', borderColor: 'white' }}>
+          <Button variant="outlined" sx={{ color: 'white', borderColor: 'white' }}>
             Choose PDF File
           </Button>
 
-          <input
-            type="file"
-            accept="application/pdf"
-            ref={fileInputRef}
-            style={{ display: 'none' }}
-            onChange={handleFileChange}
-          />
         </Grid>
       ) : (
         <PdfUpload file={uploadedFile} />

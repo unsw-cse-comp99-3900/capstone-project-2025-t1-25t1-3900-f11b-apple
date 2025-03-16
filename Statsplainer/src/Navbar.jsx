@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { AppBar, Toolbar, Button, Box, Typography } from '@mui/material';
 
-export const NavBar = ({ page, pdfUploaded }) => {
+export const NavBar = ({ page, pdfUploaded, setPdfUploaded, setUploadedFile }) => {
   const buttonStyles = { 
     height: '80%',
     color: 'white',
@@ -13,10 +13,15 @@ export const NavBar = ({ page, pdfUploaded }) => {
     }
   };
 
+  const reset = () => {
+    setPdfUploaded(false);
+    setUploadedFile(null);
+  }
+
   let nav = <></>;
-  if (page === '/History') {
+  if (page === '/history') {
     nav = (
-      <Button color="inherit" variant="contained" component={Link} to="/" sx={buttonStyles}>
+      <Button color="inherit" variant="contained" onClick={() => reset()} component={Link} to="/" sx={buttonStyles}>
         ADD
       </Button>
     );
@@ -24,7 +29,7 @@ export const NavBar = ({ page, pdfUploaded }) => {
     nav = (
       <>
         {pdfUploaded && (
-          <Button color="inherit" variant="contained" component={Link} to="/" sx={buttonStyles}>
+          <Button color="inherit" variant="contained" onClick={() => reset()} component={Link} to="/" sx={buttonStyles}>
             ADD
           </Button>
         )}
