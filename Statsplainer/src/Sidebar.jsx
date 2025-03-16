@@ -1,4 +1,4 @@
-import { Button, Paper, TextField } from '@mui/material';
+import { Box, Button, Paper, TextField } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import {useState} from "react";
 
@@ -9,6 +9,13 @@ const NAVBAR_HEIGHT = 60;
 
 export default function Sidebar() {
 
+
+    const test = [
+        {text: "hello", sender:"user"},
+        {text: "Hi this is AI", sender: "AI"}    
+    ];
+    
+    
     return (
         <Grid
             container
@@ -19,7 +26,7 @@ export default function Sidebar() {
                 height:"90vh",
                 width: 400,
                 borderRadius: "20px",
-                backgroundColor: "#464646",
+                backgroundColor: "#37383C",
                 flexDirection: "column",
                 p: 2,
             }}
@@ -27,55 +34,44 @@ export default function Sidebar() {
         >
 
         {/* Toggleable AI prompt Button */}
-        <Grid 
-            item
+        <Box
+            container
+            sx={{
+                display: "flex",
+                justifyContent: "space-Between",
+                gap: 2,
+              }}
         >
-            <button variant="contained">
-                Basic Definition
-            </button>
+           <Button sx={{color: "#35343E", backgroundColor: "#D9D9D9"}}>
+              Defintion
+           </Button>
 
-            <button variant="contained">
-                Real world Analogy
-            </button>
+           <Button sx={{color: "#35343E", backgroundColor: "#D9D9D9",opacity: "60%"}}>
+              Real world analogy
+           </Button>
 
-            <button variant="contained">
-                ELI5
-            </button>
+           <Button sx={{color: "#35343E", backgroundColor: "#D9D9D9",opacity: "60%"}}>
+              ELI5
+           </Button>
             
-        </Grid>
+        </Box>
 
         {/* response section */}
-        <Grid
-            item
-            sx={{
-                flex: 1,
-                overflowY: "auto",
-                backgroundColor: '#464646',
-                borderRadius: "inherit",
-                height: "inherit",
-                
-            }}
-        >
-            <Paper 
-                sx={{
-                    height: "inherit"
-                }}>
-                
-                response section ...
-            </Paper>
 
-        </Grid>
+        <ChatResponseSection messages={test} />
+        
 
         {/* chat box input section */}
         <Grid item 
             sx={{
-                backgroundColor: "#ddd",
+                backgroundColor: "#4B4C50",
                 borderRadius : "10px",
             }}>            
             <TextField
                 fullWidth
                 placeholder="Ask Anything"
                 variant="outlined"
+                color='#26252C'
             />
         </Grid>
 
@@ -84,3 +80,59 @@ export default function Sidebar() {
     )
 };
 
+
+// Chat message container function
+const ChatResponseSection = ({ messages }) => {
+    // interaction to be complete
+
+    return (
+        <Box
+            item
+            sx={{
+                flex: 1,
+                overflowY: "auto",
+                borderRadius: "inherit",
+                height: "inherit",
+                padding: "10px",
+            }}
+        >
+
+        {/* Render messages from AI and User */}
+        {messages.map((message, index) => (
+            <Box 
+                key={index}
+                sx={{
+                    display:"flex",
+                    flexDirection:"column",
+                    alignItems: message.sender === "AI" ? "flex-start" : "flex-end",
+                    margineBottom :" 10px",
+                    padding: "5px",
+                }}
+            >
+
+                {/* User Icon + AI Icon section To be implemented */}
+
+
+
+                {/* Message Section*/}
+                <Paper
+                    key={index}
+                    sx={{
+                        marginBtoom: "10px",
+                        maxWidth: "75%",
+                        borderRadius: '5px',
+                        padding: '10px',
+                        backgroundColor: message.sender === "AI" ? "#f0f0f0" : "#d1e7ff",
+
+                    }}
+                >
+                    {message.text}
+                </Paper>
+
+            </Box>
+        ))}
+
+        </Box>
+        
+    )
+}
