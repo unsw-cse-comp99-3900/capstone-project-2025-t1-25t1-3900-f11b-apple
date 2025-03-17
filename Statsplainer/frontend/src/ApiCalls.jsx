@@ -1,40 +1,37 @@
 let BACKEND_PORT = 5000;
 
 export const apiCallPost = (path, pdfFile) => {
+    const formData = new FormData();
+    formData.append("file", pdfFile);
+
     return new Promise((resolve, reject) => {
-      fetch(`http://localhost:${BACKEND_PORT}/` + path, {
-        method: 'POST',
-        headers: {
-          'pdf': 'application/pdf',
-        },
-        body: pdfFile
-      })
+        fetch(`http://localhost:${BACKEND_PORT}/` + path, {
+            method: 'POST',
+            body: formData
+        })
         .then(response => {
-          if (response.status !== 200) {
+            if (response.status !== 200) {
             reject('POST Promise reject error');
-          }
-          return response.json()
+            }
+            return response.json()
         })
         .then(data => {
-          resolve(data);
+            resolve(data);
         });
     })
-  };
+};
 
-  export const apiCallGet = (path, queryString) => {
+export const apiCallGet = (path, queryString) => {
     return new Promise((resolve, reject) => {
-      fetch(`http://localhost:${BACKEND_PORT}/` + path + '?' + queryString, {
-        method: 'GET',
-        headers: {
-          'pdf': 'application/pdf',
-        },
-      }).then((response) => {
+        fetch(`http://localhost:${BACKEND_PORT}/` + path + '?' + queryString, {
+            method: 'GET',
+        }).then((response) => {
         if (response.status !== 200) {
-          reject('GET Promise reject error');
+            reject('GET Promise reject error');
         }
-        return response.json()
-      }).then((data) => {
-        resolve(data);
-      });
+            return response.blob()
+        }).then((data) => {
+            resolve(data);
+        });
     })
-  };
+};

@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom';
-import { AppBar, Toolbar, Button, Box, Typography } from '@mui/material';
+import { AppBar, Toolbar, Button, Box, Typography, IconButton } from '@mui/material';
+import HistoryRoundedIcon from '@mui/icons-material/HistoryRounded';
+import AddRoundedIcon from '@mui/icons-material/AddRounded';
 
 export const NavBar = ({ page, pdfUploaded, setPdfUploaded, setUploadedFile }) => {
   const buttonStyles = { 
@@ -21,21 +23,21 @@ export const NavBar = ({ page, pdfUploaded, setPdfUploaded, setUploadedFile }) =
   let nav = <></>;
   if (page === '/history') {
     nav = (
-      <Button color="inherit" variant="contained" onClick={() => reset()} component={Link} to="/" sx={buttonStyles}>
-        ADD
-      </Button>
+      <IconButton color="inherit" variant="contained" onClick={() => reset()} component={Link} to="/" sx={buttonStyles}>
+        <AddRoundedIcon />
+      </IconButton>
     );
   } else {
     nav = (
       <>
         {pdfUploaded && (
-          <Button color="inherit" variant="contained" onClick={() => reset()} component={Link} to="/" sx={buttonStyles}>
-            ADD
-          </Button>
+          <IconButton color="inherit" variant="contained" onClick={() => reset()} component={Link} to="/" sx={buttonStyles}>
+            <AddRoundedIcon />
+          </IconButton>
         )}
-        <Button color="inherit" variant="contained" component={Link} to="/history" sx={buttonStyles}>
-          History
-        </Button>
+        <IconButton color="inherit" variant="contained" component={Link} to="/history" sx={buttonStyles}>
+          <HistoryRoundedIcon />
+        </IconButton>
       </>
     );
   }
