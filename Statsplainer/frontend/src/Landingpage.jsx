@@ -4,15 +4,23 @@ import Grid from '@mui/material/Grid2';
 import { PdfUpload } from "./PdfUpload";
 import { useDropzone } from 'react-dropzone'
 import { PdfSidebar } from './PdfSidebar';
+import { apiCallPost } from './ApiCalls';
 
 
 export const LandingPage = ({ uploadedFile, setPdfUploaded, setUploadedFile }) => {
 
-  const onDrop = useCallback(acceptedFiles => {
+  const onDrop = useCallback(async (acceptedFiles) => {
     const file = acceptedFiles[0];
     if (file && file.type === 'application/pdf') {
       setUploadedFile(file);
       setPdfUploaded(true);
+
+      try {
+        await apiCallPost('upload-PDF', file);
+        console.log('success');
+      } catch (err) {
+        console.error(err);
+      }
     }
   }, []);
 
