@@ -16,6 +16,7 @@ export const PdfUpload = ({ file }) => {
   const [pageScale, setPageScale] = useState(1);
 
   const onDocumentLoadSuccess = ({ numPages, pdf }) => {
+    console.log(file)
     setNumPages(numPages);
     pdfRef.current = pdf;
   };

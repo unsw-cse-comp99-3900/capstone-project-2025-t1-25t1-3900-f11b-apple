@@ -3,7 +3,7 @@ import { Typography, Button, Box } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { PdfUpload } from "./PdfUpload";
 import { useDropzone } from 'react-dropzone'
-
+import { PdfSidebar } from './PdfSidebar';
 
 
 export const LandingPage = ({ uploadedFile, setPdfUploaded, setUploadedFile }) => {
@@ -59,7 +59,7 @@ export const LandingPage = ({ uploadedFile, setPdfUploaded, setUploadedFile }) =
 
         </Grid>
       ) : (
-        <PdfUpload file={uploadedFile} />
+        <PdfSidebar file={uploadedFile} />
       )}
     </>
   );
