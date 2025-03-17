@@ -1,9 +1,13 @@
 import { useState, useRef } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
-import { Typography, Button, Box } from '@mui/material';
+import { Typography, Button, Box, IconButton  } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
+import ZoomInRoundedIcon from '@mui/icons-material/ZoomInRounded';
+import ZoomOutRoundedIcon from '@mui/icons-material/ZoomOutRounded';
+import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
+import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
 
 import worker from "pdfjs-dist/build/pdf.worker?worker";
 pdfjs.GlobalWorkerOptions.workerPort = new worker();
@@ -46,20 +50,20 @@ export const PdfUpload = ({ file }) => {
       </Box>
 
       <Box sx={{ position: 'absolute', display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', width: ButtonWidth, height: ButtonHeight, zIndex: '10', top: '20px', right: '20px'}}>
-        <button onClick={() => setPageScale((p) => Math.max(p - 0.1, 0.5))} disabled={pageScale <= 0.5}>
-          Zoom out
-        </button>
-        <button onClick={() => setPageScale((p) => Math.min(p + 0.1, 2))} disabled={pageScale >= 2}>
-          Zoom in
-        </button>
+        <IconButton onClick={() => setPageScale((p) => Math.max(p - 0.1, 0.5))} disabled={pageScale <= 0.5}>
+          <ZoomInRoundedIcon />
+        </IconButton>
+        <IconButton onClick={() => setPageScale((p) => Math.min(p + 0.1, 2))} disabled={pageScale >= 2}>
+          <ZoomOutRoundedIcon />
+        </IconButton>
       </Box>
       <Box sx={{ position: 'absolute', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: ButtonWidth, height: ButtonHeight, zIndex: '10', bottom: '20px', }}>
-        <button onClick={() => setPageNumber((p) => Math.max(p - 1, 1))} disabled={pageNumber <= 1}>
-          Previous
-        </button>
-        <button onClick={() => setPageNumber((p) => Math.min(p + 1, numPages))} disabled={pageNumber >= numPages}>
-          Next
-        </button>
+        <IconButton onClick={() => setPageNumber((p) => Math.max(p - 1, 1))} disabled={pageNumber <= 1}>
+          <ArrowBackRoundedIcon />
+        </IconButton>
+        <IconButton onClick={() => setPageNumber((p) => Math.min(p + 1, numPages))} disabled={pageNumber >= numPages}>
+          <ArrowForwardRoundedIcon />
+        </IconButton>
       </Box>
     </Grid>
   );

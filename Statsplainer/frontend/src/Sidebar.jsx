@@ -103,6 +103,7 @@ const ChatResponseSection = ({ messages }) => {
                     alignItems: message.sender === "AI" ? "flex-start" : "flex-end",
                     margineBottom :" 10px",
                     padding: "5px",
+                    wordBreak: 'break-word',
                 }}
             >
 
