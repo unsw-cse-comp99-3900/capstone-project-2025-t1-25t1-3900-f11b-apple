@@ -169,7 +169,7 @@ const ChatMessageInput = ({addMessage}) => {
                 headers: {
                     "Content-Type" : "application/json",
                 },
-                body: JSON.stringify({text: userMessageInput})
+                body: JSON.stringify({highlighted_text : userMessageInput})
             })
             .then(response => response.json())
             .then(data => addMessage(prevMessages =>[...prevMessages, data]))
