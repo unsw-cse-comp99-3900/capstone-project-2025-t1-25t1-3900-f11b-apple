@@ -56,21 +56,8 @@ def explain_highlight():
 
             If the highlighted text contains statistics, percentages, or measurements, always specify what they measure or refer to."""
     
-    # Find the position of the highlighted text in the full text
-    highlight_position = full_text.find(highlighted_text)
-    
-    # Extract a larger window around the highlighted text (1000 chars before and after)
-    start_idx = max(0, highlight_position - 100)
-    end_idx = min(len(full_text), highlight_position + len(highlighted_text) + 100)
-    
-    # Get the immediate context
-    context_window = full_text[start_idx:end_idx]
-    
     # Add the context to the prompt
-    prompt += f"\n\nHere is the surrounding context (the highlighted text is inside this excerpt):\n\n{context_window}"
-    
-    # Also provide the full document, but as supplementary information
-    prompt += f"\n\nFull document (for additional reference if needed):\n{full_text}..."
+    prompt += f"\n\nHere is the surrounding context (the highlighted text is inside this excerpt):\n\n{full_text}"
     
     try:
         # Call existing API utility with modified developer instructions
