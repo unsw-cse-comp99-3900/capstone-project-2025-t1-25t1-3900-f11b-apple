@@ -62,7 +62,7 @@ export const Highlight = (containerRef, pageNumber, fileName) => {
     setCurrentHighlight(null);
     setHighlightedBoxes([]);
     
-    apiCallPostText("explain-highlight", text, fileName);
+    apiCallPostText("explain-highlight", { 'highlighted_text': text, 'filename': fileName });
   };
 
   /*
@@ -70,65 +70,81 @@ export const Highlight = (containerRef, pageNumber, fileName) => {
     splits words to be used for exact word capturing and their information
     Used for inner word highlighting and text exctraction
   */
-  const extractWordsAndBoxes = (highlight) => {
-    const containerRect = containerRef.current.getBoundingClientRect();
-    const extractedWords = [];
-    const wordBoxes = [];
-
-    textLayerElements.forEach((el) => {
-      const text = el.textContent;
-      if (!text) return;
-
-      const words = text.split(/\s+/);
-      let wordStartIndex = 0;
-
-      words.forEach((word) => {
-        const trimmedWord = word.trim();
-        if (!trimmedWord) return;
-
-        const wordIndex = text.indexOf(trimmedWord, wordStartIndex);
-        if (wordIndex === -1 || !el.firstChild) return;
-
-        try {
-          const range = document.createRange();
-          range.setStart(el.firstChild, wordIndex);
-          range.setEnd(el.firstChild, wordIndex + trimmedWord.length);
-          const wordRect = range.getBoundingClientRect();
-
-          const wordLeft = wordRect.left + containerRef.current.scrollLeft - containerRect.left;
-          const wordTop = wordRect.top + containerRef.current.scrollTop - containerRect.top;
-          const wordRight = wordLeft + wordRect.width;
-          const wordBottom = wordTop + wordRect.height;
-
-          const isOverlapping =
-            wordRight > highlight.x &&
-            wordLeft < highlight.x + highlight.width &&
-            wordBottom > highlight.y &&
-            wordTop < highlight.y + highlight.height;
-
-          if (isOverlapping) {
-            extractedWords.push(trimmedWord);
-            wordBoxes.push({
-              text: trimmedWord,
-              x: wordLeft,
-              y: wordTop,
-              width: wordRect.width,
-              height: wordRect.height,
-            });
-          }
-
-          wordStartIndex = wordIndex + trimmedWord.length;
-        } catch (err) {
-          console.error(err);
-        }
-      });
-    });
-
-    return {
-      text: extractedWords.join(" ").trim(),
-      boxes: wordBoxes,
-    };
-  };
+    const extractWordsAndBoxes = (highlight) => {
+        const containerRect = containerRef.current.getBoundingClientRect();
+        const extractedWords = [];
+        const wordBoxes = [];
+      
+        textLayerElements.forEach((el) => {
+          const text = el.textContent;
+          const textNode = el.firstChild;
+      
+          if (!text || !textNode || textNode.nodeType !== Node.TEXT_NODE) return;
+      
+          const fullText = textNode.textContent;
+          const maxOffset = fullText.length;
+      
+          const words = text.split(/\s+/);
+          let searchStart = 0;
+      
+          words.forEach((word) => {
+            const trimmedWord = word.trim();
+            if (!trimmedWord) return;
+      
+            const wordIndex = fullText.indexOf(trimmedWord, searchStart);
+            if (wordIndex === -1 || wordIndex >= maxOffset) return;
+      
+            try {
+              const range = document.createRange();
+      
+              // Ensure start and end offsets are within bounds
+              const startOffset = Math.max(0, Math.min(wordIndex, maxOffset));
+              const endOffset = Math.max(0, Math.min(wordIndex + trimmedWord.length, maxOffset));
+      
+              // Only proceed if the range is valid
+              if (startOffset < endOffset) {
+                range.setStart(textNode, startOffset);
+                range.setEnd(textNode, endOffset);
+      
+                const wordRect = range.getBoundingClientRect();
+      
+                const wordLeft = wordRect.left + containerRef.current.scrollLeft - containerRect.left;
+                const wordTop = wordRect.top + containerRef.current.scrollTop - containerRect.top;
+                const wordRight = wordLeft + wordRect.width;
+                const wordBottom = wordTop + wordRect.height;
+      
+                const isOverlapping =
+                  wordRight > highlight.x &&
+                  wordLeft < highlight.x + highlight.width &&
+                  wordBottom > highlight.y &&
+                  wordTop < highlight.y + highlight.height;
+      
+                if (isOverlapping) {
+                  extractedWords.push(trimmedWord);
+                  wordBoxes.push({
+                    text: trimmedWord,
+                    x: wordLeft,
+                    y: wordTop,
+                    width: wordRect.width,
+                    height: wordRect.height,
+                  });
+                }
+              }
+      
+              // Advance search start index so we don't re-match same word
+              searchStart = wordIndex + trimmedWord.length;
+            } catch (err) {
+              console.warn("Range error:", err.message);
+            }
+          });
+        });
+      
+        return {
+          text: extractedWords.join(" ").trim(),
+          boxes: wordBoxes,
+        };
+      };
+      
 
   useEffect(() => {
     const interval = setInterval(() => {

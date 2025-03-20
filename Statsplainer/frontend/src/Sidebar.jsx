@@ -28,24 +28,23 @@ export default function Sidebar(message) {
     // store which chat is currently selected  (default Defintion)
     const [selectedChat, setSelectedChat] = useState("Definition"); 
 
-    if ("Definition" in message) {
-        setMessageDefinition(message.text);
-    } else if ("Real world analogy" in message) {
-        setMessageRealWorldAnalogy(message.text);
-    } else {
-        setMessageELI5(message.text);
-    };
+    useEffect(() => {
+        if ("Definition" in message) {
+            setMessageDefinition(message.text);
+        } else if ("Real world analogy" in message) {
+            setMessageRealWorldAnalogy(message.text);
+        } else {
+            setMessageELI5(message.text);
+        };
+    }, [message]);
 
 
     return (
         <Grid
             container
             sx={{
-                position: "fixed",
-                right:30,
-                top: NAVBAR_HEIGHT,
-                height:"90vh",
-                width: 400,
+                height:"82vh",
+                width: "30vw",
                 borderRadius: "20px",
                 backgroundColor: "#37383C",
                 flexDirection: "column",
@@ -163,6 +162,18 @@ const ChatMessageInput = ({addMessage}) => {
 
             //clear send message section once user send the message by pressing enter key
             setUserMessageInput("");
+
+            fetch("http://localhost:5000/explain-highlight", {
+                method: "post",
+                headers: {
+                    "Content-Type" : "application/json",
+                },
+                body: JSON.stringify({highlighted_text : userMessageInput})
+            })
+            .then(response => response.json())
+            .then(data => addMessage(prevMessages =>[...prevMessages, {sender: "AI", text: data.explanation}]))
+            .catch(error => console.error("Error:", error));
+
         }
     };
 
@@ -215,21 +226,21 @@ const PromptButtonSelector = ({ selectedChat, setSelectedChat }) => {
         >
            <Button 
                 onClick={() => setSelectedChat("Definition")}
-                sx={{color: "#35343E", backgroundColor: "#D9D9D9", opacity: selectedChat === "Definition" ? 1:0.6}}
+                sx={{color: "#35343E", backgroundColor: "#D9D9D9", opacity: selectedChat === "Definition" ? 1:0.6, flexGrow: 1}}
             >
               Defintion
            </Button>
 
            <Button  
                 onClick={() => setSelectedChat("Real world analogy")}
-                sx={{color: "#35343E", backgroundColor: "#D9D9D9", opacity: selectedChat === "Real world analogy" ? 1:0.6}}
+                sx={{color: "#35343E", backgroundColor: "#D9D9D9", opacity: selectedChat === "Real world analogy" ? 1:0.6, flexGrow: 2}}
             >
               Real world analogy
            </Button>
 
            <Button 
                 onClick={() => setSelectedChat("ELI5")}
-                sx={{color: "#35343E", backgroundColor: "#D9D9D9", opacity: selectedChat === "ELI5" ? 1:0.6}}
+                sx={{color: "#35343E", backgroundColor: "#D9D9D9", opacity: selectedChat === "ELI5" ? 1:0.6, flexGrow: 1}}
             >
               ELI5
            </Button>

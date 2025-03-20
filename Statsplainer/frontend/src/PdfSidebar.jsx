@@ -29,7 +29,7 @@ export const PdfSidebar = ({ file }) => {
             <PdfUpload file={file} />
           </Box>
           <Box>
-            <Sidebar />
+            <Sidebar message={{"Chat" : "Definition", "text" : "hello"}} />
           </Box>
         </Grid>
       )}
