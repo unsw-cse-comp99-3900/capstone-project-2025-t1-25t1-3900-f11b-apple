@@ -1,18 +1,18 @@
-FROM node:18-alpine
+FROM python:3.9-slim
 
 WORKDIR /app
 
-# Copy package and lock files
-COPY package*.json ./
+# Copy requirements file
+COPY requirements.txt .
 
 # Install dependencies
-RUN npm install
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the rest of your backend code
 COPY . .
 
-# Expose the port your backend listens on (example: 5000)
+# Expose the port your backend listens on
 EXPOSE 5000
 
 # Run your server
-CMD ["npm", "start"]
+CMD ["python", "server.py"]
