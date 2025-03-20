@@ -164,7 +164,7 @@ const ChatMessageInput = ({addMessage}) => {
             //clear send message section once user send the message by pressing enter key
             setUserMessageInput("");
 
-            fetch("http://localhost:5000/api/post", {
+            fetch("http://localhost:5000/explain-highlight", {
                 method: "post",
                 headers: {
                     "Content-Type" : "application/json",
