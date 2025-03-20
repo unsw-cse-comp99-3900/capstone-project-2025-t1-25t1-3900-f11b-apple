@@ -9,6 +9,7 @@ import ZoomOutRoundedIcon from '@mui/icons-material/ZoomOutRounded';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
 import { Highlight } from "./Highlight";
+import { apiCallPostText } from "./ApiCalls";
 
 import worker from "pdfjs-dist/build/pdf.worker?worker";
 pdfjs.GlobalWorkerOptions.workerPort = new worker();
@@ -30,13 +31,15 @@ export const PdfUpload = ({ file, setText }) => {
     handleMouseMove,
     handleMouseUp,
     highlightedBoxes
-  } = Highlight(containerRef, pageNumber, file.name);
+  } = Highlight(containerRef, pageNumber);
 
   useEffect(() => {
     if (highlights.length > 0) {
+      const result = async () => {try { const explanation = await apiCallPostText("explain-highlight", { 'highlighted_text': highlights[0].text, 'filename': file.name }); setText(explanation.explanation); } catch (error) { console.log(error);}};
       setText(highlights[0].text);
+      result()
     }
-  }, [highlights, setText]);
+  }, [file.name, highlights, setText]);
   
   let width = 53;
   let height = 82;

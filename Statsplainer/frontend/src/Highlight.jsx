@@ -1,7 +1,6 @@
 import { useRef, useState, useEffect } from "react";
-import { apiCallPostText } from "./ApiCalls";
 
-export const Highlight = (containerRef, pageNumber, fileName) => {
+export const Highlight = (containerRef, pageNumber) => {
   // Needed for handleMouseDown to keep in down state
   const isDrawing = useRef(false);
   // Tracks start of highlight box drag point
@@ -46,7 +45,7 @@ export const Highlight = (containerRef, pageNumber, fileName) => {
     setCurrentHighlight(newHighlight);
   };
 
-  const handleMouseUp = () => {
+  const handleMouseUp = async () => {
     isDrawing.current = false;
 
     if (!currentHighlight || currentHighlight.width < 5 || currentHighlight.height < 5) {
@@ -62,9 +61,11 @@ export const Highlight = (containerRef, pageNumber, fileName) => {
     setCurrentHighlight(null);
     setHighlightedBoxes([]);
     
-    apiCallPostText("explain-highlight", { 'highlighted_text': text, 'filename': fileName });
+    // const explanation = apiCallPostText("explain-highlight", { 'highlighted_text': text, 'filename': fileName });
+    // try { const explanation = await apiCallPostText("explain-highlight", { 'highlighted_text': text, 'filename': fileName }); } catch (error) { console.log(error);};
+    
   };
-
+  
   /*
     Gets all span information from page in pdf: text within, location, etc
     splits words to be used for exact word capturing and their information
