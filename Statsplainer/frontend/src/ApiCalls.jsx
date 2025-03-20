@@ -35,3 +35,24 @@ export const apiCallGet = (path, queryString) => {
         });
     })
 };
+
+export const apiCallPostText = (path, body) => {
+    return new Promise((resolve, reject) => {
+        fetch(`http://localhost:${BACKEND_PORT}/` + path, {
+        method: 'POST',
+        headers: {
+            'Content-type': 'application/json',
+        },
+        body: JSON.stringify(body)
+        })
+        .then(response => {
+            if (response.status !== 200) {
+            reject('POST Promise reject error');
+            }
+            return response.json()
+        })
+        .then(data => {
+            resolve(data);
+        });
+    })
+};

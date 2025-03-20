@@ -22,7 +22,7 @@ export const PdfUpload = ({ file }) => {
   const onDocumentLoadSuccess = ({ numPages }) => {
     setNumPages(numPages);
   };
-
+  
   const {
     highlights,
     currentHighlight,
@@ -30,7 +30,7 @@ export const PdfUpload = ({ file }) => {
     handleMouseMove,
     handleMouseUp,
     highlightedBoxes
-  } = Highlight(containerRef, pageNumber);
+  } = Highlight(containerRef, pageNumber, file.name);
 
   let width = 53;
   let height = 82;

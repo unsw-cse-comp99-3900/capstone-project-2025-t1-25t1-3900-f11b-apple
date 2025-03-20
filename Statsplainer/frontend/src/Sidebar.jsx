@@ -7,7 +7,7 @@ import {useState, useRef, useEffect} from "react";
 //update here where the border of the side bar starts
 const NAVBAR_HEIGHT = 60;
 
-export default function Sidebar() {
+export default function Sidebar(message) {
 
 
     /*const test = [
@@ -28,13 +28,24 @@ export default function Sidebar() {
     // store which chat is currently selected  (default Defintion)
     const [selectedChat, setSelectedChat] = useState("Definition"); 
 
-    
+    if ("Definition" in message) {
+        setMessageDefinition(message.text);
+    } else if ("Real world analogy" in message) {
+        setMessageRealWorldAnalogy(message.text);
+    } else {
+        setMessageELI5(message.text);
+    };
+
+
     return (
         <Grid
             container
             sx={{
-                height:"82vh",
-                width: "30vw",
+                position: "fixed",
+                right:30,
+                top: NAVBAR_HEIGHT,
+                height:"90vh",
+                width: 400,
                 borderRadius: "20px",
                 backgroundColor: "#37383C",
                 flexDirection: "column",
@@ -204,21 +215,21 @@ const PromptButtonSelector = ({ selectedChat, setSelectedChat }) => {
         >
            <Button 
                 onClick={() => setSelectedChat("Definition")}
-                sx={{color: "#35343E", backgroundColor: "#D9D9D9", opacity: selectedChat === "Definition" ? 1:0.6, flexGrow: 1}}
+                sx={{color: "#35343E", backgroundColor: "#D9D9D9", opacity: selectedChat === "Definition" ? 1:0.6}}
             >
               Defintion
            </Button>
 
            <Button  
                 onClick={() => setSelectedChat("Real world analogy")}
-                sx={{color: "#35343E", backgroundColor: "#D9D9D9", opacity: selectedChat === "Real world analogy" ? 1:0.6, flexGrow: 2}}
+                sx={{color: "#35343E", backgroundColor: "#D9D9D9", opacity: selectedChat === "Real world analogy" ? 1:0.6}}
             >
               Real world analogy
            </Button>
 
            <Button 
                 onClick={() => setSelectedChat("ELI5")}
-                sx={{color: "#35343E", backgroundColor: "#D9D9D9", opacity: selectedChat === "ELI5" ? 1:0.6, flexGrow: 1}}
+                sx={{color: "#35343E", backgroundColor: "#D9D9D9", opacity: selectedChat === "ELI5" ? 1:0.6}}
             >
               ELI5
            </Button>
