@@ -16,6 +16,7 @@ export default function Sidebar(message) {
     ];
     */
 
+
     //store messages for definition
     const [messageDefinition, setMessageDefinition] = useState([]);
 
@@ -25,16 +26,25 @@ export default function Sidebar(message) {
     //store message for ELI5
     const [messageELI5, setMessageELI5] = useState([]);
 
+    console.log(messageDefinition);
+
+    console.log(messageRealWorldAnalogy);
+
+    console.log(messageELI5);
+
     // store which chat is currently selected  (default Defintion)
     const [selectedChat, setSelectedChat] = useState("Definition"); 
 
-    if ("Definition" in message) {
-        setMessageDefinition(message.text);
-    } else if ("Real world analogy" in message) {
-        setMessageRealWorldAnalogy(message.text);
-    } else {
-        setMessageELI5(message.text);
-    };
+    useEffect (() => {
+        if (message.chat === "Definition") {
+            setMessageDefinition(prevMessages =>[...prevMessages, {sender: "AI", text: message.text}])
+        } else if (message.chat === "Real world analogy") {
+            setMessageRealWorldAnalogy(prevMessages =>[...prevMessages, {sender: "AI", text: message.text}])
+        } else {
+            setMessageELI5(prevMessages =>[...prevMessages, {sender: "AI", text: message.text}])
+        };
+    }, [message]);
+    
 
 
     return (
@@ -90,7 +100,6 @@ const ChatResponseSection = ({ messages }) => {
     },[messages]);
     
 
-
     return (
         <Box
             item
@@ -103,6 +112,7 @@ const ChatResponseSection = ({ messages }) => {
                 position: "relative",
             }}
         >
+
 
         {/* Render messages from AI and User */}
         {messages.map((message, index) => (
