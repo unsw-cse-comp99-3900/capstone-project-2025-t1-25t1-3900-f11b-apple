@@ -7,7 +7,7 @@ import {useState, useRef, useEffect} from "react";
 //update here where the border of the side bar starts
 const NAVBAR_HEIGHT = 60;
 
-export default function Sidebar() {
+export default function Sidebar(message) {
 
 
     /*const test = [
@@ -28,7 +28,15 @@ export default function Sidebar() {
     // store which chat is currently selected  (default Defintion)
     const [selectedChat, setSelectedChat] = useState("Definition"); 
 
-    
+    if ("Definition" in message) {
+        setMessageDefinition(message.text);
+    } else if ("Real world analogy" in message) {
+        setMessageRealWorldAnalogy(message.text);
+    } else {
+        setMessageELI5(message.text);
+    };
+
+
     return (
         <Grid
             container
