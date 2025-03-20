@@ -172,7 +172,7 @@ const ChatMessageInput = ({addMessage}) => {
                 body: JSON.stringify({highlighted_text : userMessageInput})
             })
             .then(response => response.json())
-            .then(data => addMessage(prevMessages =>[...prevMessages, data.explanation]))
+            .then(data => addMessage(prevMessages =>[...prevMessages, {sender: "AI", text: data.explanation}]))
             .catch(error => console.error("Error:", error));
 
         }
