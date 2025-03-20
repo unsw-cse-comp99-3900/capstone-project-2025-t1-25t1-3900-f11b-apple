@@ -7,8 +7,7 @@ import {useState, useRef, useEffect} from "react";
 //update here where the border of the side bar starts
 const NAVBAR_HEIGHT = 60;
 
-export default function Sidebar(message) {
-
+export default function Sidebar({message, setChatType}) {
 
     /*const test = [
         {text: "hello", sender:"user"},
@@ -28,14 +27,15 @@ export default function Sidebar(message) {
     // store which chat is currently selected  (default Defintion)
     const [selectedChat, setSelectedChat] = useState("Definition"); 
 
-    useEffect(() => {
-        if ("Definition" in message) {
-            setMessageDefinition(message.text);
-        } else if ("Real world analogy" in message) {
-            setMessageRealWorldAnalogy(message.text);
-        } else {
-            setMessageELI5(message.text);
+    useEffect (() => {
+        if (message.chat === "Definition") {
+            setMessageDefinition(prevMessages =>[...prevMessages, {sender: "AI", text: message.text}])
+        } else if (message.chat === "Real world analogy") {
+            setMessageRealWorldAnalogy(prevMessages =>[...prevMessages, {sender: "AI", text: message.text}])
+        } else if (message.chat === "ELI5") {
+            setMessageELI5(prevMessages =>[...prevMessages, {sender: "AI", text: message.text}])
         };
+        message = {};
     }, [message]);
 
 
@@ -54,7 +54,7 @@ export default function Sidebar(message) {
         >
 
         {/* Toggleable AI prompt Button */}
-        <PromptButtonSelector selectedChat={selectedChat} setSelectedChat={setSelectedChat}/>
+        <PromptButtonSelector selectedChat={selectedChat} setSelectedChat={setSelectedChat} setChatType={setChatType}/>
 
         {/* response section */}
         <ChatResponseSection 
@@ -92,7 +92,6 @@ const ChatResponseSection = ({ messages }) => {
 
     return (
         <Box
-            item
             sx={{
                 flex: 1,
                 overflowY: "auto",
@@ -214,7 +213,7 @@ const ChatMessageInput = ({addMessage}) => {
 
 // Toggleable AI Prompt Button 
 
-const PromptButtonSelector = ({ selectedChat, setSelectedChat }) => {
+const PromptButtonSelector = ({ selectedChat, setSelectedChat, setChatType }) => {
     return (
         <Box
             
@@ -225,21 +224,21 @@ const PromptButtonSelector = ({ selectedChat, setSelectedChat }) => {
               }}
         >
            <Button 
-                onClick={() => setSelectedChat("Definition")}
+                onClick={() => {setSelectedChat("Definition"); setChatType("Definition");}}
                 sx={{color: "#35343E", backgroundColor: "#D9D9D9", opacity: selectedChat === "Definition" ? 1:0.6, flexGrow: 1}}
             >
               Defintion
            </Button>
 
            <Button  
-                onClick={() => setSelectedChat("Real world analogy")}
+                onClick={() => {setSelectedChat("Real world analogy"); setChatType("Real world analogy");}}
                 sx={{color: "#35343E", backgroundColor: "#D9D9D9", opacity: selectedChat === "Real world analogy" ? 1:0.6, flexGrow: 2}}
             >
               Real world analogy
            </Button>
 
            <Button 
-                onClick={() => setSelectedChat("ELI5")}
+                onClick={() => {setSelectedChat("ELI5"); setChatType("ELI5");}}
                 sx={{color: "#35343E", backgroundColor: "#D9D9D9", opacity: selectedChat === "ELI5" ? 1:0.6, flexGrow: 1}}
             >
               ELI5

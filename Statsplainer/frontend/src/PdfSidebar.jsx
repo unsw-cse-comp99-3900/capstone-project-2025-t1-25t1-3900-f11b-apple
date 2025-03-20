@@ -1,19 +1,29 @@
 import { PdfUpload } from "./PdfUpload";
 import Sidebar from './Sidebar';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Typography, Button, Box } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 
 
 export const PdfSidebar = ({ file }) => {
   const [aiTriggered, setAiTriggered] = useState(false);
+  const [text, setText] = useState();
+  const [chatType, setChatType] = useState("Definition");
+  const [sendMessage, setSendMessage] = useState({});
+  
+  useEffect(() => {
+    if (text) {
+      setSendMessage({"chat" : chatType, "text" : text})
+    }
+    setText();
+  }, [chatType, text])
 
   return (
     <>
       {!aiTriggered ? (
         <>
-          <PdfUpload file={file} />
+          <PdfUpload file={file} setText={setText}/>
           <Button onClick={() => setAiTriggered(true)}>
               click
           </Button>
@@ -26,10 +36,10 @@ export const PdfSidebar = ({ file }) => {
           }}
         >
           <Box sx={{ flex: 1, paddingRight: '3vw' }}>
-            <PdfUpload file={file} />
+            <PdfUpload file={file} setText={setText} />
           </Box>
           <Box>
-            <Sidebar message={{"Chat" : "Definition", "text" : "hello"}} />
+            <Sidebar message={sendMessage} setChatType={setChatType}/>
           </Box>
         </Grid>
       )}

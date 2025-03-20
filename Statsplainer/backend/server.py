@@ -76,7 +76,7 @@ def explain_highlight():
         # Call existing API utility with modified developer instructions
         explanation = API_text_input(prompt, 
             "Generate a contextually accurate explanation that explicitly identifies what the highlighted text refers to in the surrounding content")
-        
+        print(explanation)
         return jsonify({
             "explanation": explanation
         })

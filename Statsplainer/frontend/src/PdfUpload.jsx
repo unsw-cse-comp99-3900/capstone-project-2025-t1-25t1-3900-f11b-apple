@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import { Typography, Button, Box, IconButton  } from '@mui/material';
 import Grid from '@mui/material/Grid2';
@@ -13,7 +13,7 @@ import { Highlight } from "./Highlight";
 import worker from "pdfjs-dist/build/pdf.worker?worker";
 pdfjs.GlobalWorkerOptions.workerPort = new worker();
 
-export const PdfUpload = ({ file }) => {
+export const PdfUpload = ({ file, setText }) => {
   const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
   const [pageScale, setPageScale] = useState(1);
@@ -32,6 +32,12 @@ export const PdfUpload = ({ file }) => {
     highlightedBoxes
   } = Highlight(containerRef, pageNumber, file.name);
 
+  useEffect(() => {
+    if (highlights.length > 0) {
+      setText(highlights[0].text);
+    }
+  }, [highlights, setText]);
+  
   let width = 53;
   let height = 82;
   let containerWidth = width + 'vw';
@@ -116,10 +122,10 @@ export const PdfUpload = ({ file }) => {
       </Box>
 
       <Box sx={{ position: 'absolute', display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', width: ButtonWidth, height: ButtonHeight, zIndex: '10', top: '20px', right: '20px'}}>
-        <IconButton onClick={() => setPageScale((p) => Math.max(p - 0.1, 0.5))} disabled={pageScale <= 0.5}>
+        <IconButton onClick={() => setPageScale((p) => Math.min(p + 0.1, 2))} disabled={pageScale <= 0.5}>
           <ZoomInRoundedIcon />
         </IconButton>
-        <IconButton onClick={() => setPageScale((p) => Math.min(p + 0.1, 2))} disabled={pageScale >= 2}>
+        <IconButton onClick={() => setPageScale((p) => Math.max(p - 0.1, 0.5))} disabled={pageScale >= 2}>
           <ZoomOutRoundedIcon />
         </IconButton>
       </Box>
