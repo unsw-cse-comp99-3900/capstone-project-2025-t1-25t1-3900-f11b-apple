@@ -1,6 +1,7 @@
-import { Box, Button, Paper, TextField } from '@mui/material';
+import { Box, Button, Paper, TextField, Snackbar, Slide } from '@mui/material';
 import Grid from '@mui/material/Grid2';
-import {useState, useRef, useEffect} from "react";
+import React, {useState, useRef, useEffect} from "react";
+import Tooltip from './Tooltips';
 
 // Sidebar Function
 
@@ -27,6 +28,16 @@ export default function Sidebar({message, setChatType}) {
     // store which chat is currently selected  (default Defintion)
     const [selectedChat, setSelectedChat] = useState("Definition"); 
 
+    //set tooltips state
+    const [open,setOpen] = useState(true);
+    const targetRef = React.useRef(null);
+
+    //handle open/close tooltip
+    const handleOpenTooltip = () => setOpen(true);
+    const handleCloseTooltip = () => setOpen(false);
+
+
+
     useEffect (() => {
         if (message.chat === "Definition") {
             setMessageDefinition(prevMessages =>[...prevMessages, {sender: "AI", text: message.text}])
@@ -37,6 +48,8 @@ export default function Sidebar({message, setChatType}) {
         };
         message = {};
     }, [message]);
+
+
 
 
     return (
@@ -53,8 +66,12 @@ export default function Sidebar({message, setChatType}) {
             spacing={2}
         >
 
+        <Tooltip targetRef={targetRef} open={open} onClose={handleCloseTooltip}/>
+
         {/* Toggleable AI prompt Button */}
         <PromptButtonSelector selectedChat={selectedChat} setSelectedChat={setSelectedChat} setChatType={setChatType}/>
+        
+            
 
         {/* response section */}
         <ChatResponseSection 
@@ -70,7 +87,8 @@ export default function Sidebar({message, setChatType}) {
             selectedChat === "Definition" ? setMessageDefinition :
             selectedChat === "Real world analogy" ? setMessageRealWorldAnalogy : setMessageELI5
             }
-        />
+        /> 
+        
         
         </Grid>
     )
