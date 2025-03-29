@@ -5,26 +5,25 @@ import Grid from '@mui/material/Grid2';
 // tooltip bubble function that create a rectangular bubble with a
 // dismiss button to guide through the user what each component does and how to interact with.
 // takes in three parameter to manage the state of the tooltips whether we open it or close it. and assign a target component to it
-export default function Tooltip ({targetRef, open, onClose}) {
-    onClose = false
+export default function Tooltip ({targetRef, open, handleClose}) {
     return (
         <Snackbar
             open={open}
-            onClose={onClose}
+            onClose={handleClose}
             anchorOrigin={{vertical:"top", horizontal: "left"}}
+
+
             sx={{
                 backgroundColor: "grey",
                 borderRadius: "10px",
                 minHeight: "10vh",
                 width: "25vw",
                 p:2,
-            }}
-
-                       
+                boxShadow:10,
+            }}          
         >
-            <Grid
-
-                
+        <Slide in={open} direction="down">
+            <Grid 
                 sx={{
                     minWidth: "auto",
                     minHeight: "auto",
@@ -32,6 +31,9 @@ export default function Tooltip ({targetRef, open, onClose}) {
                 }}
             
             >
+                {/* arrow pointing to the component*/}
+                
+
                 {/* tooltips message */}
                 <Typography 
                     sx={{
@@ -45,7 +47,7 @@ export default function Tooltip ({targetRef, open, onClose}) {
                 {/* Dismiss button */}
                 <Button
                     size="small"
-                    onClick={onClose}
+                    onClick={handleClose}
                     
                     sx={{
                         backgroundColor:"lightblue",
@@ -57,6 +59,7 @@ export default function Tooltip ({targetRef, open, onClose}) {
                 </Button>
                 
             </Grid>
+            </Slide>
         </Snackbar>
     )
 }
