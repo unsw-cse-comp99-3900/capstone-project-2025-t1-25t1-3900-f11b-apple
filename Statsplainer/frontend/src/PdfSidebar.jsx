@@ -19,14 +19,13 @@ export const PdfSidebar = ({ file }) => {
     setText();
   }, [chatType, text])
 
+  console.log(aiTriggered)
+
   return (
     <>
       {!aiTriggered ? (
         <>
-          <PdfUpload file={file} setText={setText}/>
-          <Button onClick={() => setAiTriggered(true)}>
-              click
-          </Button>
+          <PdfUpload file={file} setText={setText} setAiTriggered={setAiTriggered}/>
         </>
       ) : (
         <Grid
@@ -36,7 +35,7 @@ export const PdfSidebar = ({ file }) => {
           }}
         >
           <Box sx={{ flex: 1, paddingRight: '3vw' }}>
-            <PdfUpload file={file} setText={setText} />
+            <PdfUpload file={file} setText={setText} setAiTriggered={setAiTriggered} />
           </Box>
           <Box>
             <Sidebar message={sendMessage} setChatType={setChatType}/>
