@@ -32,20 +32,48 @@ def get_pdf(filename):
     return send_file(file_path, mimetype="application/pdf")
 
 # Endpoint for handling highlighted text explanations
+# Endpoint for handling highlighted text explanations
 @app.route("/explain-highlight", methods=["POST"])
 def explain_highlight():
     data = request.json
-    if not data or "highlighted_text" not in data:
-        return jsonify({"error": "No highlighted text provided"}), 400
-    
+    if not data or "highlighted_text" not in data or "filename" not in data:
+        return jsonify({"error": "Missing highlighted_text or filename in request"}), 400
+
     highlighted_text = data["highlighted_text"]
-    
     filename = data["filename"]
+    # Get the prompt type from the request, default to "Definition" if not provided
+    prompt_type = data.get("prompt_type", "Definition")
+
     file_path = os.path.join(UPLOAD_FOLDER, filename)
-    full_text = extract_text_from_pdf(file_path)
-    
-    
-    prompt = f"""Explain this highlighted text in context: '{highlighted_text}'
+
+    # Ensure the file exists before trying to extract text
+    if not os.path.exists(file_path):
+        return jsonify({"error": f"File {filename} not found on server"}), 404
+
+    try:
+        # Extract the full text for context (assuming util.py has this function)
+        full_text = extract_text_from_pdf(file_path)
+        # Limit context size if needed (e.g., OpenAI token limits) - adjust as necessary
+        max_context_length = 3000 # Example limit, adjust based on model/needs
+        if len(full_text) > max_context_length:
+           # Basic truncation, might need smarter context handling
+           context_for_prompt = full_text[:max_context_length] + "..."
+        else:
+           context_for_prompt = full_text
+
+    except Exception as e:
+        # Log the error for debugging
+        print(f"Error extracting text from {filename}: {e}")
+        return jsonify({"error": f"Could not extract text from PDF: {e}"}), 500
+
+    # Define instructions based on prompt_type
+    instruction = ""
+    if prompt_type == "ELI5":
+        instruction = "Explain the following highlighted text in a very simple and concise way, suitable for a 5-year-old. Focus on the core meaning within the provided context:"
+    elif prompt_type == "Real world analogy":
+        instruction = "Explain the following highlighted text using a brief, clear real-world analogy relevant to the provided context:"
+    else: # Default or "Definition"
+        instruction = """Explain this highlighted text in context: '{highlighted_text}'
 
             Your explanation must:
             1. Explicitly reference what specific entities or values the highlighted text refers to in the surrounding context (e.g., if "8%" is highlighted, explain exactly what this percentage represents)
@@ -54,21 +82,36 @@ def explain_highlight():
             4. Use clear, precise language
             5. Prioritize explaining references, relationships, and what exactly the highlighted text represents
 
-            If the highlighted text contains statistics, percentages, or measurements, always specify what they measure or refer to."""
-    
-    # Add the context to the prompt
-    prompt += f"\n\nHere is the surrounding context (the highlighted text is inside this excerpt):\n\n{full_text}"
-    
+            If the highlighted text contains statistics, percentages, or measurements, always specify what they measure or refer to.
+
+            Highlighted Text to Explain:"""
+
+
+    # Construct the final prompt for the AI
+    # If default/definition, replace the placeholder; otherwise, append the highlighted text.
+    if prompt_type == "Definition" or prompt_type == "Default":
+         # The default instruction already contains the placeholder format
+         # (Assuming the placeholder '{highlighted_text}' was part of the original default instruction)
+         # If not, adjust accordingly. Let's assume it wasn't and structure it like the others:
+         instruction = """Explain this highlighted text providing context and identifying specific references:""" # Simplified default instruction
+         final_prompt = f"{instruction}\n\nHighlighted Text: \"{highlighted_text}\"\n\nFull Document Context (excerpt):\n{context_for_prompt}"
+
+    else:
+        final_prompt = f"{instruction}\n\nHighlighted Text: \"{highlighted_text}\"\n\nFull Document Context (excerpt):\n{context_for_prompt}"
+
+
     try:
-        # Call existing API utility with modified developer instructions
-        explanation = API_text_input(prompt, 
-            "Generate a contextually accurate explanation that explicitly identifies what the highlighted text refers to in the surrounding content")
-        print(explanation)
+        # Define a generic developer message for the API call
+        dev_msg = f"Generate explanation for highlighted text based on user request type: {prompt_type}"
+        # Call existing API utility with the constructed prompt and dev_msg
+        explanation = API_text_input(final_prompt, dev_msg)
+        print(f"Generated explanation ({prompt_type}): {explanation}") # Log explanation
         return jsonify({
             "explanation": explanation
         })
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        print(f"Error calling AI API: {e}") # Log the error
+        return jsonify({"error": f"Failed to get explanation from AI: {str(e)}"}), 500
 
 def cleanup():
     for pdf in os.listdir(UPLOAD_FOLDER):

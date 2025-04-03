@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect } from "react";
 
-export const Highlight = (containerRef, pageNumber) => {
+export const Highlight = (containerRef, pageNumber, onHighlightComplete) => {
   // Needed for handleMouseDown to keep in down state
   const isDrawing = useRef(false);
   // Tracks start of highlight box drag point
@@ -55,15 +55,13 @@ export const Highlight = (containerRef, pageNumber) => {
     }
 
     const { text, boxes } = extractWordsAndBoxes(currentHighlight);
-    const newHighlight = { ...currentHighlight, text, boxes };
-
-    setHighlights([newHighlight]);
+ 
     setCurrentHighlight(null);
     setHighlightedBoxes([]);
     
-    // const explanation = apiCallPostText("explain-highlight", { 'highlighted_text': text, 'filename': fileName });
-    // try { const explanation = await apiCallPostText("explain-highlight", { 'highlighted_text': text, 'filename': fileName }); } catch (error) { console.log(error);};
-    
+    if (text && onHighlightComplete) {
+      onHighlightComplete(text);
+  }
   };
   
   /*

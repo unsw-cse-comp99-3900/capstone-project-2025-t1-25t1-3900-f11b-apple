@@ -14,7 +14,7 @@ import { apiCallPostText } from "./ApiCalls";
 import worker from "pdfjs-dist/build/pdf.worker?worker";
 pdfjs.GlobalWorkerOptions.workerPort = new worker();
 
-export const PdfUpload = ({ file, setText }) => {
+export const PdfUpload = ({ file, onTextHighlighted }) => {
   const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
   const [pageScale, setPageScale] = useState(1);
@@ -24,6 +24,13 @@ export const PdfUpload = ({ file, setText }) => {
     setNumPages(numPages);
   };
   
+  const handleHighlightComplete = (extractedText) => {
+    if (onTextHighlighted && file) {
+        // Pass text and filename up as an object
+        onTextHighlighted({ text: extractedText, filename: file.name });
+    }
+  };
+
   const {
     highlights,
     currentHighlight,
@@ -31,16 +38,8 @@ export const PdfUpload = ({ file, setText }) => {
     handleMouseMove,
     handleMouseUp,
     highlightedBoxes
-  } = Highlight(containerRef, pageNumber);
+  } = Highlight(containerRef, pageNumber, handleHighlightComplete);
 
-  useEffect(() => {
-    if (highlights.length > 0) {
-      const result = async () => {try { const explanation = await apiCallPostText("explain-highlight", { 'highlighted_text': highlights[0].text, 'filename': file.name }); setText(explanation.explanation); } catch (error) { console.log(error);}};
-      setText(highlights[0].text);
-      result()
-    }
-  }, [file.name, highlights, setText]);
-  
   let width = 53;
   let height = 82;
   let containerWidth = width + 'vw';
