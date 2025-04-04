@@ -1,6 +1,8 @@
 from openai import OpenAI
 import base64
 
+ai_model = "google/gemini-2.5-pro-exp-03-25:free"
+
 #------------------------------------------------------------------------------------
 #                   SETTING UP API CLIENT/KEY
 #------------------------------------------------------------------------------------
@@ -21,7 +23,7 @@ client = OpenAI(
 # Gives a response to a user's question/query.
 def user_query(query):
   completion = client.chat.completions.create(
-    model="google/gemini-2.5-pro-exp-03-25:free",
+    model=ai_model,
     messages=[
       {
         "role": "user",
@@ -29,6 +31,7 @@ def user_query(query):
       }
     ]
   )
+  print(completion.choices[0].message.content)
   return completion.choices[0].message.content
 
 # Gives a brief summary of text provided by user
@@ -69,7 +72,7 @@ def API_text_input(text, dev_msg):
     string representing the explanation
   """
   completion = client.chat.completions.create(
-    model="google/gemini-2.0-pro-exp-02-05:free",
+    model=ai_model,
     messages=[
       {
         "role": "developer",
@@ -97,7 +100,7 @@ def API_image_input(image_path, dev_msg):
     base64_image = base64.b64encode(image_file.read()).decode("utf-8")
   
   completion = client.chat.completions.create(
-    model="google/gemini-2.0-pro-exp-02-05:free",
+    model=ai_model,
     messages=[
       {
         "role": "developer",
