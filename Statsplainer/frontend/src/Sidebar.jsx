@@ -1,4 +1,4 @@
-import { Box, Button, Paper, TextField, Snackbar, Slide } from '@mui/material';
+import { Box, Button, Paper, TextField, } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import React, {useState, useRef, useEffect} from "react";
 import Tooltip from './Tooltips';
@@ -53,9 +53,11 @@ export default function Sidebar({message, setChatType}) {
 
 
     return (
+        
         <Grid
             container
             sx={{
+                display:"flex",
                 height:"82vh",
                 width: "30vw",
                 borderRadius: "20px",
@@ -66,10 +68,10 @@ export default function Sidebar({message, setChatType}) {
             spacing={2}
         >
 
-        <Tooltip targetRef={targetRef} open={open} onClose={handleCloseTooltip}/>
+        
 
         {/* Toggleable AI prompt Button */}
-        <PromptButtonSelector selectedChat={selectedChat} setSelectedChat={setSelectedChat} setChatType={setChatType}/>
+        <PromptButtonSelector ref={targetRef} selectedChat={selectedChat} setSelectedChat={setSelectedChat} setChatType={setChatType}/>
         
             
 
@@ -89,7 +91,7 @@ export default function Sidebar({message, setChatType}) {
             }
         /> 
         
-        
+        <Tooltip targetRef={targetRef} open={open} handleClose={handleCloseTooltip}/>
         </Grid>
     )
 };
@@ -210,8 +212,17 @@ const ChatMessageInput = ({addMessage}) => {
     return (
         <Grid item 
             sx={{
+                display:"inherit",
+                width:"100%",
                 backgroundColor: "#4B4C50",
                 borderRadius : "10px",
+                    fontSize:{
+                        xs: "8px",
+                        sm: "10px",
+                        md: "12px",
+                        lg: "14px",
+                        xl: "16px",
+                    }
             }}>            
             <TextField
                 fullWidth
@@ -221,6 +232,10 @@ const ChatMessageInput = ({addMessage}) => {
                 value={userMessageInput}
                 onChange={(e) => setUserMessageInput(e.target.value)}
                 onKeyDown={checkEnterKey}
+                sx={{
+                    width:"100%",
+                    display:"inherit",
+                }}
 
 
             />
@@ -233,35 +248,43 @@ const ChatMessageInput = ({addMessage}) => {
 
 const PromptButtonSelector = ({ selectedChat, setSelectedChat, setChatType }) => {
     return (
-        <Box
-            
+        <Grid
             sx={{
-                display: "flex",
-                justifyContent: "space-Between",
-                gap: 2,
+                width:"100%",
+                height:"10%",
+                display:"inherit",
+                gap:1,
               }}
         >
            <Button 
                 onClick={() => {setSelectedChat("Definition"); setChatType("Definition");}}
-                sx={{color: "#35343E", backgroundColor: "#D9D9D9", opacity: selectedChat === "Definition" ? 1:0.6, flexGrow: 1}}
+                fullWidth
+                sx={{color: "#35343E", backgroundColor: "#D9D9D9", opacity: selectedChat === "Definition" ? 1:0.6, width:"100%", display:'inherit', minWidth: 10,fontSize:"10px"}}
             >
               Defintion
            </Button>
 
            <Button  
                 onClick={() => {setSelectedChat("Real world analogy"); setChatType("Real world analogy");}}
-                sx={{color: "#35343E", backgroundColor: "#D9D9D9", opacity: selectedChat === "Real world analogy" ? 1:0.6, flexGrow: 2}}
-            >
-              Real world analogy
-           </Button>
+                fullWidth
+                sx={{color: "#35343E", backgroundColor: "#D9D9D9", opacity: selectedChat === "Real world analogy" ? 1:0.6, width:"100%", display:'inherit', minWidth: 10,fontSize:"10px"}}
+                >
+                Real world analogy
+            </Button>
 
-           <Button 
+            <Button 
                 onClick={() => {setSelectedChat("ELI5"); setChatType("ELI5");}}
-                sx={{color: "#35343E", backgroundColor: "#D9D9D9", opacity: selectedChat === "ELI5" ? 1:0.6, flexGrow: 1}}
-            >
-              ELI5
-           </Button>
+                fullWidth
+                sx={{color: "#35343E", backgroundColor: "#D9D9D9", opacity: selectedChat === "ELI5" ? 1:0.6, width:"100%", display:'inherit', minWidth: 10,fontSize:"10px"}}
+                >
+                ELI5
+            </Button>
+
             
-        </Box>
+        </Grid>
     )
 }
+
+/*
+
+*/
