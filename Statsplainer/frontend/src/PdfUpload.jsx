@@ -79,7 +79,14 @@ export const PdfUpload = ({ file, setText, setAiTriggered }) => {
           onLoadSuccess={onDocumentLoadSuccess}
           onLoadError={(err) => console.error("PDF load error:", err)}
         >
-          <Page pageNumber={pageNumber}  scale={pageScale} width={windowWidth}/>
+          {[...Array(numPages)].map((_, index) => (
+            <Page
+              key={`page_${index + 1}`}
+              pageNumber={index + 1}
+              scale={pageScale}
+              width={windowWidth}
+            />
+          ))}
         </Document>
 
         {currentHighlight && (
