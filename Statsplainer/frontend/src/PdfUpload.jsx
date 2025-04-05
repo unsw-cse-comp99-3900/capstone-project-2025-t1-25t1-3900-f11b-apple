@@ -55,7 +55,7 @@ export const PdfUpload = ({ file, setText, setAiTriggered }) => {
     }
   }, [highlights]);
   
-  let width = 53;
+  let width = 70;
   let height = 82;
   let containerWidth = width + 'vw';
   let containerHeight = height + 'vh';
