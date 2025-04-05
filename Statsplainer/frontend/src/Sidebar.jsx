@@ -214,9 +214,23 @@ const ChatMessageInput = ({addMessage}) => {
 // Toggleable AI Prompt Button 
 
 const PromptButtonSelector = ({ selectedChat, setSelectedChat, setChatType }) => {
+    const buttonStyle = (label) => ({
+        color: "#35343E",
+        backgroundColor: "#D9D9D9",
+        opacity: selectedChat === label ? 1 : 0.6,
+        flexGrow: 1,
+        padding: "6px 1px",
+        textAlign: "center",
+        whiteSpace: "normal",
+        overflowWrap: "break-word",
+        fontSize: "clamp(0.65rem, 1.5vw, 0.85rem)",
+        minHeight: "48px",
+        minWidth: '80px',
+        maxWidth: '160px',
+    });
+
     return (
         <Box
-            
             sx={{
                 display: "flex",
                 justifyContent: "space-Between",
@@ -225,21 +239,21 @@ const PromptButtonSelector = ({ selectedChat, setSelectedChat, setChatType }) =>
         >
            <Button 
                 onClick={() => {setSelectedChat("Definition"); setChatType("Definition");}}
-                sx={{color: "#35343E", backgroundColor: "#D9D9D9", opacity: selectedChat === "Definition" ? 1:0.6, flexGrow: 1}}
+                sx={buttonStyle("Definition")}
             >
               Defintion
            </Button>
 
            <Button  
                 onClick={() => {setSelectedChat("Real world analogy"); setChatType("Real world analogy");}}
-                sx={{color: "#35343E", backgroundColor: "#D9D9D9", opacity: selectedChat === "Real world analogy" ? 1:0.6, flexGrow: 2}}
+                sx={buttonStyle("Real world analogy")}
             >
               Real world analogy
            </Button>
 
            <Button 
                 onClick={() => {setSelectedChat("ELI5"); setChatType("ELI5");}}
-                sx={{color: "#35343E", backgroundColor: "#D9D9D9", opacity: selectedChat === "ELI5" ? 1:0.6, flexGrow: 1}}
+                sx={buttonStyle("ELI5")}
             >
               ELI5
            </Button>
