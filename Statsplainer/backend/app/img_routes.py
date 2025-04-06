@@ -2,9 +2,6 @@ from flask import Flask, request, jsonify, send_file, Blueprint, current_app
 from flask_cors import CORS
 import os
 
-app = Flask(__name__)
-CORS(app)
-
 img_routes = Blueprint("img_routes", __name__)
 
 @img_routes.route("/upload-image", methods=["POST"])

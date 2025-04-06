@@ -2,9 +2,6 @@ from flask import Flask, request, send_file, jsonify, Blueprint, current_app
 from flask_cors import CORS
 import os
 
-app = Flask(__name__)
-CORS(app)
-
 pdf_routes = Blueprint("pdf_routes", __name__)
 
 @pdf_routes.route("/upload-PDF", methods=["POST"])
