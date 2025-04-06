@@ -7,7 +7,7 @@ import Grid from '@mui/material/Grid2';
 
 
 export const PdfSidebar = ({ file }) => {
-  const [aiTriggered, setAiTriggered] = useState(false);
+  const [sideBarTriggered, setSideBarTriggered] = useState(false);
   const [text, setText] = useState();
   const [chatType, setChatType] = useState("Definition");
   const [sendMessage, setSendMessage] = useState({});
@@ -19,13 +19,13 @@ export const PdfSidebar = ({ file }) => {
     setText();
   }, [chatType, text])
 
-  console.log(aiTriggered)
+  console.log(sideBarTriggered)
 
   return (
     <>
-      {!aiTriggered ? (
+      {!sideBarTriggered ? (
         <>
-          <PdfUpload file={file} setText={setText} setAiTriggered={setAiTriggered}/>
+          <PdfUpload file={file} setText={setText} setSideBarTriggered={setSideBarTriggered}/>
         </>
       ) : (
         <Grid
@@ -35,7 +35,7 @@ export const PdfSidebar = ({ file }) => {
           }}
         >
           <Box sx={{ flex: 1, paddingRight: '3vw' }}>
-            <PdfUpload file={file} setText={setText} setAiTriggered={setAiTriggered} />
+            <PdfUpload file={file} setText={setText} setSideBarTriggered={setSideBarTriggered} />
           </Box>
           <Box>
             <Sidebar message={sendMessage} setChatType={setChatType}/>
