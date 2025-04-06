@@ -13,6 +13,12 @@ export const Highlight = (containerRef, pageNumber) => {
   const [textLayerElements, setTextLayerElements] = useState([]);
   // Keeps track of words to be highlighted within Highlighting box
   const [highlightedBoxes, setHighlightedBoxes] = useState([]);
+  // Used for highlight cleaning when transitioning to different page states
+  const highlightReset = () => {
+    setCurrentHighlight(null);
+    setHighlightedBoxes([]);
+    setHighlights([]);
+  }
 
   const handleMouseDown = (e) => {
     setHighlights([]);
@@ -32,6 +38,8 @@ export const Highlight = (containerRef, pageNumber) => {
 
     const width = currentX - startPoint.current.x;
     const height = currentY - startPoint.current.y;
+
+    if (Math.abs(width) == 1 || Math.abs(height) == 1) return;
 
     const newHighlight = {
       x: Math.min(startPoint.current.x, currentX),
@@ -59,7 +67,7 @@ export const Highlight = (containerRef, pageNumber) => {
 
     setHighlights([newHighlight]);
     setCurrentHighlight(null);
-    setHighlightedBoxes([]);
+    //setHighlightedBoxes([]);
     
     // const explanation = apiCallPostText("explain-highlight", { 'highlighted_text': text, 'filename': fileName });
     // try { const explanation = await apiCallPostText("explain-highlight", { 'highlighted_text': text, 'filename': fileName }); } catch (error) { console.log(error);};
@@ -164,5 +172,6 @@ export const Highlight = (containerRef, pageNumber) => {
     handleMouseMove,
     handleMouseUp,
     highlightedBoxes,
+    highlightReset
   };
 };
