@@ -15,4 +15,4 @@ COPY . .
 EXPOSE 5000
 
 # Run your server
-CMD ["python", "server.py"]
+CMD ["python", "run.py"]
