@@ -34,7 +34,7 @@ export const PdfSidebar = ({ file }) => {
             flexDirection: 'row',
           }}
         >
-          <Box sx={{ flex: 1, paddingRight: '3vw' }}>
+          <Box sx={{ flex: 1}}>
             <PdfUpload file={file} setText={setText} setSideBarTriggered={setSideBarTriggered} />
           </Box>
           <Box>

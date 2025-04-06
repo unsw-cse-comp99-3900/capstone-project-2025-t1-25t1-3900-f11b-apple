@@ -67,19 +67,19 @@ export const PdfUpload = ({ file, setText, setSideBarTriggered }) => {
     highlightReset();
   }, [pageScale, numPages, snipHighlightSwitch])
   
-  let width = 53;
-  let height = 82;
+  let width = 70;
+  let height = 92;
   let containerWidth = width + 'vw';
   let containerHeight = height + 'vh';
   let ButtonWidth = width - 10 +'vw';
   let ButtonHeight = '3vh';
-  let windowWidth = window.innerWidth / 2.05;
+  let windowWidth = window.innerWidth / 1.5;
 
   return (
-    <Grid sx={{ position: 'relative', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', borderRadius: 7, width: containerWidth, height: containerHeight}}>
+    <Grid sx={{ position: 'relative', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', width: containerWidth, height: containerHeight}}>
 
       <Box 
-        sx={{ display: 'flex', position: 'relative', flexDirection: 'column', alignItems: 'center', overflow: 'scroll', width: '95%', height: '95%', userSelect: "none",}}
+        sx={{ display: 'flex', position: 'relative', flexDirection: 'column', alignItems: 'center', overflow: 'scroll', width: '100%', height: '100%', userSelect: "none",}}
         onMouseDown={(e) => {setConfirmPopup(false); handleMouseDown(e);}}
         onMouseMove={handleMouseMove}
         onMouseUp={(e) => {setConfirmPopup(false); setlastHighlightPoint(currentHighlight); handleMouseUp(e);}}
@@ -137,8 +137,8 @@ export const PdfUpload = ({ file, setText, setSideBarTriggered }) => {
             display: "flex",
             justifyContent: "center",
             alignContent: "center",
-            top: lastHighlightPoint.y - containerRef.scrollTop + lastHighlightPoint.height -  + 5,
-            left: lastHighlightPoint.x - containerRef.scrollLeft + (lastHighlightPoint.width / 2 - (8 * window.innerWidth) / 200),
+            top: lastHighlightPoint.y - containerRef.current.scrollTop + lastHighlightPoint.height -  + 5,
+            left: lastHighlightPoint.x - containerRef.current.scrollLeft + (lastHighlightPoint.width / 2 - (8 * window.innerWidth) / 200),
             width: "8vw",
             height: "5vh",
             zIndex: 1000
@@ -194,11 +194,9 @@ export const PdfUpload = ({ file, setText, setSideBarTriggered }) => {
 const result = async (highlights, file, setText, snipHighlightSwitch) => {
   try { 
     if (snipHighlightSwitch === "Highlight") {
-      const explanation = await apiCallPostText("explain-highlight", { 'highlighted_text': highlights[0].text, 'filename': file.name }); 
-      setText(explanation.explanation); 
+      apiCallPostText("explain-highlight", { 'highlighted_text': highlights[0].text, 'filename': file.name }).then(res => {setText(res.explanation);}); 
     } else if (snipHighlightSwitch === "Snip") {
-      const explanation = await apiCallPost('upload-PDF', highlights[0].snippedImageDataUrl);
-      setText(explanation.explanation); 
+      apiCallPost('upload-PDF', highlights[0].snippedImageDataUrl).then(res => {setText(res.explanation);});
     }
   } 
   catch (error) { console.log(error);}
