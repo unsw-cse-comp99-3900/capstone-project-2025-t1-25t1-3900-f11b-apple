@@ -1,38 +1,12 @@
-from flask import Flask, request, send_file, jsonify
-from flask_cors import CORS
+from flask import request, jsonify, Blueprint, current_app
 import os
-import atexit
 from API import API_text_input
 from util import extract_text_from_pdf
 
-app = Flask(__name__)
-CORS(app)
-
-UPLOAD_FOLDER = "uploads"
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-
-@app.route("/upload-PDF", methods=["POST"])
-def upload_pdf():
-    if "file" not in request.files:
-        return jsonify({"error": "No PDF uploaded"}), 400
-    
-    file = request.files["file"]
-    file_path = os.path.join(UPLOAD_FOLDER, file.filename)
-    file.save(file_path)
-    
-    return jsonify({"message": "File uploaded successfully", "filename": file.filename})
-
-@app.route("/get-pdf/<filename>", methods=["GET"])
-def get_pdf(filename):
-    file_path = os.path.join(UPLOAD_FOLDER, filename)
-    
-    if not os.path.exists(file_path):
-        return jsonify({"error": "PDF not found"}), 404
-    
-    return send_file(file_path, mimetype="application/pdf")
+aiapi_routes = Blueprint("aiapi_routes", __name__)
 
 # Endpoint for handling highlighted text explanations
-@app.route("/explain-highlight", methods=["POST"])
+@aiapi_routes.route("/explain-highlight", methods=["POST"])
 def explain_highlight():
     data = request.json
     if not data or "highlighted_text" not in data:
@@ -41,7 +15,7 @@ def explain_highlight():
     highlighted_text = data["highlighted_text"]
     
     filename = data["filename"]
-    file_path = os.path.join(UPLOAD_FOLDER, filename)
+    file_path = os.path.join(current_app.config['PDF_FOLDER'], filename)
     full_text = extract_text_from_pdf(file_path)
     
     
@@ -69,14 +43,3 @@ def explain_highlight():
         })
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
-def cleanup():
-    for pdf in os.listdir(UPLOAD_FOLDER):
-        file_path = os.path.join(UPLOAD_FOLDER, pdf)
-        os.remove(file_path)
-        print(f"PDF deleted: {file_path}")
-
-if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=5000)
-    
-atexit.register(cleanup)
