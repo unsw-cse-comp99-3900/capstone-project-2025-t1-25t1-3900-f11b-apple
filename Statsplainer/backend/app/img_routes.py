@@ -5,6 +5,7 @@ img_routes = Blueprint("img_routes", __name__)
 
 @img_routes.route("/upload-image", methods=["POST"])
 def upload_image():
+    print(request.files["file"])
     if "file" not in request.files:
         return jsonify({"error": "No image uploaded"}), 400
 

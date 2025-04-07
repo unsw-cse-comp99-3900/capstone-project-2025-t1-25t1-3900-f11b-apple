@@ -9,7 +9,7 @@ import ZoomOutRoundedIcon from '@mui/icons-material/ZoomOutRounded';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
 import { Highlight } from "./Highlight";
-import { apiCallPostText, apiCallPost } from "./ApiCalls";
+import { apiCallPostText, apiCallPostImg } from "./ApiCalls";
 import CheckRoundedIcon from '@mui/icons-material/CheckRounded';
 import HighlightAltRoundedIcon from '@mui/icons-material/HighlightAltRounded';
 import PhotoCameraRoundedIcon from '@mui/icons-material/PhotoCameraRounded';
@@ -244,7 +244,7 @@ const result = async (highlights, file, setText, snipHighlightSwitch) => {
     if (snipHighlightSwitch === "Highlight") {
       apiCallPostText("explain-highlight", { 'highlighted_text': highlights[0].text, 'filename': file.name }).then(res => {setText(res.explanation);}); 
     } else if (snipHighlightSwitch === "Snip") {
-      apiCallPost('upload-PDF', highlights[0].snippedImageDataUrl).then(res => {setText(res.explanation);});
+      apiCallPostImg('upload-image', highlights[0].snippedImageDataUrl).then(res => {setText(res.explanation);});
     }
   } 
   catch (error) { console.log(error);}
