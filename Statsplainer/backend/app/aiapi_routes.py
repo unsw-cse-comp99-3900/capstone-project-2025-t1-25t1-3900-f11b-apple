@@ -1,5 +1,4 @@
-from flask import Flask, request, send_file, jsonify, Blueprint, current_app
-from flask_cors import CORS
+from flask import request, jsonify, Blueprint, current_app
 import os
 from API import API_text_input
 from util import extract_text_from_pdf

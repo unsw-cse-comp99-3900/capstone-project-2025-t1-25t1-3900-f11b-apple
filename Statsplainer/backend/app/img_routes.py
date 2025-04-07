@@ -1,5 +1,4 @@
-from flask import Flask, request, jsonify, send_file, Blueprint, current_app
-from flask_cors import CORS
+from flask import request, jsonify, send_file, Blueprint, current_app
 import os
 
 img_routes = Blueprint("img_routes", __name__)

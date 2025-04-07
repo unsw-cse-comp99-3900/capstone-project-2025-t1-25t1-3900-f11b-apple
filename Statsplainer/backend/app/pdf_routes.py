@@ -1,5 +1,4 @@
-from flask import Flask, request, send_file, jsonify, Blueprint, current_app
-from flask_cors import CORS
+from flask import request, send_file, jsonify, Blueprint, current_app
 import os
 
 pdf_routes = Blueprint("pdf_routes", __name__)
@@ -12,6 +11,7 @@ def upload_pdf():
     file = request.files["file"]
     file_path = os.path.join(current_app.config['PDF_FOLDER'], file.filename)
     file.save(file_path)
+    print(file_path)
     
     return jsonify({"message": "File uploaded successfully", "filename": file.filename})
 
