@@ -19,4 +19,6 @@ services:
     environment:
       - FLASK_DEBUG=1
     volumes:
-      - ./backend/uploads:/app/uploads
+      - ./backend/img_uploads:/app/img_uploads
+      - ./backend/pdf_uploads:/app/pdf_uploads
+
