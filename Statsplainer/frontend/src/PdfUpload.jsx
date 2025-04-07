@@ -197,7 +197,7 @@ export const PdfUpload = ({ file, setText, setSideBarTriggered }) => {
             onClick={() => {
               setConfirmPopup(false); 
               setSideBarTriggered(true);
-              result(highlights, file, setText)
+              result(highlights, file, setText, snipHighlightSwitch)
             }}
           >
             <CheckRoundedIcon fontSize="small" sx={{ color: 'black'}}/>
