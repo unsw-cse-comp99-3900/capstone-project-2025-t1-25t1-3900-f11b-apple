@@ -1,6 +1,6 @@
 FROM python:3.9-slim
 
-WORKDIR /backend
+WORKDIR /app
 
 # Copy requirements file
 COPY requirements.txt .
@@ -9,7 +9,13 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the rest of your backend code
-COPY . .
+COPY run.py .
+COPY app/ app/
+COPY pdf_uploads/ pdf_uploads/
+COPY img_uploads/ img_uploads/
+COPY API.py .
+COPY key.txt .
+COPY util.py .
 
 # Expose the port your backend listens on
 EXPOSE 5000
