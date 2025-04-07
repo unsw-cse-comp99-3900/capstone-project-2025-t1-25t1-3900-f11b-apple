@@ -1,65 +1,174 @@
-import { Box, Button, Paper, TextField, Snackbar, Slide, Typography } from '@mui/material';
-import {useState, useRef, useEffect} from "react";
+import { Box, Button, Snackbar, Slide, Typography, Backdrop, IconButton } from '@mui/material';
+import { useState, useRef, useEffect } from "react";
 import Grid from '@mui/material/Grid2';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import CloseIcon from '@mui/icons-material/Close';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+
+
+const steps = [
+  {
+    target: 'pdf-section',
+    content: 'This is the PDF section where you can upload and view your PDF documents. You can drag and drop files here or click to select them.',
+    placement: { vertical: 'top', horizontal: 'left' },
+    slideDirection : 'down',
+  },
+  {
+    target: 'sidebar-buttons',
+    content: 'You can select between three different chat modes to help you understand the PDF better: Definition, Real World Analogy, and ELI5.',
+    placement: { vertical: 'top', horizontal: 'right' },
+    slideDirection : 'left',
+  },
+  {
+    target: 'message-response',
+    content: 'This section will show the response to your highlighted sentences, providing definitions or statistical analyses based on your selection.',
+    placement: { vertical: 'bottom', horizontal: 'right' },
+    slideDirection : 'up',
+  },
+  {
+    target: 'chat-input',
+    content: 'You can type and ask questions to the AI here. Press Enter to send your message.',
+    placement: { vertical: 'bottom', horizontal: 'left' },
+    slideDirection : 'right',
+  },
+];
+
 
 // tooltip bubble function that create a rectangular bubble with a
 // dismiss button to guide through the user what each component does and how to interact with.
 // takes in three parameter to manage the state of the tooltips whether we open it or close it. and assign a target component to it
-export default function Tooltip ({targetRef, open, handleClose}) {
-    return (
-        <Snackbar
-            open={open}
-            onClose={handleClose}
-            anchorOrigin={{vertical:"top", horizontal: "left"}}
+export default function Tooltip({open, handleClose }) {
+  const [currentStep, setCurrentStep] = useState(0);
+  const [showBackdrop, setShowBackdrop] = useState(false);
+  const [isTourActive, setTourActive] = useState(false);
 
 
-            sx={{
-                backgroundColor: "grey",
-                borderRadius: "10px",
-                minHeight: "10vh",
-                width: "25vw",
-                p:2,
-                boxShadow:10,
-            }}          
-        >
-        <Slide in={open} direction="down">
-            <Grid 
-                sx={{
-                    minWidth: "auto",
-                    minHeight: "auto",
-                    alignItems: "flex-start",
-                }}
-            
+  useEffect(() => {
+    // Check if user has seen the tour before
+    const hasSeenTour = localStorage.getItem('hasSeenTour');
+    if (open) {
+      setShowBackdrop(true);
+      setTourActive(true);
+      setCurrentStep(0);
+    } else {
+        setShowBackdrop(false);
+        setTourActive(false);
+    }
+  }, [open]);
+
+
+  const handleNext = () => {
+    if (currentStep < steps.length - 1) {
+      setCurrentStep(currentStep + 1);
+    } else {
+      handleCloseTour();
+    }
+  };
+
+
+  const handleCloseTour = () => {
+    
+    if (handleClose) handleClose();
+  };
+
+
+  return (
+    <>
+
+      <Backdrop
+        open={showBackdrop}
+        sx={{
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          zIndex: 1000,
+        }}
+      />
+
+
+      <Snackbar
+        open={isTourActive}
+        onClose={handleCloseTour}
+        anchorOrigin={steps[currentStep].placement}
+        sx={{
+          backgroundColor: 'transparent',
+          borderRadius: '10px',
+          minHeight: '10vh',
+          width: '25vw',
+          p: 2,
+          boxShadow: 10,
+          zIndex: 1001,
+          '& .MuiSnackbarContent-root': {
+            backgroundColor: "#37383C",
+            borderRadius: "10px",
+            boxShadow: 10,
+            minWidth: "25vw",
+            padding: "16px",
+          }
+        }}
+      >
+        <Slide 
+            key={currentStep}
+            in={isTourActive} 
+            direction={steps[currentStep].slideDirection} 
+            timeout={500}
+            mountOnEnter
+            unmountOnExit
+            style={{
+                position: "relative",
+                width: "100%",
+                height: "100%",
+            }}
             >
-                {/* arrow pointing to the component*/}
-                
+          <Grid
+            sx={{
+              minWidth: 'auto',
+              minHeight: 'auto',
+              alignItems: 'flex-start',
+              color: 'white',
+            }}
+          >
+            <Typography
+              sx={{
+                wordBreak: 'break-word',
+                pb: 1,
+                whiteSpace: "pre-wrap",
+              }}
+            >
+              {steps[currentStep].content}
+            </Typography>
 
-                {/* tooltips message */}
-                <Typography 
-                    sx={{
-                        wordBreak: 'break-word',
-                        pb:1,
-                    }}
-                >
-                    tooltip message !!!! will change to a variabledwa dawd ad wdw wdaiodaoidkioa dwaidjoawd
-                </Typography>
 
-                {/* Dismiss button */}
-                <Button
-                    size="small"
-                    onClick={handleClose}
-                    
-                    sx={{
-                        backgroundColor:"lightblue",
-                        alignSelf:"flex-end",
-                        }}
-                >
-                    Dismiss
-
-                </Button>
-                
-            </Grid>
-            </Slide>
-        </Snackbar>
-    )
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+              <Button
+                size="small"
+                onClick={handleCloseTour}
+                startIcon={<CloseIcon />}
+                sx={{
+                  color: 'white',
+                  '&:hover': {
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                  },
+                }}
+              >
+                Dismiss
+              </Button>
+              <Button
+                size="small"
+                onClick={handleNext}
+                endIcon={<ArrowForwardIcon />}
+                sx={{
+                  color: 'white',
+                  '&:hover': {
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                  },
+                }}
+              >
+                {currentStep === steps.length - 1 ? 'Finish' : 'Next'}
+              </Button>
+            </Box>
+          </Grid>
+        </Slide>
+      </Snackbar>
+    </>
+  );
 }
+

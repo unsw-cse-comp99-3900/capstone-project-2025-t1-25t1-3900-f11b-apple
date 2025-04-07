@@ -1,7 +1,10 @@
-import { Box, Button, Paper, TextField, } from '@mui/material';
+import { Box, Button, Paper, TextField, IconButton } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import React, {useState, useRef, useEffect} from "react";
 import Tooltip from './Tooltips';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import CloseIcon from '@mui/icons-material/Close';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 // Sidebar Function
 
@@ -29,14 +32,20 @@ export default function Sidebar({message, setChatType}) {
     const [selectedChat, setSelectedChat] = useState("Definition"); 
 
     //set tooltips state
-    const [open,setOpen] = useState(true);
+    const [open,setOpen] = useState(false);
     const targetRef = React.useRef(null);
 
     //handle open/close tooltip
     const handleOpenTooltip = () => setOpen(true);
     const handleCloseTooltip = () => setOpen(false);
 
-
+    useEffect (() => {
+        const hasSeenTour = localStorage.getItem("hasSeenTour");
+        if (!hasSeenTour) {
+            handleOpenTooltip();
+            localStorage.setItem("hasSeemTour", "true");
+        }
+    }, []);
 
     useEffect (() => {
         if (message.chat === "Definition") {
@@ -64,6 +73,7 @@ export default function Sidebar({message, setChatType}) {
                 backgroundColor: "#37383C",
                 flexDirection: "column",
                 p: 2,
+                position: "relative",
             }}
             spacing={2}
         >
@@ -71,27 +81,64 @@ export default function Sidebar({message, setChatType}) {
         
 
         {/* Toggleable AI prompt Button */}
-        <PromptButtonSelector ref={targetRef} selectedChat={selectedChat} setSelectedChat={setSelectedChat} setChatType={setChatType}/>
+        <Box 
+            id="sidebar-buttons"
+            sx={{
+                width:"100%",
+                display: "flex",
+                alignItems: "center",
+                gap: 2,
+            }}
         
+        >
+            <PromptButtonSelector selectedChat={selectedChat} setSelectedChat={setSelectedChat} setChatType={setChatType}/>
+
+            <IconButton
+                onClick={handleOpenTooltip}
+                sx={{
+                    color: "white",
+                    "&:hover": {
+                        backgroundColor : `rgba(255,255,255,0.1)`,
+                    }
+                }}
+            >
+                <HelpOutlineIcon />
+            </IconButton>
+        </Box>
             
 
         {/* response section */}
+        <Box 
+            id="message-response"
+            sx={{
+                flex: 1,
+                overflowY: "auto",
+            }}    
+        >
         <ChatResponseSection 
             messages={
             selectedChat === "Definition" ? messageDefinition :
             selectedChat === "Real world analogy" ? messageRealWorldAnalogy : messageELI5  
             } />
-        
+        </Box>
 
         {/* chat box input section */}
+        <Box 
+            id="chat-input"
+            sx={{
+                width: "100%",
+                marginTop: "auto",
+            }}
+        >
         <ChatMessageInput 
             addMessage={
             selectedChat === "Definition" ? setMessageDefinition :
             selectedChat === "Real world analogy" ? setMessageRealWorldAnalogy : setMessageELI5
             }
         /> 
+        </Box>
         
-        <Tooltip targetRef={targetRef} open={open} handleClose={handleCloseTooltip}/>
+        <Tooltip open={open} handleClose={handleCloseTooltip}/>
         </Grid>
     )
 };
@@ -251,15 +298,16 @@ const PromptButtonSelector = ({ selectedChat, setSelectedChat, setChatType }) =>
         <Grid
             sx={{
                 width:"100%",
-                height:"10%",
-                display:"inherit",
+                height:"auto",
+                display:"flex",
+                flexDirection:"row",
                 gap:1,
               }}
         >
            <Button 
                 onClick={() => {setSelectedChat("Definition"); setChatType("Definition");}}
                 fullWidth
-                sx={{color: "#35343E", backgroundColor: "#D9D9D9", opacity: selectedChat === "Definition" ? 1:0.6, width:"100%", display:'inherit', minWidth: 10,fontSize:"10px"}}
+                sx={{color: "#35343E", backgroundColor: "#D9D9D9", opacity: selectedChat === "Definition" ? 1:0.6, width:"33.33%", display:'inherit', minWidth: 10,fontSize:"10px"}}
             >
               Defintion
            </Button>
@@ -267,7 +315,7 @@ const PromptButtonSelector = ({ selectedChat, setSelectedChat, setChatType }) =>
            <Button  
                 onClick={() => {setSelectedChat("Real world analogy"); setChatType("Real world analogy");}}
                 fullWidth
-                sx={{color: "#35343E", backgroundColor: "#D9D9D9", opacity: selectedChat === "Real world analogy" ? 1:0.6, width:"100%", display:'inherit', minWidth: 10,fontSize:"10px"}}
+                sx={{color: "#35343E", backgroundColor: "#D9D9D9", opacity: selectedChat === "Real world analogy" ? 1:0.6, width:"33.33%", display:'inherit', minWidth: 10,fontSize:"10px"}}
                 >
                 Real world analogy
             </Button>
@@ -275,7 +323,7 @@ const PromptButtonSelector = ({ selectedChat, setSelectedChat, setChatType }) =>
             <Button 
                 onClick={() => {setSelectedChat("ELI5"); setChatType("ELI5");}}
                 fullWidth
-                sx={{color: "#35343E", backgroundColor: "#D9D9D9", opacity: selectedChat === "ELI5" ? 1:0.6, width:"100%", display:'inherit', minWidth: 10,fontSize:"10px"}}
+                sx={{color: "#35343E", backgroundColor: "#D9D9D9", opacity: selectedChat === "ELI5" ? 1:0.6, width:"33.33%", display:'inherit', minWidth: 10,fontSize:"10px"}}
                 >
                 ELI5
             </Button>
