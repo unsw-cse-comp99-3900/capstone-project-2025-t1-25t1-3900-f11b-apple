@@ -1,6 +1,7 @@
 import { useRef, useState, useEffect } from "react";
+import html2canvas from 'html2canvas';
 
-export const Highlight = (containerRef, pageNumber, snipHighlightSwitch, scale) => {
+export const Highlight = (containerRef, pageNumber, snipHighlightSwitch, scale, pageRef ) => {
   // Needed for handleMouseDown to keep in down state
   const isDrawing = useRef(false);
   // Tracks start of highlight box drag point
@@ -13,8 +14,6 @@ export const Highlight = (containerRef, pageNumber, snipHighlightSwitch, scale) 
   const [textLayerElements, setTextLayerElements] = useState([]);
   // Keeps track of words to be highlighted within Highlighting box
   const [highlightedBoxes, setHighlightedBoxes] = useState([]);
-  // Keeps track of canvas layer to snip images
-  const [canvasLayerElements, setCanvasLayerElements] = useState();
   // Used for highlight cleaning when transitioning to different page states
   const highlightReset = () => {
     setCurrentHighlight(null);
@@ -49,7 +48,6 @@ export const Highlight = (containerRef, pageNumber, snipHighlightSwitch, scale) 
       width: Math.abs(width),
       height: Math.abs(height),
     };
-
     const { boxes } = extractWordsAndBoxes(newHighlight);
     setHighlightedBoxes(boxes);
     setCurrentHighlight(newHighlight);
@@ -57,8 +55,6 @@ export const Highlight = (containerRef, pageNumber, snipHighlightSwitch, scale) 
 
   const handleMouseUp = async () => {
     isDrawing.current = false;
-
-    console.log(currentHighlight)
 
     if (!currentHighlight || currentHighlight.width < 5 || currentHighlight.height < 5) {
       setCurrentHighlight(null);
@@ -72,64 +68,88 @@ export const Highlight = (containerRef, pageNumber, snipHighlightSwitch, scale) 
       setHighlights([newHighlight]);
     }
 
+    const finalHighlightRect = { ...currentHighlight };
+
     if (snipHighlightSwitch === "Snip") {
-      const canvas = canvasLayerElements;
-      if (!canvas) return;
+      if (!pageRef || !pageRef.current || !containerRef.current) {
+         setHighlights([]);
+         return;
+      }
 
-      const canvasRect = canvas.getBoundingClientRect();
-      const containerRect = containerRef.current.getBoundingClientRect();
+      try {
+        const targetPageElement = pageRef.current;
 
-      // Calculate scale based on canvas intrinsic bitmap vs displayed size
-      // Use canvasRect dimensions for potentially more accurate displayed size
-      const scaleX = canvas.width / canvasRect.width;
-      const scaleY = canvas.height / canvasRect.height;
+        if (!targetPageElement) {
+             setHighlights([]);
+             return;
+        }
 
-      const { x: highlightX_container, y: highlightY_container, width: layoutWidth, height: layoutHeight } = currentHighlight;
+        const cropX = finalHighlightRect.x - targetPageElement.offsetLeft;
+        const cropY = finalHighlightRect.y - targetPageElement.offsetTop;
+        const cropWidth = finalHighlightRect.width;
+        const cropHeight = finalHighlightRect.height;
 
-      // Calculate the canvas's offset within the container's scrollable content box
-      const canvasOffsetX = canvasRect.left - containerRect.left + containerRef.current.scrollLeft;
-      const canvasOffsetY = canvasRect.top - containerRect.top + containerRef.current.scrollTop;
+        const pageCanvas = await html2canvas(targetPageElement, {
+          useCORS: true,
+          logging: true,
+          scale: scale,
+          scrollX: 0,
+          scrollY: 0,
+          windowWidth: targetPageElement.scrollWidth,
+          windowHeight: targetPageElement.scrollHeight,
+          backgroundColor: '#ffffff'
+        });
 
-      // Calculate the highlight's position relative to the canvas's displayed top-left corner
-      const highlightX_canvas = highlightX_container - canvasOffsetX;
-      const highlightY_canvas = highlightY_container - canvasOffsetY;
+        const croppedCanvas = document.createElement('canvas');
 
-      // Convert highlight coordinates from canvas display coordinates to canvas bitmap coordinates
-      const bitmapX = highlightX_canvas * scaleX;
-      const bitmapY = highlightY_canvas * scaleY;
-      const bitmapWidth = layoutWidth * scaleX; // Width/Height are based on the selection size in the displayed coordinate system
-      const bitmapHeight = layoutHeight * scaleY;
+        croppedCanvas.width = Math.max(1, cropWidth * scale);
+        croppedCanvas.height = Math.max(1, cropHeight * scale);
 
-      // Create temp canvas with the calculated bitmap dimensions
-      const tempCanvas = document.createElement('canvas');
-      tempCanvas.width = Math.max(1, bitmapWidth); // Ensure minimum 1px dimension
-      tempCanvas.height = Math.max(1, bitmapHeight);
+        const ctx = croppedCanvas.getContext('2d');
+        if (!ctx) {
+            setHighlights([]);
+            return;
+        }
 
-      const tempCtx = tempCanvas.getContext('2d');
+         const sourceX = Math.max(0, cropX * scale);
+         const sourceY = Math.max(0, cropY * scale);
+         const sourceWidth = Math.max(0, Math.min(cropWidth * scale, pageCanvas.width - sourceX));
+         const sourceHeight = Math.max(0, Math.min(cropHeight * scale, pageCanvas.height - sourceY));
 
-      // Ensure source coordinates/dimensions for drawImage are valid and within canvas bounds
-      const sx = Math.max(0, bitmapX);
-      const sy = Math.max(0, bitmapY);
-      // Clamp source width/height to not exceed canvas boundaries from the start point
-      const sw = Math.max(0, Math.min(bitmapWidth, canvas.width - sx));
-      const sh = Math.max(0, Math.min(bitmapHeight, canvas.height - sy));
+         croppedCanvas.width = sourceWidth;
+         croppedCanvas.height = sourceHeight;
 
-      // if sh gets too large then taking snip of whole screen cuts off
-      const dh = Math.min(1000, Math.min(bitmapHeight, canvas.height - sy))
+        // Checks valid dimension then generates image
+        if (sourceWidth > 0 && sourceHeight > 0) {
+            ctx.drawImage(
+                pageCanvas,
+                sourceX,
+                sourceY,
+                sourceWidth,
+                sourceHeight,
+                0,
+                0,
+                sourceWidth,
+                sourceHeight
+            );
 
-      if (sw > 0 && sh > 0) {
-          tempCtx.drawImage(
-              canvas,
-              sx, sy, sw, sh, // Source rectangle (from bitmap)
-              0, 0, sw, dh   // Destination rectangle (on temp canvas, starting at 0,0)
-          );
-          const snippedImageDataUrl = tempCanvas.toDataURL('image/png');
-          const newHighlight = { ...currentHighlight, snippedImageDataUrl };
-          setHighlights([newHighlight]);
-          console.log("Snipped Image Data URL:", snippedImageDataUrl);
-      } else {
-          console.warn("Calculated snipping area resulted in zero width or height. sx, sy, sw, sh:", sx, sy, sw, sh);
-          setHighlights([]); // Clear highlights if snip failed due to invalid dimensions
+            const snippedImageDataUrl = croppedCanvas.toDataURL('image/png');
+            console.log(snippedImageDataUrl)
+
+            const newHighlightData = {
+                x: finalHighlightRect.x,
+                y: finalHighlightRect.y,
+                width: finalHighlightRect.width,
+                height: finalHighlightRect.height,
+                snippedImageDataUrl
+            };
+            setHighlights([newHighlightData]);
+        } else {
+             setHighlights([]);
+        }
+      } catch (error) {
+        console.log(error);
+        setHighlights([]);
       }
     }
     
@@ -222,8 +242,6 @@ export const Highlight = (containerRef, pageNumber, snipHighlightSwitch, scale) 
       const elements = Array.from(
         containerRef.current?.querySelectorAll(".react-pdf__Page__textContent span") || []
       );
-      setCanvasLayerElements(containerRef.current?.querySelector(".react-pdf__Page__canvas"))
-      //console.log(containerRef.current?.querySelector(".react-pdf__Page__canvas").width, containerRef.current?.querySelector(".react-pdf__Page__canvas").height)
       setTextLayerElements(elements);
     }, 500);
     return () => clearInterval(interval);

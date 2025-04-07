@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import { Typography, Button, Box, IconButton  } from '@mui/material';
 import Grid from '@mui/material/Grid2';
@@ -25,6 +25,8 @@ export const PdfUpload = ({ file, setText, setSideBarTriggered }) => {
   const [confirmPopup, setConfirmPopup] = useState(false);
   const [snipHighlightSwitch, setSnipHighlightSwitch] = useState("Highlight");
   const containerRef = useRef(null);
+  const pageRef = useRef(null);
+  const [isHorizontallyOverflowing, setIsHorizontallyOverflowing] = useState(false);
 
   const onDocumentLoadSuccess = ({ numPages }) => {
     setNumPages(numPages);
@@ -38,26 +40,21 @@ export const PdfUpload = ({ file, setText, setSideBarTriggered }) => {
     handleMouseUp,
     highlightedBoxes,
     highlightReset
-  } = Highlight(containerRef, pageNumber, snipHighlightSwitch, pageScale);
-
-  // turn this into an onclick on popup to conrfirm
-  // useEffect(() => {
-  //   if (highlights.length > 0) {
-  //     const result = async () => {try { const explanation = await apiCallPostText("explain-highlight", { 'highlighted_text': highlights[0].text, 'filename': file.name }); setText(explanation.explanation); } catch (error) { console.log(error);}};
-  //     setText(highlights[0].text);
-  //     result()
-  //   }
-  // }, [file.name, highlights, setText]);
+  } = Highlight(containerRef, pageNumber, snipHighlightSwitch, pageScale, pageRef);
 
   useEffect(() => {
     if (highlights.length > 0) {
       if (snipHighlightSwitch === "Snip") {
-        console.log(highlights)
         setConfirmPopup(true);
       } else if (highlights[0].boxes.length > 0) {
-        console.log(highlights)
         setConfirmPopup(true);
       }
+      setlastHighlightPoint({
+        x: highlights[0].x,
+        y: highlights[0].y,
+        width: highlights[0].width,
+        height: highlights[0].height
+      });
     } else {
       setConfirmPopup(false);
     }
@@ -66,32 +63,79 @@ export const PdfUpload = ({ file, setText, setSideBarTriggered }) => {
   useEffect(() => {
     highlightReset();
   }, [pageScale, numPages, snipHighlightSwitch])
-  
+
   let width = 70;
   let height = 92;
   let containerWidth = width + 'vw';
   let containerHeight = height + 'vh';
-  let ButtonWidth = width - 10 +'vw';
-  let ButtonHeight = '3vh';
-  let windowWidth = window.innerWidth / 1.5;
+  let windowWidth = window.innerWidth * (width / 100) * 0.9;
+
+  const changePage = (newPageNumber) => {
+    if (newPageNumber >= 1 && newPageNumber <= numPages) {
+      setPageNumber(newPageNumber);
+    }
+  };
+  const goToPreviousPage = () => changePage(pageNumber - 1);
+  const goToNextPage = () => changePage(pageNumber + 1);
+
+  const changeZoom = (delta) => {
+      setPageScale((prevScale) => Math.max(0.5, Math.min(prevScale + delta, 3.0)));
+  };
+  const zoomIn = () => changeZoom(0.1);
+  const zoomOut = () => changeZoom(-0.1);
+
+  // Fix's zoom bug
+  const onPageRenderSuccess = useCallback(() => {
+    if (pageRef.current && containerRef.current) {
+      const pageElementWidth = pageRef.current.clientWidth;
+      const containerElementWidth = containerRef.current.clientWidth;
+      const overflows = pageElementWidth > containerElementWidth + 1;
+      // Only update state if it changes to prevent potential loops
+      setIsHorizontallyOverflowing(prev => overflows !== prev ? overflows : prev);
+    }
+  }, []);
 
   return (
-    <Grid sx={{ position: 'relative', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', width: containerWidth, height: containerHeight}}>
+    <Grid sx={{ position: 'relative', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', backgroundColor: 'lightgrey', width: containerWidth, height: containerHeight}}>
 
       <Box 
-        sx={{ display: 'flex', position: 'relative', flexDirection: 'column', alignItems: 'center', overflow: 'scroll', width: '100%', height: '100%', userSelect: "none",}}
+        sx={{
+          display: 'flex',
+          position: 'relative',
+          flexDirection: 'column',
+          alignItems: isHorizontallyOverflowing ? 'flex-start' : 'center',
+          overflow: 'auto',
+          width: '100%',
+          height: '100%',
+          userSelect: "none",
+          padding: '1vh 0'
+        }}
         onMouseDown={(e) => {setConfirmPopup(false); handleMouseDown(e);}}
         onMouseMove={handleMouseMove}
-        onMouseUp={(e) => {setConfirmPopup(false); setlastHighlightPoint(currentHighlight); handleMouseUp(e);}}
+        onMouseUp={(e) => {setConfirmPopup(false); handleMouseUp(e);}}
         onScroll={highlightReset}
         ref={containerRef}
       >
+
         <Document
           file={file}
           onLoadSuccess={onDocumentLoadSuccess}
-          onLoadError={(err) => console.error("PDF load error:", err)}
+          sx={{ display: 'flex', position: 'relative', flexDirection: 'column', alignItems: 'center', overflow: 'auto', width: '100%', height: '100%', userSelect: "none",}}
         >
-          <Page pageNumber={pageNumber}  scale={pageScale} width={windowWidth}/>
+          {numPages && (
+            <Box
+              key={`page_container_${pageNumber}`}
+              ref={pageRef}
+              sx={{ position: 'relative', boxShadow: '0px 4px 8px rgba(0,0,0,0.2)' }}
+            >
+              <Page
+                pageNumber={pageNumber}
+                scale={pageScale}
+                width={windowWidth}
+                onRenderSuccess={onPageRenderSuccess}
+              />
+             </Box>
+          )}
         </Document>
 
         {currentHighlight && (
@@ -127,66 +171,70 @@ export const PdfUpload = ({ file, setText, setSideBarTriggered }) => {
 
       </Box>
 
-      {confirmPopup && (highlights.length > 0 || snipHighlightSwitch === "Snip") && (
+      {confirmPopup && lastHighlightPoint && (
         <Box
           sx={{
             position: "absolute",
-            border: "2px solid rgba(0, 0, 0, 0.5)",
-            borderRadius: 2,
-            backgroundColor: "rgb(80, 80, 80)",
+            border: "1px solid grey",
+            borderRadius: 1,
+            backgroundColor: "rgb(240, 240, 240)",
             display: "flex",
             justifyContent: "center",
-            alignContent: "center",
-            top: lastHighlightPoint.y - containerRef.current.scrollTop + lastHighlightPoint.height -  + 5,
-            left: lastHighlightPoint.x - containerRef.current.scrollLeft + (lastHighlightPoint.width / 2 - (8 * window.innerWidth) / 200),
-            width: "8vw",
-            height: "5vh",
-            zIndex: 1000
+            alignItems: "center",
+            padding: '4px',
+            top: `${lastHighlightPoint.y - (containerRef.current?.scrollTop || 0) + lastHighlightPoint.height + 5}px`,
+            left: `${lastHighlightPoint.x - (containerRef.current?.scrollLeft || 0) + lastHighlightPoint.width / 2 - 24}px`,
+            zIndex: 100,
+            boxShadow: '0px 2px 5px rgba(0,0,0,0.2)',
           }}
         >
-          <IconButton 
-            sx={{backgroundColor: "green"}}
-            onMouseDown={(e) => e.stopPropagation()} // Stop all mouse events from reaching container
+          <IconButton
+            size="small"
+            sx={{ backgroundColor: "lightgreen", '&:hover': { backgroundColor: 'darkgreen'}}}
+            onMouseDown={(e) => e.stopPropagation()}
             onMouseUp={(e) => e.stopPropagation()}
             onMouseMove={(e) => e.stopPropagation()}
-          >
-            <CheckRoundedIcon onClick={(e) => {
-              e.stopPropagation(); 
-              console.log('check'); 
+            onClick={() => {
               setConfirmPopup(false); 
               setSideBarTriggered(true);
-              setText(highlights[0].text);
               result(highlights, file, setText)
-            }}/>
+            }}
+          >
+            <CheckRoundedIcon fontSize="small" sx={{ color: 'black'}}/>
           </IconButton>
         </Box>
       )}
 
-      <Box sx={{ position: 'absolute', display: 'flex', flexDirection: 'row', justifyContent: 'flex-start', width: ButtonWidth, height: ButtonHeight, zIndex: '10', top: '20px', left: '20px'}}>
-        <IconButton onClick={() => {setSnipHighlightSwitch("Highlight");}} disabled={snipHighlightSwitch === "Highlight"}>
-          <HighlightAltRoundedIcon />
-        </IconButton>
-        <IconButton onClick={() => {setSnipHighlightSwitch("Snip");}} disabled={snipHighlightSwitch === "Snip"}>
-          <PhotoCameraRoundedIcon />
-        </IconButton>
+      <Box sx={{ position: 'absolute', display: 'flex', gap: 1, zIndex: '10', top: '10px', left: '10px', backgroundColor: 'rgba(255,255,255,0.8)', padding: '4px', borderRadius: 1 }}>
+         <IconButton size="small" onClick={() => setSnipHighlightSwitch("Highlight")} disabled={snipHighlightSwitch === "Highlight"} title="Highlight Text">
+           <HighlightAltRoundedIcon color={snipHighlightSwitch === "Highlight" ? "primary" : "action"} />
+         </IconButton>
+         <IconButton size="small" onClick={() => setSnipHighlightSwitch("Snip")} disabled={snipHighlightSwitch === "Snip"} title="Snip Image">
+           <PhotoCameraRoundedIcon color={snipHighlightSwitch === "Snip" ? "primary" : "action"} />
+         </IconButton>
+      </Box>
+       <Box sx={{ position: 'absolute', display: 'flex', gap: 1, zIndex: '10', top: '10px', right: '10px', backgroundColor: 'rgba(255,255,255,0.8)', padding: '4px', borderRadius: 1 }}>
+         <IconButton size="small" onClick={zoomIn} disabled={pageScale >= 3} title="Zoom In">
+           <ZoomInRoundedIcon />
+         </IconButton>
+         <IconButton size="small" onClick={zoomOut} disabled={pageScale <= 0.5} title="Zoom Out">
+           <ZoomOutRoundedIcon />
+         </IconButton>
       </Box>
 
-      <Box sx={{ position: 'absolute', display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', width: ButtonWidth, height: ButtonHeight, zIndex: '10', top: '20px', right: '20px'}}>
-        <IconButton onClick={() => setPageScale((p) => Math.min(p + 0.1, 2))} disabled={pageScale >= 2}>
-          <ZoomInRoundedIcon />
-        </IconButton>
-        <IconButton onClick={() => setPageScale((p) => Math.max(p - 0.1, 0.5))} disabled={pageScale <= 0.5}>
-          <ZoomOutRoundedIcon />
-        </IconButton>
-      </Box>
-      <Box sx={{ position: 'absolute', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: ButtonWidth, height: ButtonHeight, zIndex: '10', bottom: '20px', }}>
-        <IconButton onClick={() => setPageNumber((p) => Math.max(p - 1, 1))} disabled={pageNumber <= 1}>
-          <ArrowBackRoundedIcon />
-        </IconButton>
-        <IconButton onClick={() => setPageNumber((p) => Math.min(p + 1, numPages))} disabled={pageNumber >= numPages}>
-          <ArrowForwardRoundedIcon />
-        </IconButton>
-      </Box>
+      {numPages && numPages > 1 && (
+        <Box sx={{ position: 'absolute', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 2, width: 'auto', zIndex: '10', bottom: '10px', backgroundColor: 'rgba(255,255,255,0.8)', padding: '4px 8px', borderRadius: 1 }}>
+          <IconButton size="small" onClick={goToPreviousPage} disabled={pageNumber <= 1} title="Previous Page">
+            <ArrowBackRoundedIcon />
+          </IconButton>
+          <Typography variant="body2" sx={{ userSelect: 'none' }}>
+            Page {pageNumber} of {numPages}
+          </Typography>
+          <IconButton size="small" onClick={goToNextPage} disabled={pageNumber >= numPages} title="Next Page">
+            <ArrowForwardRoundedIcon />
+          </IconButton>
+        </Box>
+      )}
     </Grid>
   );
 };
@@ -201,4 +249,3 @@ const result = async (highlights, file, setText, snipHighlightSwitch) => {
   } 
   catch (error) { console.log(error);}
 };
-              
