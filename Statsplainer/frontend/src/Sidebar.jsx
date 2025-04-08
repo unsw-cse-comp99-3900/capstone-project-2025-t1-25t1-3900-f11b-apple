@@ -230,7 +230,6 @@ const PromptButtonSelector = ({ selectedChat, setSelectedChat, setChatType }) =>
 
     return (
         <Box
-            
             sx={{
                 display: "flex",
                 justifyContent: "space-Between",
