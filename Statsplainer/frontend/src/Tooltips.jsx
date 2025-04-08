@@ -9,27 +9,27 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 const steps = [
   {
     target: 'pdf-section',
-    content: 'This is the PDF section where you can upload and view your PDF documents. You can drag and drop files here or click to select them.',
-    placement: { vertical: 'top', horizontal: 'left' },
+    content: 'To the left is the PDF section where you can view the pdf and scroll through pages that you have uploaded previously.',
     slideDirection : 'down',
+    position: {top: "30%",left: "50%"},
   },
   {
     target: 'sidebar-buttons',
     content: 'You can select between three different chat modes to help you understand the PDF better: Definition, Real World Analogy, and ELI5.',
-    placement: { vertical: 'top', horizontal: 'right' },
     slideDirection : 'left',
+    position: {top: "10%",right: "50%"},
   },
   {
     target: 'message-response',
     content: 'This section will show the response to your highlighted sentences, providing definitions or statistical analyses based on your selection.',
-    placement: { vertical: 'bottom', horizontal: 'right' },
     slideDirection : 'up',
+    position: {top: "40%",right: "50%"},
   },
   {
     target: 'chat-input',
     content: 'You can type and ask questions to the AI here. Press Enter to send your message.',
-    placement: { vertical: 'bottom', horizontal: 'left' },
     slideDirection : 'right',
+    position: {top: "95%",right: "50%"},
   },
 ];
 
@@ -84,57 +84,67 @@ export default function Tooltip({open, handleClose }) {
       />
 
 
-      <Snackbar
-        open={isTourActive}
-        onClose={handleCloseTour}
-        anchorOrigin={steps[currentStep].placement}
+    <Box
         sx={{
-          backgroundColor: 'transparent',
-          borderRadius: '10px',
-          minHeight: '10vh',
-          width: '25vw',
-          p: 2,
-          boxShadow: 10,
+          position: 'absolute',
+          ...steps[currentStep].position,
           zIndex: 1001,
-          '& .MuiSnackbarContent-root': {
-            backgroundColor: "#37383C",
-            borderRadius: "10px",
-            boxShadow: 10,
-            minWidth: "25vw",
-            padding: "16px",
-          }
+          width: "300px",
+          transform: `translate(-50%,-50%)`,
         }}
       >
-        <Slide 
+        <Snackbar
+          open={isTourActive}
+          onClose={handleCloseTour}
+          sx={{
+            backgroundColor: 'transparent',
+            borderRadius: '10px',
+            position:"static",
+            width: '100%',
+            p: 0,
+            boxShadow: 'none',
+            '& .MuiSnackbarContent-root': {
+              backgroundColor: '#37383C',
+              borderRadius: '10px',
+              boxShadow: 10,
+              width: '100%',
+              padding: '16px',
+              margin: 0,
+            }
+          }}
+        >
+          <Slide
             key={currentStep}
-            in={isTourActive} 
-            direction={steps[currentStep].slideDirection} 
+            in={isTourActive}
+            direction={steps[currentStep].slideDirection}
             timeout={500}
             mountOnEnter
             unmountOnExit
-            style={{
-                position: "relative",
-                width: "100%",
-                height: "100%",
-            }}
-            >
-          <Grid
-            sx={{
-              minWidth: 'auto',
-              minHeight: 'auto',
-              alignItems: 'flex-start',
-              color: 'white',
-            }}
           >
-            <Typography
+            <Box
               sx={{
-                wordBreak: 'break-word',
-                pb: 1,
-                whiteSpace: "pre-wrap",
+                width:"auto",
+                
+                color: 'white',
+                backgroundColor: `rbga(55, 56, 60, 0.8)`,
+                borderRadius: '10px',
+                padding: '16px',
+                boxShadow: 10,
+                backdropFilter: `blur(8px)`,
               }}
             >
-              {steps[currentStep].content}
-            </Typography>
+              <Typography
+                sx={{
+                  wordBreak: 'break-word',
+                  pb: 1,
+                  whiteSpace: 'pre-wrap',
+                  
+                }}
+              >
+                {steps[currentStep].content}
+              </Typography>
+
+
 
 
             <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
@@ -165,9 +175,10 @@ export default function Tooltip({open, handleClose }) {
                 {currentStep === steps.length - 1 ? 'Finish' : 'Next'}
               </Button>
             </Box>
-          </Grid>
+          </Box>
         </Slide>
       </Snackbar>
+    </Box>
     </>
   );
 }
