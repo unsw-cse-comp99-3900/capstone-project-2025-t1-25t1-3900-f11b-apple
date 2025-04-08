@@ -17,7 +17,7 @@ import PhotoCameraRoundedIcon from '@mui/icons-material/PhotoCameraRounded';
 import worker from "pdfjs-dist/build/pdf.worker?worker";
 pdfjs.GlobalWorkerOptions.workerPort = new worker();
 
-export const PdfUpload = ({ file, setSideBarTriggered, currentMode, addMessage }) => {
+export const PdfUpload = ({ file, setText, setSideBarTriggered }) => {
   const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
   const [pageScale, setPageScale] = useState(1);
@@ -197,8 +197,8 @@ export const PdfUpload = ({ file, setSideBarTriggered, currentMode, addMessage }
             onClick={() => {
               setConfirmPopup(false); 
               setSideBarTriggered(true);
-              // Call result function, passing addMessage instead of setText
-              result(highlights, file, addMessage, snipHighlightSwitch, currentMode);
+              {snipHighlightSwitch === "Highlight" ? (setText(highlights[0].text)) : (setText("Image Processing"))}
+              result(highlights, file, setText, snipHighlightSwitch)
             }}
           >
             <CheckRoundedIcon fontSize="small" sx={{ color: 'black'}}/>
@@ -240,59 +240,13 @@ export const PdfUpload = ({ file, setSideBarTriggered, currentMode, addMessage }
   );
 };
 
-// Update function signature to use addMessage
-const result = async (highlights, file, addMessage, snipHighlightSwitch, currentMode) => {
-  try {
-    if (snipHighlightSwitch === "Highlight" && highlights.length > 0 && highlights[0].text) {
-      const userText = highlights[0].text;
-      const payload = {
-        'highlighted_text': userText,
-        'filename': file.name,
-        'mode': currentMode
-      };
-
-      // 1. Add user's highlighted text to chat
-      addMessage(prevMessages => [...prevMessages, { text: userText, sender: "user" }]);
-
-      // 2. Call API for explanation
-      apiCallPostText("explain-highlight", payload)
-        .then(res => {
-          // 3. Add AI's response to chat
-          if (res && res.explanation) {
-            addMessage(prevMessages => [...prevMessages, { text: res.explanation, sender: "AI" }]);
-          } else {
-            // Handle cases where explanation might be missing
-             addMessage(prevMessages => [...prevMessages, { text: "Sorry, I couldn't get an explanation.", sender: "AI" }]);
-          }
-        })
-        .catch(error => {
-          console.error("API call failed:", error);
-          // Add error message to chat
-          addMessage(prevMessages => [...prevMessages, { text: "Error fetching explanation.", sender: "AI" }]);
-        });
-
-    } else if (snipHighlightSwitch === "Snip" && highlights.length > 0 && highlights[0].snippedImageDataUrl) {
-      const imageUrl = highlights[0].snippedImageDataUrl;
-      
-      // Optional: Add a placeholder for the image snipping action if desired
-      // addMessage(prevMessages => [...prevMessages, { text: "[Image Snipped]", sender: "user" }]);
-
-      // Call API for image explanation (assuming '/explain-image' endpoint exists and works similarly)
-      // NOTE: This part assumes an endpoint like 'explain-image' exists and accepts mode/filename if needed.
-      // Adjust the endpoint and payload as necessary based on backend implementation for images.
-      apiCallPostImg('upload-image', imageUrl) // Might need to change endpoint/payload
-         .then(res => {
-           if (res && res.explanation) {
-             addMessage(prevMessages => [...prevMessages, { text: res.explanation, sender: "AI" }]);
-           } else {
-             addMessage(prevMessages => [...prevMessages, { text: "Sorry, I couldn't explain the image.", sender: "AI" }]);
-           }
-         })
-         .catch(error => {
-           console.error("Image API call failed:", error);
-           addMessage(prevMessages => [...prevMessages, { text: "Error explaining image.", sender: "AI" }]);
-         });
+const result = async (highlights, file, setText, snipHighlightSwitch) => {
+  try { 
+    if (snipHighlightSwitch === "Highlight") {
+      apiCallPostText("explain-highlight", { 'highlighted_text': highlights[0].text, 'filename': file.name }).then(res => {setText(res.explanation);}); 
+    } else if (snipHighlightSwitch === "Snip") {
+      apiCallPostImg('upload-image', highlights[0].snippedImageDataUrl).then(res => {setText(res.explanation);});
     }
-  }
-  catch (error) { console.error("Error in result function:", error); }
+  } 
+  catch (error) { console.log(error);}
 };
