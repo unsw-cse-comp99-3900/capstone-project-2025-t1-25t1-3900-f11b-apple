@@ -72,7 +72,7 @@ export default function Sidebar({message, setChatType}) {
                 borderRadius: "20px",
                 backgroundColor: "#37383C",
                 flexDirection: "column",
-                p: 2,
+                p: 1,
                 position: "relative",
             }}
             spacing={2}
@@ -87,7 +87,6 @@ export default function Sidebar({message, setChatType}) {
                 width:"100%",
                 display: "flex",
                 alignItems: "center",
-                gap: 2,
             }}
         
         >
@@ -307,7 +306,29 @@ const PromptButtonSelector = ({ selectedChat, setSelectedChat, setChatType }) =>
            <Button 
                 onClick={() => {setSelectedChat("Definition"); setChatType("Definition");}}
                 fullWidth
-                sx={{color: "#35343E", backgroundColor: "#D9D9D9", opacity: selectedChat === "Definition" ? 1:0.6, width:"33.33%", display:'inherit', minWidth: 10,fontSize:"10px"}}
+                sx={{
+                    color: "#ffffff",
+                    backgroundColor: selectedChat === "Definition" ? `rgba(217,217,217, 0.8)`: `rgba(217,217,217, 0.4)`,
+                    width: "33.33%",
+                    display: "inherit",
+                    minWidth: 10,
+                    fontsize: "12px",
+                    height: "50px",
+                    textTransform: "none",
+                    borderRadius: "10px",
+                    transition: "all 0,3s ease",
+                    boxShadow: selectedChat === "Definition" ? `0 4px 20px rgba(217,217,217, 0.3), 0 0 0 1px rgba(255,255,255, 0.1)` : `0 2px 10px rgba(217,217,217, 0.1)`,
+                    backdropFilter: `blur(8px)`,
+                    border: `1px solid rgba(255, 255,255,0.1)`,
+                    whiteSpace:"normal",
+                    lineHeight: "1.2",
+                    padding: "8px 4px",
+                    "&:hover": {
+                        backgroundColor: `rgba(217,217,217,0.6)`,
+                        transform: `translateY(-2px)`,
+                        boxShadow: `0 6px 25px rgba(217,217,217,0.4), 0 0 0 1px rgba(255,255,255, 0.2)`,
+                    },
+                }}
             >
               Defintion
            </Button>
@@ -315,7 +336,29 @@ const PromptButtonSelector = ({ selectedChat, setSelectedChat, setChatType }) =>
            <Button  
                 onClick={() => {setSelectedChat("Real world analogy"); setChatType("Real world analogy");}}
                 fullWidth
-                sx={{color: "#35343E", backgroundColor: "#D9D9D9", opacity: selectedChat === "Real world analogy" ? 1:0.6, width:"33.33%", display:'inherit', minWidth: 10,fontSize:"10px"}}
+                sx={{
+                    color: "#ffffff",
+                    backgroundColor: selectedChat === "Real world analogy" ? `rgba(217,217,217, 0.8)`: `rgba(217,217,217, 0.4)`,
+                    width: "33.33%",
+                    display: "inherit",
+                    minWidth: 10,
+                    fontsize: "12px",
+                    height: "50px",
+                    textTransform: "none",
+                    borderRadius: "10px",
+                    transition: "all 0,3s ease",
+                    boxShadow: selectedChat === "Real world analogy" ? `0 4px 20px rgba(217,217,217, 0.3), 0 0 0 1px rgba(255,255,255, 0.1)` : `0 2px 10px rgba(217,217,217, 0.1)`,
+                    backdropFilter: `blur(8px)`,
+                    border: `1px solid rgba(255, 255,255,0.1)`,
+                    whiteSpace:"normal",
+                    lineHeight: "1.2",
+                    padding: "8px 4px",
+                    "&:hover": {
+                        backgroundColor: `rgba(217,217,217,0.6)`,
+                        transform: `translateY(-2px)`,
+                        boxShadow: `0 6px 25px rgba(217,217,217,0.4), 0 0 0 1px rgba(255,255,255, 0.2)`,
+                    },
+                }}
                 >
                 Real world analogy
             </Button>
@@ -323,7 +366,29 @@ const PromptButtonSelector = ({ selectedChat, setSelectedChat, setChatType }) =>
             <Button 
                 onClick={() => {setSelectedChat("ELI5"); setChatType("ELI5");}}
                 fullWidth
-                sx={{color: "#35343E", backgroundColor: "#D9D9D9", opacity: selectedChat === "ELI5" ? 1:0.6, width:"33.33%", display:'inherit', minWidth: 10,fontSize:"10px"}}
+                sx={{
+                    color: "#ffffff",
+                    backgroundColor: selectedChat === "ELI5" ? `rgba(217,217,217, 0.8)`: `rgba(217,217,217, 0.4)`,
+                    width: "33.33%",
+                    display: "inherit",
+                    minWidth: 10,
+                    fontsize: "12px",
+                    height: "50px",
+                    textTransform: "none",
+                    borderRadius: "10px",
+                    transition: "all 0,3s ease",
+                    boxShadow: selectedChat === "ELI5" ? `0 4px 20px rgba(217,217,217, 0.3), 0 0 0 1px rgba(255,255,255, 0.1)` : `0 2px 10px rgba(217,217,217, 0.1)`,
+                    backdropFilter: `blur(8px)`,
+                    border: `1px solid rgba(255, 255,255,0.1)`,
+                    whiteSpace:"normal",
+                    lineHeight: "1.2",
+                    padding: "8px 4px",
+                    "&:hover": {
+                        backgroundColor: `rgba(217,217,217,0.6)`,
+                        transform: `translateY(-2px)`,
+                        boxShadow: `0 6px 25px rgba(217,217,217,0.4), 0 0 0 1px rgba(255,255,255, 0.2)`,
+                    },
+                }}
                 >
                 ELI5
             </Button>
