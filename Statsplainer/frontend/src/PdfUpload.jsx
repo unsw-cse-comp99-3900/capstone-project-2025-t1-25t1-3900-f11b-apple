@@ -197,6 +197,7 @@ export const PdfUpload = ({ file, setText, setSideBarTriggered }) => {
             onClick={() => {
               setConfirmPopup(false); 
               setSideBarTriggered(true);
+              {snipHighlightSwitch === "Highlight" ? (setText(highlights[0].text)) : (setText("Image Processing"))}
               result(highlights, file, setText, snipHighlightSwitch)
             }}
           >
