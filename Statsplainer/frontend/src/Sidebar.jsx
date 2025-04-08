@@ -43,9 +43,8 @@ export default function Sidebar({message, setChatType}) {
         <Grid
             container
             sx={{
-                height:"82vh",
+                height:"92vh",
                 width: "30vw",
-                borderRadius: "20px",
                 backgroundColor: "#37383C",
                 flexDirection: "column",
                 p: 2,
