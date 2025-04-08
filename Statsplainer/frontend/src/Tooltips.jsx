@@ -11,25 +11,25 @@ const steps = [
     target: 'pdf-section',
     content: 'To the left is the PDF section where you can view the pdf and scroll through pages that you have uploaded previously.',
     slideDirection : 'down',
-    position: {top: "30%",left: "50%"},
+    position: {top: "30%",left: "71%"},
   },
   {
     target: 'sidebar-buttons',
     content: 'You can select between three different chat modes to help you understand the PDF better: Definition, Real World Analogy, and ELI5.',
     slideDirection : 'left',
-    position: {top: "10%",right: "50%"},
+    position: {top: "20%",right: "28%"},
   },
   {
     target: 'message-response',
     content: 'This section will show the response to your highlighted sentences, providing definitions or statistical analyses based on your selection.',
     slideDirection : 'up',
-    position: {top: "40%",right: "50%"},
+    position: {top: "40%",right: "28%"},
   },
   {
     target: 'chat-input',
     content: 'You can type and ask questions to the AI here. Press Enter to send your message.',
     slideDirection : 'right',
-    position: {top: "95%",right: "50%"},
+    position: {top: "80%",right: "28%"},
   },
 ];
 
@@ -80,13 +80,18 @@ export default function Tooltip({open, handleClose }) {
         sx={{
           backgroundColor: 'rgba(0, 0, 0, 0.5)',
           zIndex: 1000,
+          position:"fixed",
+          top:0,
+          left:0,
+          right:0,
+          bottom:0,
         }}
       />
 
 
     <Box
         sx={{
-          position: 'absolute',
+          position: 'fixed',
           ...steps[currentStep].position,
           zIndex: 1001,
           width: "300px",

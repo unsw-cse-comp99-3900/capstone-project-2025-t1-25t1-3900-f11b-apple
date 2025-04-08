@@ -3,8 +3,7 @@ import Grid from '@mui/material/Grid2';
 import React, {useState, useRef, useEffect} from "react";
 import Tooltip from './Tooltips';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
-import CloseIcon from '@mui/icons-material/Close';
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import SendIcon from "@mui/icons-material/Send"
 
 // Sidebar Function
 
@@ -66,14 +65,14 @@ export default function Sidebar({message, setChatType}) {
         <Grid
             container
             sx={{
-                display:"flex",
                 height:"82vh",
-                width: "30vw",
+                width:"30vw",
                 borderRadius: "20px",
                 backgroundColor: "#37383C",
-                flexDirection: "column",
-                p: 1,
-                position: "relative",
+                flexDirection:"column",
+                p:1,
+                position:"relative",
+                background: `linear-gradient(135deg, transparent 48% rgba(30,32,40,0.95) 0%, rgba(20,22,30,0.95) 100%)`
             }}
             spacing={2}
         >
@@ -87,6 +86,8 @@ export default function Sidebar({message, setChatType}) {
                 width:"100%",
                 display: "flex",
                 alignItems: "center",
+                position: "relative",
+                zIndex:4,
             }}
         
         >
@@ -112,6 +113,8 @@ export default function Sidebar({message, setChatType}) {
             sx={{
                 flex: 1,
                 overflowY: "auto",
+                position:"relative",
+                zIndex:2,
             }}    
         >
         <ChatResponseSection 
@@ -127,6 +130,8 @@ export default function Sidebar({message, setChatType}) {
             sx={{
                 width: "100%",
                 marginTop: "auto",
+                position:"relative",
+                zIndex:2,
             }}
         >
         <ChatMessageInput 
@@ -161,10 +166,15 @@ const ChatResponseSection = ({ messages }) => {
             sx={{
                 flex: 1,
                 overflowY: "auto",
-                borderRadius: "inherit",
-                height: "inherit",
-                padding: "10px",
+                borderRadius: "20px",
+                height: "calc(100% - 40px)",
+                padding: "16px",
                 position: "relative",
+                backgroundColor: `rgba(75,76,80,0.6)`,
+                backdropFilter: `blur(8px)`,
+                border: `1px solid rgba(255,255,255,0.1)`,
+                boxShadow: `0 4px 30px rgba(0,0,0,0.1)`,
+                padding: "16px",
             }}
         >
 
@@ -176,8 +186,8 @@ const ChatResponseSection = ({ messages }) => {
                     display:"flex",
                     flexDirection:"column",
                     alignItems: message.sender === "AI" ? "flex-start" : "flex-end",
-                    margineBottom :" 10px",
-                    padding: "5px",
+                    margineBottom :" 16px",
+                    padding: "8px",
                     wordBreak: 'break-word',
                 }}
             >
@@ -192,9 +202,25 @@ const ChatResponseSection = ({ messages }) => {
                     sx={{
                         marginBtoom: "10px",
                         maxWidth: "75%",
-                        borderRadius: '5px',
-                        padding: '10px',
-                        backgroundColor: message.sender === "AI" ? "#f0f0f0" : "#d1e7ff",
+                        borderRadius: message.sender === "AI" ? "12px 12px 12px 4px" : "12px 12px 4px 12px",
+                        padding: '12px 16px',
+                        backgroundColor: message.sender === "AI" ? `rgba(240,240,240,0.9)` : `rgba(147, 197, 253, 0.9)`,
+                        backdropFilter: `blur(8px)`,
+                        boxShadow: message.sender === "AI" ? `0 2px 8px rgba(0,0,0,0.1)` : `0 4px 15px rgba(147,197,253, 0.3)`,
+                        border: message.sender ==="AI" ? `1px solid rgba(255,255,255, 0.1)` : `1px solid rgba(255,255,255,0.2)`,
+                        color: message.sender === "AI" ? "#000000" : "#ffffff",
+                        position: "relative",
+                        "&::before": message.sender === "AI" ? {} : {
+                            content: `""`,
+                            position: "absolute",
+                            right: "-2px",
+                            bottom: "-2px",
+                            width: "8px",
+                            height: "8px",
+                            backgroundColor: `rgba(147,197,253,0.9)`,
+                            borderRadius: "50%",
+                            boxShadow: `0 0 10px rgba(147,197,253, 0.5)`,
+                        },
 
                     }}
                 >
@@ -258,33 +284,74 @@ const ChatMessageInput = ({addMessage}) => {
     return (
         <Grid item 
             sx={{
-                display:"inherit",
+                display:"flex",
                 width:"100%",
-                backgroundColor: "#4B4C50",
-                borderRadius : "10px",
-                    fontSize:{
-                        xs: "8px",
-                        sm: "10px",
-                        md: "12px",
-                        lg: "14px",
-                        xl: "16px",
-                    }
+                backgroundColor: `rgba(75,76,80,0.6)`,
+                borderRadius: "20px",
+                padding:"8px",
+                backdropFilter:`blur(10px)`,
+                border:`1px solid rgba(255,255,255,0.1)`,
+                boxShadow: `0 4px 30px rgba(0,0,0,0.1)`,
+                alignItems: "center",
+                gap: 1,
             }}>            
             <TextField
                 fullWidth
                 placeholder="Ask Anything"
                 variant="outlined"
-                color='#26252C'
                 value={userMessageInput}
                 onChange={(e) => setUserMessageInput(e.target.value)}
                 onKeyDown={checkEnterKey}
                 sx={{
-                    width:"100%",
-                    display:"inherit",
+                    "& .MuiOutlinedInput-root": {
+                        color:"#ffffff",
+                        "& fieldset" : {
+                            borderColor: `rgba(255,255,255, 0.1)`,
+                            borderRadius:"12px",
+                        },
+                        "& hover fieldset": {
+                            borderColor: `rgba(255,255,255,0.2)`,
+                        },
+                        "&.Mui-focused fieldset": {
+                            borderColor: `rgba(147, 197,253,0.5)`,
+                        },
+                    },
+                    "& .MuiInputBase-input": {
+                        padding: "12px 16px",
+                        fontSize: "14px",
+                    },
+                    "& .MuiInputLabel-root": {
+                        color: `rgba(255,255,255,0.7)`,
+                    },
+                    "& .MuiInputBase-Input::placeholder": {
+                        color: `rgba(255,255,255,0.5)`,
+                        opacity:1,
+                    },
                 }}
 
 
             />
+            <IconButton
+                onClick={sendMessage}
+                disabled={!userMessageInput.trim()}
+                sx={{
+                    color: userMessageInput.trim() ? `rgba(147,197,253,0.9)` : `rgba(255,255,255, 0.3)`,
+                    backgroundColor: userMessageInput.trim() ? `rgba(147,197,253,0.1)` : "transparent",
+                    borderRadius: "12px",
+                    padding:"8px",
+                    transitionL : "all 0.3s ease",
+                    "&.hover": {
+                        backgroundColor: userMessageInput.trim() ? `rgba(147, 197, 253, 0.2)` : "transparent",
+                        transform: `scale(1.05)`,
+                    },
+                    "&.active": {
+                        transform: `scale(0.95)`,
+                    },
+                    
+                }}
+            >
+                <SendIcon />
+            </IconButton>
         </Grid>
     )
 }
