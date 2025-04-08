@@ -7,7 +7,17 @@ import {useState, useRef, useEffect} from "react";
 //update here where the border of the side bar starts
 const NAVBAR_HEIGHT = 60;
 
-export default function Sidebar({message, setChatType}) {
+export default function Sidebar({
+  setChatType,
+  activePdfFilename,
+  // Receive state and setters from parent
+  messageDefinition,
+  setMessageDefinition,
+  messageRealWorldAnalogy,
+  setMessageRealWorldAnalogy,
+  messageELI5,
+  setMessageELI5
+}) {
 
     /*const test = [
         {text: "hello", sender:"user"},
@@ -15,28 +25,12 @@ export default function Sidebar({message, setChatType}) {
     ];
     */
 
-    //store messages for definition
-    const [messageDefinition, setMessageDefinition] = useState([]);
+    // Store which chat is currently selected (default Definition)
+    // This state remains local to Sidebar as it controls UI selection here
+    const [selectedChat, setSelectedChat] = useState("Definition");
 
-    //store message for real world analogy
-    const [messageRealWorldAnalogy, setMessageRealWorldAnalogy] = useState([]);
-
-    //store message for ELI5
-    const [messageELI5, setMessageELI5] = useState([]);
-
-    // store which chat is currently selected  (default Defintion)
-    const [selectedChat, setSelectedChat] = useState("Definition"); 
-
-    useEffect (() => {
-        if (message.chat === "Definition") {
-            setMessageDefinition(prevMessages =>[...prevMessages, {sender: "AI", text: message.text}])
-        } else if (message.chat === "Real world analogy") {
-            setMessageRealWorldAnalogy(prevMessages =>[...prevMessages, {sender: "AI", text: message.text}])
-        } else if (message.chat === "ELI5") {
-            setMessageELI5(prevMessages =>[...prevMessages, {sender: "AI", text: message.text}])
-        };
-        message = {};
-    }, [message]);
+    // Remove the useEffect that depended on the old 'message' prop
+    // AI responses will now be added directly via the setters passed down
 
 
     return (
@@ -64,10 +58,12 @@ export default function Sidebar({message, setChatType}) {
         
 
         {/* chat box input section */}
-        <ChatMessageInput 
-            addMessage={
-            selectedChat === "Definition" ? setMessageDefinition :
-            selectedChat === "Real world analogy" ? setMessageRealWorldAnalogy : setMessageELI5
+        <ChatMessageInput
+            selectedChat={selectedChat}
+            activePdfFilename={activePdfFilename}
+            addMessage={ // Pass the correct setter based on selected chat
+              selectedChat === "Definition" ? setMessageDefinition :
+              selectedChat === "Real world analogy" ? setMessageRealWorldAnalogy : setMessageELI5
             }
         />
         
@@ -145,7 +141,7 @@ const ChatResponseSection = ({ messages }) => {
 
 // chat messageInputFunction
 
-const ChatMessageInput = ({addMessage}) => {
+const ChatMessageInput = ({addMessage, selectedChat, activePdfFilename}) => {
 
     // store current input inside the message box
     const [userMessageInput, setUserMessageInput] = useState("");
@@ -166,7 +162,7 @@ const ChatMessageInput = ({addMessage}) => {
                 headers: {
                     "Content-Type" : "application/json",
                 },
-                body: JSON.stringify({highlighted_text : userMessageInput})
+                body: JSON.stringify({highlighted_text : userMessageInput, mode: selectedChat, filename: activePdfFilename})
             })
             .then(response => response.json())
             .then(data => addMessage(prevMessages =>[...prevMessages, {sender: "AI", text: data.explanation}]))
@@ -237,21 +233,21 @@ const PromptButtonSelector = ({ selectedChat, setSelectedChat, setChatType }) =>
               }}
         >
            <Button 
-                onClick={() => {setSelectedChat("Definition"); setChatType("Definition");}}
+                onClick={() => { setSelectedChat("Definition"); setChatType("Definition"); }}
                 sx={buttonStyle("Definition")}
             >
               Defintion
            </Button>
 
            <Button  
-                onClick={() => {setSelectedChat("Real world analogy"); setChatType("Real world analogy");}}
+                onClick={() => { setSelectedChat("Real world analogy"); setChatType("Real world analogy"); }}
                 sx={buttonStyle("Real world analogy")}
             >
               Real world analogy
            </Button>
 
            <Button 
-                onClick={() => {setSelectedChat("ELI5"); setChatType("ELI5");}}
+                onClick={() => { setSelectedChat("ELI5"); setChatType("ELI5"); }}
                 sx={buttonStyle("ELI5")}
             >
               ELI5
