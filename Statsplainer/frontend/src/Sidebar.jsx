@@ -32,7 +32,6 @@ export default function Sidebar({message, setChatType}) {
 
     //set tooltips state
     const [open,setOpen] = useState(false);
-    const targetRef = React.useRef(null);
 
     //handle open/close tooltip
     const handleOpenTooltip = () => setOpen(true);
@@ -40,9 +39,10 @@ export default function Sidebar({message, setChatType}) {
 
     useEffect (() => {
         const hasSeenTour = localStorage.getItem("hasSeenTour");
-        if (!hasSeenTour) {
+        console.log(hasSeenTour);
+        if (hasSeenTour === "true") {
             handleOpenTooltip();
-            localStorage.setItem("hasSeemTour", "true");
+            localStorage.setItem("hasSeenTour", "false");
         }
     }, []);
 

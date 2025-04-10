@@ -5,13 +5,27 @@ import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import CloseIcon from '@mui/icons-material/Close';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
-
+// list of steps for the tool tips 
+// edit here to add more steps and content in each step
+// position of the message box can be modifed by the position key
 const steps = [
   {
     target: 'pdf-section',
-    content: 'To the left is the PDF section where you can view the pdf and scroll through pages that you have uploaded previously.',
+    content: 'To the left is the PDF section where you can view the pdf and click the arrow key located on the bottom ofthe screen to navigate between different pages.',
     slideDirection : 'down',
     position: {top: "30%",left: "71%"},
+  },
+  {
+    target: 'pdf-higlight text/image',
+    content: 'You can switch between highlighting text/sentences or highlight images by clicking the button ',
+    slideDirection : 'down',
+    position: {top: "18%",left: "25%"},
+  },
+  {
+    target: 'pdf-zoom in and out',
+    content: 'You can zoom in and out of the pdf by clicking the magnifier + to zoom in and - to zoom out',
+    slideDirection : 'down',
+    position: {top: "18%",left: "70%"},
   },
   {
     target: 'sidebar-buttons',
@@ -38,14 +52,15 @@ const steps = [
 // dismiss button to guide through the user what each component does and how to interact with.
 // takes in three parameter to manage the state of the tooltips whether we open it or close it. and assign a target component to it
 export default function Tooltip({open, handleClose }) {
+ // get the current step and update the step to progress to the next step
   const [currentStep, setCurrentStep] = useState(0);
+ // show to backdrop to make the background dim
   const [showBackdrop, setShowBackdrop] = useState(false);
+ // check the state whether the tooltip guide is on or off
   const [isTourActive, setTourActive] = useState(false);
 
 
   useEffect(() => {
-    // Check if user has seen the tour before
-    const hasSeenTour = localStorage.getItem('hasSeenTour');
     if (open) {
       setShowBackdrop(true);
       setTourActive(true);
@@ -67,7 +82,7 @@ export default function Tooltip({open, handleClose }) {
 
 
   const handleCloseTour = () => {
-    
+    // check if its closed if its not closed then we close the tooltip guide
     if (handleClose) handleClose();
   };
 
