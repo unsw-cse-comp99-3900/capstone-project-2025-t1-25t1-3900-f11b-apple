@@ -50,7 +50,8 @@ def explain_highlight():
     
     try:
         # Call API utility with combined text and mode-specific instructions
-        explanation = API_text_input(text=combined_text, dev_msg=dev_msg)
+        # Pass image_base64 if it exists
+        explanation = API_text_input(text=combined_text, dev_msg=dev_msg, image_base64=image_base64)
         print(explanation)
         return jsonify({
             "explanation": explanation

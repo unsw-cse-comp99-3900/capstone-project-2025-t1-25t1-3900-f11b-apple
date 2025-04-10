@@ -17,7 +17,7 @@ import PhotoCameraRoundedIcon from '@mui/icons-material/PhotoCameraRounded';
 import worker from "pdfjs-dist/build/pdf.worker?worker";
 pdfjs.GlobalWorkerOptions.workerPort = new worker();
 
-export const PdfUpload = ({ file, setSideBarTriggered, currentMode, addMessage }) => {
+export const PdfUpload = ({ file, setSideBarTriggered, currentMode, addMessage, setIsLoading }) => { // Add setIsLoading prop
   const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
   const [pageScale, setPageScale] = useState(1);
@@ -198,7 +198,7 @@ export const PdfUpload = ({ file, setSideBarTriggered, currentMode, addMessage }
               setConfirmPopup(false); 
               setSideBarTriggered(true);
               // Call result function, passing addMessage instead of setText
-              result(highlights, file, addMessage, snipHighlightSwitch, currentMode);
+              result(highlights, file, addMessage, snipHighlightSwitch, currentMode, setIsLoading); // Pass setIsLoading to result
             }}
           >
             <CheckRoundedIcon fontSize="small" sx={{ color: 'black'}}/>
@@ -241,7 +241,7 @@ export const PdfUpload = ({ file, setSideBarTriggered, currentMode, addMessage }
 };
 
 // Update function signature to use addMessage
-const result = async (highlights, file, addMessage, snipHighlightSwitch, currentMode) => {
+const result = async (highlights, file, addMessage, snipHighlightSwitch, currentMode, setIsLoading) => { // Add setIsLoading parameter
   try {
     if (snipHighlightSwitch === "Highlight" && highlights.length > 0 && highlights[0].text) {
       const userText = highlights[0].text;
@@ -254,7 +254,8 @@ const result = async (highlights, file, addMessage, snipHighlightSwitch, current
       // 1. Add user's highlighted text to chat
       addMessage(prevMessages => [...prevMessages, { text: userText, sender: "user" }]);
 
-      // 2. Call API for explanation
+      // 2. Set loading and call API for explanation
+      setIsLoading(true); // Set loading before API call
       apiCallPostText("explain-highlight", payload)
         .then(res => {
           // 3. Add AI's response to chat
@@ -263,12 +264,14 @@ const result = async (highlights, file, addMessage, snipHighlightSwitch, current
           } else {
             // Handle cases where explanation might be missing
              addMessage(prevMessages => [...prevMessages, { text: "Sorry, I couldn't get an explanation.", sender: "AI" }]);
-          }
+         }
+         setIsLoading(false); // Clear loading on success
         })
         .catch(error => {
           console.error("API call failed:", error);
           // Add error message to chat
           addMessage(prevMessages => [...prevMessages, { text: "Error fetching explanation.", sender: "AI" }]);
+          setIsLoading(false); // Clear loading on error
         });
 
     } else if (snipHighlightSwitch === "Snip" && highlights.length > 0 && highlights[0].snippedImageDataUrl) {
@@ -291,19 +294,25 @@ const result = async (highlights, file, addMessage, snipHighlightSwitch, current
       // Call API for image explanation (assuming '/explain-image' endpoint exists and works similarly)
       // NOTE: This part assumes an endpoint like 'explain-image' exists and accepts mode/filename if needed.
       // Adjust the endpoint and payload as necessary based on backend implementation for images.
-      apiCallPostText("explain-highlight", payload) // Might need to change endpoint/payload
+  setIsLoading(true); // Set loading before API call
+  apiCallPostText("explain-highlight", payload) // Might need to change endpoint/payload
          .then(res => {
            if (res && res.explanation) {
              addMessage(prevMessages => [...prevMessages, { text: res.explanation, sender: "AI" }]);
            } else {
              addMessage(prevMessages => [...prevMessages, { text: "Sorry, I couldn't explain the image.", sender: "AI" }]);
            }
+           setIsLoading(false); // Clear loading on success
          })
          .catch(error => {
            console.error("Image API call failed:", error);
            addMessage(prevMessages => [...prevMessages, { text: "Error explaining image.", sender: "AI" }]);
+           setIsLoading(false); // Clear loading on error
          });
     }
   }
-  catch (error) { console.error("Error in result function:", error); }
+  catch (error) {
+    console.error("Error in result function:", error);
+    setIsLoading(false); // Ensure loading is cleared in case of unexpected error in result function itself
+  }
 };

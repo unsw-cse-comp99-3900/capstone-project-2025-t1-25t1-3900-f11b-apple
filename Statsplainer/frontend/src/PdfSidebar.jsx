@@ -9,6 +9,7 @@ import Tooltip from './Tooltips';
 export const PdfSidebar = ({ file }) => {
   const [sideBarTriggered, setSideBarTriggered] = useState(false);
   const [chatType, setChatType] = useState("Definition"); // Mode selected
+  const [isLoading, setIsLoading] = useState(false); // State for loading indicator
 
   // Lifted state for chat messages
   const [messageDefinition, setMessageDefinition] = useState([]);
@@ -46,7 +47,7 @@ export const PdfSidebar = ({ file }) => {
     <>
       {!sideBarTriggered ? (
         <>
-          <PdfUpload file={file} setSideBarTriggered={setSideBarTriggered} currentMode={chatType} addMessage={getAddMessageFunc()} />
+          <PdfUpload file={file} setSideBarTriggered={setSideBarTriggered} currentMode={chatType} addMessage={getAddMessageFunc()} setIsLoading={setIsLoading} />
         </>
       ) : (
         <Grid
@@ -56,7 +57,7 @@ export const PdfSidebar = ({ file }) => {
           }}
         >
           <Box sx={{ flex: 1}}>
-            <PdfUpload file={file} setSideBarTriggered={setSideBarTriggered} currentMode={chatType} addMessage={getAddMessageFunc()} />
+            <PdfUpload file={file} setSideBarTriggered={setSideBarTriggered} currentMode={chatType} addMessage={getAddMessageFunc()} setIsLoading={setIsLoading} />
           </Box>
           <Box>
             <Sidebar
@@ -69,6 +70,9 @@ export const PdfSidebar = ({ file }) => {
               setMessageRealWorldAnalogy={setMessageRealWorldAnalogy}
               messageELI5={messageELI5}
               setMessageELI5={setMessageELI5}
+              // Pass loading state and setter
+              isLoading={isLoading}
+              setIsLoading={setIsLoading}
             />
           </Box>
         </Grid>
