@@ -1,7 +1,7 @@
 from openai import OpenAI
 import base64
 
-ai_model = "google/gemini-2.5-pro-preview-03-25"
+ai_model = "google/gemini-flash-1.5-8b"
 
 #------------------------------------------------------------------------------------
 #                   SETTING UP API CLIENT/KEY
