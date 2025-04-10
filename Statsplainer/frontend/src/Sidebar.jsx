@@ -10,7 +10,17 @@ import SendIcon from "@mui/icons-material/Send"
 //update here where the border of the side bar starts
 const NAVBAR_HEIGHT = 60;
 
-export default function Sidebar({message, setChatType}) {
+export default function Sidebar({
+  setChatType,
+  activePdfFilename,
+  // Receive state and setters from parent
+  messageDefinition,
+  setMessageDefinition,
+  messageRealWorldAnalogy,
+  setMessageRealWorldAnalogy,
+  messageELI5,
+  setMessageELI5
+}) {
 
     /*const test = [
         {text: "hello", sender:"user"},
@@ -18,8 +28,9 @@ export default function Sidebar({message, setChatType}) {
     ];
     */
 
-    //store messages for definition
-    const [messageDefinition, setMessageDefinition] = useState([]);
+    // Store which chat is currently selected (default Definition)
+    // This state remains local to Sidebar as it controls UI selection here
+    const [selectedChat, setSelectedChat] = useState("Definition");
 
     //store message for real world analogy
     const [messageRealWorldAnalogy, setMessageRealWorldAnalogy] = useState([]);
@@ -65,6 +76,7 @@ export default function Sidebar({message, setChatType}) {
         <Grid
             container
             sx={{
+
                 height:"82vh",
                 width:"30vw",
                 borderRadius: "20px",
@@ -125,6 +137,7 @@ export default function Sidebar({message, setChatType}) {
         </Box>
 
         {/* chat box input section */}
+
         <Box 
             id="chat-input"
             sx={{
@@ -138,6 +151,7 @@ export default function Sidebar({message, setChatType}) {
             addMessage={
             selectedChat === "Definition" ? setMessageDefinition :
             selectedChat === "Real world analogy" ? setMessageRealWorldAnalogy : setMessageELI5
+
             }
         /> 
         </Box>
@@ -238,7 +252,7 @@ const ChatResponseSection = ({ messages }) => {
 
 // chat messageInputFunction
 
-const ChatMessageInput = ({addMessage}) => {
+const ChatMessageInput = ({addMessage, selectedChat, activePdfFilename}) => {
 
     // store current input inside the message box
     const [userMessageInput, setUserMessageInput] = useState("");
@@ -259,7 +273,7 @@ const ChatMessageInput = ({addMessage}) => {
                 headers: {
                     "Content-Type" : "application/json",
                 },
-                body: JSON.stringify({highlighted_text : userMessageInput})
+                body: JSON.stringify({highlighted_text : userMessageInput, mode: selectedChat, filename: activePdfFilename})
             })
             .then(response => response.json())
             .then(data => addMessage(prevMessages =>[...prevMessages, {sender: "AI", text: data.explanation}]))
@@ -360,8 +374,24 @@ const ChatMessageInput = ({addMessage}) => {
 // Toggleable AI Prompt Button 
 
 const PromptButtonSelector = ({ selectedChat, setSelectedChat, setChatType }) => {
+    const buttonStyle = (label) => ({
+        color: "#35343E",
+        backgroundColor: "#D9D9D9",
+        opacity: selectedChat === label ? 1 : 0.6,
+        flexGrow: 1,
+        padding: "6px 1px",
+        textAlign: "center",
+        whiteSpace: "normal",
+        overflowWrap: "break-word",
+        fontSize: "clamp(0.65rem, 1.5vw, 0.85rem)",
+        minHeight: "48px",
+        minWidth: '80px',
+        maxWidth: '160px',
+    });
+
     return (
         <Grid
+
             sx={{
                 width:"100%",
                 height:"auto",
@@ -371,6 +401,7 @@ const PromptButtonSelector = ({ selectedChat, setSelectedChat, setChatType }) =>
               }}
         >
            <Button 
+
                 onClick={() => {setSelectedChat("Definition"); setChatType("Definition");}}
                 fullWidth
                 sx={{
@@ -396,6 +427,7 @@ const PromptButtonSelector = ({ selectedChat, setSelectedChat, setChatType }) =>
                         boxShadow: `0 6px 25px rgba(217,217,217,0.4), 0 0 0 1px rgba(255,255,255, 0.2)`,
                     },
                 }}
+
             >
               Defintion
            </Button>
@@ -465,6 +497,3 @@ const PromptButtonSelector = ({ selectedChat, setSelectedChat, setChatType }) =>
     )
 }
 
-/*
-
-*/
