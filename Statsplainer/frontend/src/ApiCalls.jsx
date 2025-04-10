@@ -39,7 +39,7 @@ export const apiCallPostImg = async (path, imageDataUrl, filename = "image.png")
     
     const imageBlob = await dataURLtoBlob(imageDataUrl);
     const formData = new FormData();
-    formData.append("file", imageBlob, filename + imageBlob);
+    formData.append("file", imageBlob, filename);
 
     return new Promise((resolve, reject) => {
         fetch(`http://localhost:${BACKEND_PORT}/` + path, {
