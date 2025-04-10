@@ -187,7 +187,7 @@ const ChatMessageInput = ({addMessage, selectedChat, activePdfFilename}) => {
     return (
         <Grid item 
             sx={{
-                backgroundColor: "#4B4C50",
+                backgroundColor: "#ffffff",
                 borderRadius : "10px",
             }}>            
             <TextField
