@@ -8,57 +8,66 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 // list of steps for the tool tips 
 // edit here to add more steps and content in each step
 // position of the message box can be modifed by the position key
-const steps = [
+const tourGuide = [
   {
     target: 'pdf-section',
     content: 'To the left is the PDF section where you can view the pdf and click the arrow key located on the bottom ofthe screen to navigate between different pages.',
     slideDirection : 'down',
-    position: {top: "30%",left: "80%"},
+    position: {top: "30%",left: "50%"},
   },
   {
     target: 'pdf-higlight text/image',
     content: 'You can switch between highlighting text/sentences or highlight images by clicking the button ',
     slideDirection : 'down',
-    position: {top: "18%",left: "25%"},
+    position: {top: "10%",left: "20%"},
   },
   {
     target: 'pdf-zoom in and out',
     content: 'You can zoom in and out of the pdf by clicking the magnifier + to zoom in and - to zoom out',
     slideDirection : 'down',
-    position: {top: "18%",left: "83%"},
+    position: {top: "10%",left: "50%"},
   },
   {
     target: 'sidebar-buttons',
     content: 'You can select between three different chat modes to help you understand the PDF better: Definition, Real World Analogy, and ELI5.',
     slideDirection : 'left',
-    position: {top: "20%",right: "18%"},
+    position: {top: "20%",right: "0%"},
   },
   {
     target: 'message-response',
     content: 'This section will show the response to your highlighted sentences, providing definitions or statistical analyses based on your selection.',
     slideDirection : 'up',
-    position: {top: "40%",right: "18%"},
+    position: {top: "40%",right: "0%"},
   },
   {
     target: 'chat-input',
     content: 'You can type and ask questions to the AI here. Press Enter to send your message.',
     slideDirection : 'right',
-    position: {top: "80%",right: "18%"},
+    position: {top: "85%",right: "18%"},
   },
+];
+
+const highlight = [
+    {
+        target: "highlight-feature",
+        content: "you can select between highlighting and image-snip, once you highlight or snipped an image from the pdf you've uploaded the sidebar will pop up on the right hand side",
+        slideDirection: "right",
+        position: {top: "18%", left: "30%"},
+    },
 ];
 
 
 // tooltip bubble function that create a rectangular bubble with a
 // dismiss button to guide through the user what each component does and how to interact with.
 // takes in three parameter to manage the state of the tooltips whether we open it or close it. and assign a target component to it
-export default function Tooltip({open, handleClose }) {
+export default function Tooltip({state,open, handleClose }) {
  // get the current step and update the step to progress to the next step
   const [currentStep, setCurrentStep] = useState(0);
  // show to backdrop to make the background dim
   const [showBackdrop, setShowBackdrop] = useState(false);
  // check the state whether the tooltip guide is on or off
   const [isTourActive, setTourActive] = useState(false);
-
+  const steps = (state === "highlight") ? highlight : tourGuide;
 
   useEffect(() => {
     if (open) {
