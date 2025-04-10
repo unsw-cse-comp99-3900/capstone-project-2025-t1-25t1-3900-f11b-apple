@@ -1,7 +1,7 @@
 from openai import OpenAI
 import base64
 
-ai_model = "google/gemini-flash-1.5-8b"
+ai_model = "google/gemini-2.5-pro-preview-03-25"
 
 #------------------------------------------------------------------------------------
 #                   SETTING UP API CLIENT/KEY
@@ -39,30 +39,30 @@ def text_explanation(subject):
     return API_text_input(subject, "Give an explanation of the text provided by the user.")
 
 # Gives a brief summary of image provided by user
-def image_explanation(subject):
-    return API_image_input(subject, "Give an explanation of the image provided by the user.")
+#def image_explanation(subject):
+#    return API_image_input(subject, "Give an explanation of the image provided by the user.")
 
 # Gives a eli5 explanation of text provided by user
 def text_eli5(subject):
     return API_text_input(subject, "Explain the text provided by the user in a way that a five-year old can understand.")
 
 # Gives a eli5 explanation of image provided by user 
-def image_eli5(subject):
-    return API_image_input(subject, "Explain the image provided by the user in a way that a five-year old can understand.")
+#def image_eli5(subject):
+#    return API_image_input(subject, "Explain the image provided by the user in a way that a five-year old can understand.")
  
 # Gives a real world analogy of concepts in text provided by user
 def text_real_world_analogy(subject):
   return API_text_input(subject, "Give a real world analogy of the concepts in the text provided by the user.")
   
 # Gives a real world analogy of concepts in image provided by user
-def image_real_world_analogy(subject):
-  return API_image_input(subject, "Give a real world analogy of the concepts in the image provided by the user.")
+#def image_real_world_analogy(subject):
+#  return API_image_input(subject, "Give a real world analogy of the concepts in the image provided by the user.")
 
 #------------------------------------------------------------------------------------
 #                   API WRAPPERS
 #------------------------------------------------------------------------------------
 
-def API_text_input(text, dev_msg):
+def API_text_input(text, dev_msg, image_base64=None):
   """
   Returns generated text from LLM with text argument
   Arguments:
@@ -71,9 +71,28 @@ def API_text_input(text, dev_msg):
   Return:
     string representing the explanation
   """
-  completion = client.chat.completions.create(
-    model=ai_model,
-    messages=[
+
+  if image_base64:
+    msg=[
+      {
+        "role": "developer",
+        "content": dev_msg
+      },
+      {
+        "role": "user",
+        "content": [
+          {
+            "type": "image_url",
+            "image_url": {
+                "url": f"data:image/jpeg;base64,{image_base64}",
+            },
+          },
+        ]
+      }
+    ]
+    
+  else:
+    msg=[
       {
         "role": "developer",
         "content": dev_msg
@@ -83,10 +102,14 @@ def API_text_input(text, dev_msg):
         "content": text
       }
     ]
+
+  completion = client.chat.completions.create(
+    model=ai_model,
+    messages=msg
   )
   return completion.choices[0].message.content
 
-
+'''
 def API_image_input(image_path, dev_msg):
   """
   Returns generated text from LLM with image argument
@@ -120,7 +143,7 @@ def API_image_input(image_path, dev_msg):
     ]
   )
   return completion.choices[0].message.content
-
+'''
 
 
 
