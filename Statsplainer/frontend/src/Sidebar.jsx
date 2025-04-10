@@ -27,7 +27,8 @@ export default function Sidebar({
         {text: "Hi this is AI", sender: "AI"}    
     ];
     */
-
+    // intialised the state of hasSeenTour
+    localStorage.setItem("hasSeenTour", "false");
     // Store which chat is currently selected (default Definition)
     // This state remains local to Sidebar as it controls UI selection here
     const [selectedChat, setSelectedChat] = useState("Definition");
