@@ -13,37 +13,37 @@ const steps = [
     target: 'pdf-section',
     content: 'To the left is the PDF section where you can view the pdf and click the arrow key located on the bottom ofthe screen to navigate between different pages.',
     slideDirection : 'down',
-    position: {top: "30%",left: "80%"},
+    position: {top: "30%",left: "50%"},
   },
   {
     target: 'pdf-higlight text/image',
     content: 'You can switch between highlighting text/sentences or highlight images by clicking the button ',
     slideDirection : 'down',
-    position: {top: "18%",left: "25%"},
+    position: {top: "10%",left: "20%"},
   },
   {
     target: 'pdf-zoom in and out',
     content: 'You can zoom in and out of the pdf by clicking the magnifier + to zoom in and - to zoom out',
     slideDirection : 'down',
-    position: {top: "18%",left: "83%"},
+    position: {top: "10%",left: "50%"},
   },
   {
     target: 'sidebar-buttons',
     content: 'You can select between three different chat modes to help you understand the PDF better: Definition, Real World Analogy, and ELI5.',
     slideDirection : 'left',
-    position: {top: "20%",right: "18%"},
+    position: {top: "20%",right: "-5%"},
   },
   {
     target: 'message-response',
     content: 'This section will show the response to your highlighted sentences, providing definitions or statistical analyses based on your selection.',
     slideDirection : 'up',
-    position: {top: "40%",right: "18%"},
+    position: {top: "40%",right: "-5%"},
   },
   {
     target: 'chat-input',
     content: 'You can type and ask questions to the AI here. Press Enter to send your message.',
     slideDirection : 'right',
-    position: {top: "80%",right: "18%"},
+    position: {top: "85%",right: "18%"},
   },
 ];
 
