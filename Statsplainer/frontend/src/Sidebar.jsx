@@ -21,12 +21,6 @@ export default function Sidebar({
   messageELI5,
   setMessageELI5
 }) {
-
-    /*const test = [
-        {text: "hello", sender:"user"},
-        {text: "Hi this is AI", sender: "AI"}    
-    ];
-    */
     // intialised the state of hasSeenTour
     localStorage.setItem("hasSeenTour", "false");
     // Store which chat is currently selected (default Definition)
@@ -48,8 +42,6 @@ export default function Sidebar({
             localStorage.setItem("hasSeenTour", "true");
         }
     }, []);
-
-
 
     return (
         
@@ -218,7 +210,21 @@ const ChatResponseSection = ({ messages }) => {
 
                     }}
                 >
-                    {message.text}
+                    {/* Conditionally render image or text */}
+                    {message.type === 'image' && message.imageUrl ? (
+                      <img
+                        src={message.imageUrl}
+                        alt="Snipped Content"
+                        style={{
+                          maxWidth: '100%',
+                          maxHeight: '300px', // Adjust max height as needed
+                          borderRadius: '8px', // Match paper border radius
+                          display: 'block' // Ensure image behaves like a block element
+                        }}
+                      />
+                    ) : (
+                      message.text // Render text if not an image or imageUrl is missing
+                    )}
                 </Paper>
 
             </Box>
