@@ -274,6 +274,9 @@ const result = async (highlights, file, addMessage, snipHighlightSwitch, current
     } else if (snipHighlightSwitch === "Snip" && highlights.length > 0 && highlights[0].snippedImageDataUrl) {
       const imageUrl = highlights[0].snippedImageDataUrl;
       const base64String = imageUrl.split(',')[1];
+
+      // Add the snipped image to the chat immediately
+      addMessage(prevMessages => [...prevMessages, { sender: "user", type: "image", imageUrl: imageUrl }]);
       
       // Optional: Add a placeholder for the image snipping action if desired
       // addMessage(prevMessages => [...prevMessages, { text: "[Image Snipped]", sender: "user" }]);
