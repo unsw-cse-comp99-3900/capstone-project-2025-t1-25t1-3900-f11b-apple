@@ -128,15 +128,16 @@ export default function Sidebar({
             }}
         >
         <ChatMessageInput 
-            addMessage={
+            selectedChat={selectedChat}
+            activePdfFilename={activePdfFilename}
+            addMessage={// Pass the correct setter based on selected chat
             selectedChat === "Definition" ? setMessageDefinition :
             selectedChat === "Real world analogy" ? setMessageRealWorldAnalogy : setMessageELI5
-
             }
         /> 
         </Box>
         
-        <Tooltip open={open} handleClose={handleCloseTooltip}/>
+        <Tooltip state= "sidebar" open={open} handleClose={handleCloseTooltip}/>
         </Grid>
     )
 };

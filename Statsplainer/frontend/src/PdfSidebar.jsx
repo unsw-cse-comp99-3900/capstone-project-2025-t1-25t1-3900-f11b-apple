@@ -1,9 +1,9 @@
 import { PdfUpload } from "./PdfUpload";
 import Sidebar from './Sidebar';
-
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Typography, Button, Box } from '@mui/material';
 import Grid from '@mui/material/Grid2';
+import Tooltip from './Tooltips';
 
 
 export const PdfSidebar = ({ file }) => {
@@ -14,6 +14,25 @@ export const PdfSidebar = ({ file }) => {
   const [messageDefinition, setMessageDefinition] = useState([]);
   const [messageRealWorldAnalogy, setMessageRealWorldAnalogy] = useState([]);
   const [messageELI5, setMessageELI5] = useState([]);
+  localStorage.setItem("hasSeenTour", "false");
+      // store which chat is currently selected  (default Defintion)
+      const [selectedChat, setSelectedChat] = useState("Definition"); 
+
+      //set tooltips state
+      const [open,setOpen] = useState(false);
+
+      //handle open/close tooltip
+      const handleOpenTooltip = () => setOpen(true);
+      const handleCloseTooltip = () => setOpen(false);
+
+      useEffect (() => {
+          const hasSeenTour = localStorage.getItem("hasSeenTour");
+          console.log(hasSeenTour);
+          if (hasSeenTour === "false") {
+              handleOpenTooltip();
+              localStorage.setItem("hasSeenTour", "true");
+          }
+      }, []);
 
   // Function to get the correct setter based on chatType
   const getAddMessageFunc = () => {
@@ -54,6 +73,7 @@ export const PdfSidebar = ({ file }) => {
           </Box>
         </Grid>
       )}
+      <Tooltip state= "highlight" open={open} handleClose={handleCloseTooltip}/>
     </>
   );
 };
