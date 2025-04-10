@@ -1,4 +1,4 @@
-import { Box, Button, Paper, TextField, IconButton } from '@mui/material';
+import { Box, Button, Paper, TextField, IconButton, keyframes } from '@mui/material'; // Added keyframes
 import Grid from '@mui/material/Grid2';
 import React, {useState, useRef, useEffect} from "react";
 import Tooltip from './Tooltips';
@@ -19,7 +19,10 @@ export default function Sidebar({
   messageRealWorldAnalogy,
   setMessageRealWorldAnalogy,
   messageELI5,
-  setMessageELI5
+  setMessageELI5,
+  // Add loading state props
+  isLoading,
+  setIsLoading
 }) {
     // intialised the state of hasSeenTour
     localStorage.setItem("hasSeenTour", "false");
@@ -104,8 +107,10 @@ export default function Sidebar({
         <ChatResponseSection 
             messages={
             selectedChat === "Definition" ? messageDefinition :
-            selectedChat === "Real world analogy" ? messageRealWorldAnalogy : messageELI5  
-            } />
+            selectedChat === "Real world analogy" ? messageRealWorldAnalogy : messageELI5
+            }
+            isLoading={isLoading} // Pass isLoading down
+           />
         </Box>
 
         {/* chat box input section */}
@@ -126,7 +131,8 @@ export default function Sidebar({
             selectedChat === "Definition" ? setMessageDefinition :
             selectedChat === "Real world analogy" ? setMessageRealWorldAnalogy : setMessageELI5
             }
-        /> 
+            setIsLoading={setIsLoading} // Pass setIsLoading down
+        />
         </Box>
         
         <Tooltip state= "sidebar" open={open} handleClose={handleCloseTooltip}/>
@@ -136,7 +142,7 @@ export default function Sidebar({
 
 
 // Chat message container function
-const ChatResponseSection = ({ messages }) => {
+const ChatResponseSection = ({ messages, isLoading }) => { // Add isLoading prop
     // interaction to be complete
     const messagesEndRef = useRef(null);
 
@@ -229,16 +235,48 @@ const ChatResponseSection = ({ messages }) => {
 
             </Box>
         ))}
+        {/* Render loading indicator if loading */}
+        {isLoading && <LoadingDots />}
         <div ref={messagesEndRef} />
         </Box>
         
     )
 }
+// Helper component for the loading dots animation (using MUI)
+const LoadingDots = () => (
+  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', p: 1, width: '100%' }}>
+    <Paper sx={{ display: 'flex', gap: '8px', p: '12px 16px', borderRadius: '12px 12px 12px 4px', backgroundColor: 'rgba(240,240,240,0.9)', maxWidth: '75%' }}>
+      {[0, 1, 2].map((i) => (
+        <Box
+          key={i}
+          sx={{
+            width: 8,
+            height: 8,
+            borderRadius: '50%',
+            backgroundColor: 'grey.500', // Use theme color
+            animation: `bounce 1.4s infinite ease-in-out both`,
+            animationDelay: `${i * 0.16}s`,
+            '@keyframes bounce': { // Define keyframes directly within sx prop (MUI v5+)
+              '0%, 80%, 100%': {
+                transform: 'scale(0)',
+              },
+              '40%': {
+                transform: 'scale(1.0)',
+              },
+            },
+          }}
+        />
+      ))}
+    </Paper>
+  </Box>
+);
 
 
 // chat messageInputFunction
 
-const ChatMessageInput = ({addMessage, selectedChat, activePdfFilename}) => {
+// chat messageInputFunction
+
+const ChatMessageInput = ({addMessage, selectedChat, activePdfFilename, setIsLoading}) => { // Add setIsLoading prop
 
     // store current input inside the message box
     const [userMessageInput, setUserMessageInput] = useState("");
@@ -253,6 +291,7 @@ const ChatMessageInput = ({addMessage, selectedChat, activePdfFilename}) => {
 
             //clear send message section once user send the message by pressing enter key
             setUserMessageInput("");
+            setIsLoading(true); // Set loading before fetch
 
             fetch("http://localhost:5000/explain-highlight", {
                 method: "post",
@@ -262,8 +301,15 @@ const ChatMessageInput = ({addMessage, selectedChat, activePdfFilename}) => {
                 body: JSON.stringify({highlighted_text : userMessageInput, mode: selectedChat, filename: activePdfFilename})
             })
             .then(response => response.json())
-            .then(data => addMessage(prevMessages =>[...prevMessages, {sender: "AI", text: data.explanation}]))
-            .catch(error => console.error("Error:", error));
+            .then(data => {
+              addMessage(prevMessages =>[...prevMessages, {sender: "AI", text: data.explanation}]);
+              setIsLoading(false); // Clear loading on success
+            })
+            .catch(error => {
+              console.error("Error:", error);
+              addMessage(prevMessages => [...prevMessages, {sender: "AI", text: "Sorry, an error occurred."}]); // Add error message to chat
+              setIsLoading(false); // Clear loading on error
+            });
 
         }
     };
