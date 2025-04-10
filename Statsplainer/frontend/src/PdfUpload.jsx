@@ -9,7 +9,7 @@ import ZoomOutRoundedIcon from '@mui/icons-material/ZoomOutRounded';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
 import { Highlight } from "./Highlight";
-import { apiCallPostText, apiCallPostImg } from "./ApiCalls";
+import { apiCallPostText } from "./ApiCalls";
 import CheckRoundedIcon from '@mui/icons-material/CheckRounded';
 import HighlightAltRoundedIcon from '@mui/icons-material/HighlightAltRounded';
 import PhotoCameraRoundedIcon from '@mui/icons-material/PhotoCameraRounded';
@@ -273,14 +273,22 @@ const result = async (highlights, file, addMessage, snipHighlightSwitch, current
 
     } else if (snipHighlightSwitch === "Snip" && highlights.length > 0 && highlights[0].snippedImageDataUrl) {
       const imageUrl = highlights[0].snippedImageDataUrl;
+      const base64String = imageUrl.split(',')[1];
       
       // Optional: Add a placeholder for the image snipping action if desired
       // addMessage(prevMessages => [...prevMessages, { text: "[Image Snipped]", sender: "user" }]);
 
+      const payload = {
+        'highlighted_text': 'image',
+        'filename': file.name,
+        'mode': currentMode,
+        'image_base64': base64String
+      };
+
       // Call API for image explanation (assuming '/explain-image' endpoint exists and works similarly)
       // NOTE: This part assumes an endpoint like 'explain-image' exists and accepts mode/filename if needed.
       // Adjust the endpoint and payload as necessary based on backend implementation for images.
-      apiCallPostImg('upload-image', imageUrl) // Might need to change endpoint/payload
+      apiCallPostText("explain-highlight", payload) // Might need to change endpoint/payload
          .then(res => {
            if (res && res.explanation) {
              addMessage(prevMessages => [...prevMessages, { text: res.explanation, sender: "AI" }]);
