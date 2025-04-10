@@ -1,6 +1,9 @@
-import { Box, Button, Paper, TextField } from '@mui/material';
+import { Box, Button, Paper, TextField, IconButton } from '@mui/material';
 import Grid from '@mui/material/Grid2';
-import {useState, useRef, useEffect} from "react";
+import React, {useState, useRef, useEffect} from "react";
+import Tooltip from './Tooltips';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import SendIcon from "@mui/icons-material/Send"
 
 // Sidebar Function
 
@@ -29,44 +32,131 @@ export default function Sidebar({
     // This state remains local to Sidebar as it controls UI selection here
     const [selectedChat, setSelectedChat] = useState("Definition");
 
-    // Remove the useEffect that depended on the old 'message' prop
-    // AI responses will now be added directly via the setters passed down
+    //store message for real world analogy
+    const [messageRealWorldAnalogy, setMessageRealWorldAnalogy] = useState([]);
+
+    //store message for ELI5
+    const [messageELI5, setMessageELI5] = useState([]);
+
+    // store which chat is currently selected  (default Defintion)
+    const [selectedChat, setSelectedChat] = useState("Definition"); 
+
+    //set tooltips state
+    const [open,setOpen] = useState(false);
+
+    //handle open/close tooltip
+    const handleOpenTooltip = () => setOpen(true);
+    const handleCloseTooltip = () => setOpen(false);
+
+    useEffect (() => {
+        const hasSeenTour = localStorage.getItem("hasSeenTour");
+        console.log(hasSeenTour);
+        if (hasSeenTour === "true") {
+            handleOpenTooltip();
+            localStorage.setItem("hasSeenTour", "false");
+        }
+    }, []);
+
+    useEffect (() => {
+        if (message.chat === "Definition") {
+            setMessageDefinition(prevMessages =>[...prevMessages, {sender: "AI", text: message.text}])
+        } else if (message.chat === "Real world analogy") {
+            setMessageRealWorldAnalogy(prevMessages =>[...prevMessages, {sender: "AI", text: message.text}])
+        } else if (message.chat === "ELI5") {
+            setMessageELI5(prevMessages =>[...prevMessages, {sender: "AI", text: message.text}])
+        };
+        message = {};
+    }, [message]);
+
+
 
 
     return (
+        
         <Grid
             container
             sx={{
-                height:"92vh",
-                width: "30vw",
+
+                height:"82vh",
+                width:"30vw",
+                borderRadius: "20px",
                 backgroundColor: "#37383C",
-                flexDirection: "column",
-                p: 2,
+                flexDirection:"column",
+                p:1,
+                position:"relative",
+                background: `linear-gradient(135deg, transparent 48% rgba(30,32,40,0.95) 0%, rgba(20,22,30,0.95) 100%)`
             }}
             spacing={2}
         >
 
+        
+
         {/* Toggleable AI prompt Button */}
-        <PromptButtonSelector selectedChat={selectedChat} setSelectedChat={setSelectedChat} setChatType={setChatType}/>
+        <Box 
+            id="sidebar-buttons"
+            sx={{
+                width:"100%",
+                display: "flex",
+                alignItems: "center",
+                position: "relative",
+                zIndex:4,
+            }}
+        
+        >
+            <PromptButtonSelector selectedChat={selectedChat} setSelectedChat={setSelectedChat} setChatType={setChatType}/>
+
+            <IconButton
+                onClick={handleOpenTooltip}
+                sx={{
+                    color: "white",
+                    "&:hover": {
+                        backgroundColor : `rgba(255,255,255,0.1)`,
+                    }
+                }}
+            >
+                <HelpOutlineIcon />
+            </IconButton>
+        </Box>
+            
 
         {/* response section */}
+        <Box 
+            id="message-response"
+            sx={{
+                flex: 1,
+                overflowY: "auto",
+                position:"relative",
+                zIndex:2,
+            }}    
+        >
         <ChatResponseSection 
             messages={
             selectedChat === "Definition" ? messageDefinition :
             selectedChat === "Real world analogy" ? messageRealWorldAnalogy : messageELI5  
             } />
-        
+        </Box>
 
         {/* chat box input section */}
-        <ChatMessageInput
-            selectedChat={selectedChat}
-            activePdfFilename={activePdfFilename}
-            addMessage={ // Pass the correct setter based on selected chat
-              selectedChat === "Definition" ? setMessageDefinition :
-              selectedChat === "Real world analogy" ? setMessageRealWorldAnalogy : setMessageELI5
+
+        <Box 
+            id="chat-input"
+            sx={{
+                width: "100%",
+                marginTop: "auto",
+                position:"relative",
+                zIndex:2,
+            }}
+        >
+        <ChatMessageInput 
+            addMessage={
+            selectedChat === "Definition" ? setMessageDefinition :
+            selectedChat === "Real world analogy" ? setMessageRealWorldAnalogy : setMessageELI5
+
             }
-        />
+        /> 
+        </Box>
         
+        <Tooltip open={open} handleClose={handleCloseTooltip}/>
         </Grid>
     )
 };
@@ -90,10 +180,15 @@ const ChatResponseSection = ({ messages }) => {
             sx={{
                 flex: 1,
                 overflowY: "auto",
-                borderRadius: "inherit",
-                height: "inherit",
-                padding: "10px",
+                borderRadius: "20px",
+                height: "calc(100% - 40px)",
+                padding: "16px",
                 position: "relative",
+                backgroundColor: `rgba(75,76,80,0.6)`,
+                backdropFilter: `blur(8px)`,
+                border: `1px solid rgba(255,255,255,0.1)`,
+                boxShadow: `0 4px 30px rgba(0,0,0,0.1)`,
+                padding: "16px",
             }}
         >
 
@@ -105,8 +200,8 @@ const ChatResponseSection = ({ messages }) => {
                     display:"flex",
                     flexDirection:"column",
                     alignItems: message.sender === "AI" ? "flex-start" : "flex-end",
-                    margineBottom :" 10px",
-                    padding: "5px",
+                    margineBottom :" 16px",
+                    padding: "8px",
                     wordBreak: 'break-word',
                 }}
             >
@@ -121,9 +216,25 @@ const ChatResponseSection = ({ messages }) => {
                     sx={{
                         marginBtoom: "10px",
                         maxWidth: "75%",
-                        borderRadius: '5px',
-                        padding: '10px',
-                        backgroundColor: message.sender === "AI" ? "#f0f0f0" : "#d1e7ff",
+                        borderRadius: message.sender === "AI" ? "12px 12px 12px 4px" : "12px 12px 4px 12px",
+                        padding: '12px 16px',
+                        backgroundColor: message.sender === "AI" ? `rgba(240,240,240,0.9)` : `rgba(147, 197, 253, 0.9)`,
+                        backdropFilter: `blur(8px)`,
+                        boxShadow: message.sender === "AI" ? `0 2px 8px rgba(0,0,0,0.1)` : `0 4px 15px rgba(147,197,253, 0.3)`,
+                        border: message.sender ==="AI" ? `1px solid rgba(255,255,255, 0.1)` : `1px solid rgba(255,255,255,0.2)`,
+                        color: message.sender === "AI" ? "#000000" : "#ffffff",
+                        position: "relative",
+                        "&::before": message.sender === "AI" ? {} : {
+                            content: `""`,
+                            position: "absolute",
+                            right: "-2px",
+                            bottom: "-2px",
+                            width: "8px",
+                            height: "8px",
+                            backgroundColor: `rgba(147,197,253,0.9)`,
+                            borderRadius: "50%",
+                            boxShadow: `0 0 10px rgba(147,197,253, 0.5)`,
+                        },
 
                     }}
                 >
@@ -187,20 +298,74 @@ const ChatMessageInput = ({addMessage, selectedChat, activePdfFilename}) => {
     return (
         <Grid item 
             sx={{
-                backgroundColor: "#4B4C50",
-                borderRadius : "10px",
+                display:"flex",
+                width:"100%",
+                backgroundColor: `rgba(75,76,80,0.6)`,
+                borderRadius: "20px",
+                padding:"8px",
+                backdropFilter:`blur(10px)`,
+                border:`1px solid rgba(255,255,255,0.1)`,
+                boxShadow: `0 4px 30px rgba(0,0,0,0.1)`,
+                alignItems: "center",
+                gap: 1,
             }}>            
             <TextField
                 fullWidth
                 placeholder="Ask Anything"
                 variant="outlined"
-                color='#26252C'
                 value={userMessageInput}
                 onChange={(e) => setUserMessageInput(e.target.value)}
                 onKeyDown={checkEnterKey}
+                sx={{
+                    "& .MuiOutlinedInput-root": {
+                        color:"#ffffff",
+                        "& fieldset" : {
+                            borderColor: `rgba(255,255,255, 0.1)`,
+                            borderRadius:"12px",
+                        },
+                        "& hover fieldset": {
+                            borderColor: `rgba(255,255,255,0.2)`,
+                        },
+                        "&.Mui-focused fieldset": {
+                            borderColor: `rgba(147, 197,253,0.5)`,
+                        },
+                    },
+                    "& .MuiInputBase-input": {
+                        padding: "12px 16px",
+                        fontSize: "14px",
+                    },
+                    "& .MuiInputLabel-root": {
+                        color: `rgba(255,255,255,0.7)`,
+                    },
+                    "& .MuiInputBase-Input::placeholder": {
+                        color: `rgba(255,255,255,0.5)`,
+                        opacity:1,
+                    },
+                }}
 
 
             />
+            <IconButton
+                onClick={sendMessage}
+                disabled={!userMessageInput.trim()}
+                sx={{
+                    color: userMessageInput.trim() ? `rgba(147,197,253,0.9)` : `rgba(255,255,255, 0.3)`,
+                    backgroundColor: userMessageInput.trim() ? `rgba(147,197,253,0.1)` : "transparent",
+                    borderRadius: "12px",
+                    padding:"8px",
+                    transitionL : "all 0.3s ease",
+                    "&.hover": {
+                        backgroundColor: userMessageInput.trim() ? `rgba(147, 197, 253, 0.2)` : "transparent",
+                        transform: `scale(1.05)`,
+                    },
+                    "&.active": {
+                        transform: `scale(0.95)`,
+                    },
+                    
+                }}
+            >
+                <SendIcon />
+            </IconButton>
         </Grid>
     )
 }
@@ -225,34 +390,110 @@ const PromptButtonSelector = ({ selectedChat, setSelectedChat, setChatType }) =>
     });
 
     return (
-        <Box
+        <Grid
+
             sx={{
-                display: "flex",
-                justifyContent: "space-Between",
-                gap: 2,
+                width:"100%",
+                height:"auto",
+                display:"flex",
+                flexDirection:"row",
+                gap:1,
               }}
         >
            <Button 
-                onClick={() => { setSelectedChat("Definition"); setChatType("Definition"); }}
-                sx={buttonStyle("Definition")}
+
+                onClick={() => {setSelectedChat("Definition"); setChatType("Definition");}}
+                fullWidth
+                sx={{
+                    color: "#ffffff",
+                    backgroundColor: selectedChat === "Definition" ? `rgba(217,217,217, 0.8)`: `rgba(217,217,217, 0.4)`,
+                    width: "33.33%",
+                    display: "inherit",
+                    minWidth: 10,
+                    fontsize: "12px",
+                    height: "50px",
+                    textTransform: "none",
+                    borderRadius: "10px",
+                    transition: "all 0,3s ease",
+                    boxShadow: selectedChat === "Definition" ? `0 4px 20px rgba(217,217,217, 0.3), 0 0 0 1px rgba(255,255,255, 0.1)` : `0 2px 10px rgba(217,217,217, 0.1)`,
+                    backdropFilter: `blur(8px)`,
+                    border: `1px solid rgba(255, 255,255,0.1)`,
+                    whiteSpace:"normal",
+                    lineHeight: "1.2",
+                    padding: "8px 4px",
+                    "&:hover": {
+                        backgroundColor: `rgba(217,217,217,0.6)`,
+                        transform: `translateY(-2px)`,
+                        boxShadow: `0 6px 25px rgba(217,217,217,0.4), 0 0 0 1px rgba(255,255,255, 0.2)`,
+                    },
+                }}
+
             >
               Defintion
            </Button>
 
            <Button  
-                onClick={() => { setSelectedChat("Real world analogy"); setChatType("Real world analogy"); }}
-                sx={buttonStyle("Real world analogy")}
-            >
-              Real world analogy
-           </Button>
+                onClick={() => {setSelectedChat("Real world analogy"); setChatType("Real world analogy");}}
+                fullWidth
+                sx={{
+                    color: "#ffffff",
+                    backgroundColor: selectedChat === "Real world analogy" ? `rgba(217,217,217, 0.8)`: `rgba(217,217,217, 0.4)`,
+                    width: "33.33%",
+                    display: "inherit",
+                    minWidth: 10,
+                    fontsize: "12px",
+                    height: "50px",
+                    textTransform: "none",
+                    borderRadius: "10px",
+                    transition: "all 0,3s ease",
+                    boxShadow: selectedChat === "Real world analogy" ? `0 4px 20px rgba(217,217,217, 0.3), 0 0 0 1px rgba(255,255,255, 0.1)` : `0 2px 10px rgba(217,217,217, 0.1)`,
+                    backdropFilter: `blur(8px)`,
+                    border: `1px solid rgba(255, 255,255,0.1)`,
+                    whiteSpace:"normal",
+                    lineHeight: "1.2",
+                    padding: "8px 4px",
+                    "&:hover": {
+                        backgroundColor: `rgba(217,217,217,0.6)`,
+                        transform: `translateY(-2px)`,
+                        boxShadow: `0 6px 25px rgba(217,217,217,0.4), 0 0 0 1px rgba(255,255,255, 0.2)`,
+                    },
+                }}
+                >
+                Real world analogy
+            </Button>
 
-           <Button 
-                onClick={() => { setSelectedChat("ELI5"); setChatType("ELI5"); }}
-                sx={buttonStyle("ELI5")}
-            >
-              ELI5
-           </Button>
+            <Button 
+                onClick={() => {setSelectedChat("ELI5"); setChatType("ELI5");}}
+                fullWidth
+                sx={{
+                    color: "#ffffff",
+                    backgroundColor: selectedChat === "ELI5" ? `rgba(217,217,217, 0.8)`: `rgba(217,217,217, 0.4)`,
+                    width: "33.33%",
+                    display: "inherit",
+                    minWidth: 10,
+                    fontsize: "12px",
+                    height: "50px",
+                    textTransform: "none",
+                    borderRadius: "10px",
+                    transition: "all 0,3s ease",
+                    boxShadow: selectedChat === "ELI5" ? `0 4px 20px rgba(217,217,217, 0.3), 0 0 0 1px rgba(255,255,255, 0.1)` : `0 2px 10px rgba(217,217,217, 0.1)`,
+                    backdropFilter: `blur(8px)`,
+                    border: `1px solid rgba(255, 255,255,0.1)`,
+                    whiteSpace:"normal",
+                    lineHeight: "1.2",
+                    padding: "8px 4px",
+                    "&:hover": {
+                        backgroundColor: `rgba(217,217,217,0.6)`,
+                        transform: `translateY(-2px)`,
+                        boxShadow: `0 6px 25px rgba(217,217,217,0.4), 0 0 0 1px rgba(255,255,255, 0.2)`,
+                    },
+                }}
+                >
+                ELI5
+            </Button>
+
             
-        </Box>
+        </Grid>
     )
 }
+
