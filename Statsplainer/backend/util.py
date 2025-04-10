@@ -25,12 +25,14 @@ def prompt_builder(mode):
                 Your explaination must:
                 1. Explain the 'Highlighted Text' in very simple terms, like you're talking to a five-year-old, using the 'Full Context from PDF' to understand what the text means, this also applies for the other instructions below.
                 2. If statistics are highlighted focus on explaining what these statistics mean including their implications and significance such that a five-year-old can understand them.
+                3. Be concise (under 150 words) but complete.
             """
     elif mode == "Real world analogy":
         return """
                 Your explaination must:
                 1. Provide a real-world analogy to help understand the concept presented in the 'Highlighted Text', using the 'Full Context from PDF' to understand the concept. This also applies for the other instructions below.
                 2. If statistics are highlighted focus on explaining what these statistics mean including their implications and significance using real-world analogies.
+                3. Be concise (under 150 words) but complete.
             """
     else:
         # Default to definition if mode is unknown or invalid
@@ -38,4 +40,5 @@ def prompt_builder(mode):
                 Your explaination must:
                 1. Explain the 'Highlighted Text' using the 'Full Context from PDF'.
                 2. If statistics are highlighted focus on explaining what these statistics mean including their implications and significance (e.g if P values are said explain in a short sentence what a P value is then continue on with explaining the implications and significance of the statistucs).
+                3. Be concise (under 150 words) but complete.
             """
