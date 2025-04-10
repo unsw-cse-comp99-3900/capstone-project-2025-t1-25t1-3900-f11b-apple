@@ -32,15 +32,6 @@ export default function Sidebar({
     // This state remains local to Sidebar as it controls UI selection here
     const [selectedChat, setSelectedChat] = useState("Definition");
 
-    //store message for real world analogy
-    const [messageRealWorldAnalogy, setMessageRealWorldAnalogy] = useState([]);
-
-    //store message for ELI5
-    const [messageELI5, setMessageELI5] = useState([]);
-
-    // store which chat is currently selected  (default Defintion)
-    const [selectedChat, setSelectedChat] = useState("Definition"); 
-
     //set tooltips state
     const [open,setOpen] = useState(false);
 
@@ -51,23 +42,11 @@ export default function Sidebar({
     useEffect (() => {
         const hasSeenTour = localStorage.getItem("hasSeenTour");
         console.log(hasSeenTour);
-        if (hasSeenTour === "true") {
+        if (hasSeenTour === "false") {
             handleOpenTooltip();
-            localStorage.setItem("hasSeenTour", "false");
+            localStorage.setItem("hasSeenTour", "true");
         }
     }, []);
-
-    useEffect (() => {
-        if (message.chat === "Definition") {
-            setMessageDefinition(prevMessages =>[...prevMessages, {sender: "AI", text: message.text}])
-        } else if (message.chat === "Real world analogy") {
-            setMessageRealWorldAnalogy(prevMessages =>[...prevMessages, {sender: "AI", text: message.text}])
-        } else if (message.chat === "ELI5") {
-            setMessageELI5(prevMessages =>[...prevMessages, {sender: "AI", text: message.text}])
-        };
-        message = {};
-    }, [message]);
-
 
 
 
@@ -188,7 +167,6 @@ const ChatResponseSection = ({ messages }) => {
                 backdropFilter: `blur(8px)`,
                 border: `1px solid rgba(255,255,255,0.1)`,
                 boxShadow: `0 4px 30px rgba(0,0,0,0.1)`,
-                padding: "16px",
             }}
         >
 
