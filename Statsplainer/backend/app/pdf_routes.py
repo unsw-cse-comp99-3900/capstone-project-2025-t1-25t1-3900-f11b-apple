@@ -1,5 +1,7 @@
 from flask import request, send_file, jsonify, Blueprint, current_app
 import os
+from util import extract_text_from_pdf
+from API import API_text_input
 
 pdf_routes = Blueprint("pdf_routes", __name__)
 
@@ -11,7 +13,28 @@ def upload_pdf():
     file = request.files["file"]
     file_path = os.path.join(current_app.config['PDF_FOLDER'], file.filename)
     file.save(file_path)
-    print(file_path)
+    
+    try:
+        full_text = extract_text_from_pdf(file_path)
+    except Exception as e:
+        # Log the error e for debugging
+        print(f"Error extracting PDF text: {e}")
+        return jsonify({"error": "Failed to extract text from PDF"}), 500
+    
+    dev_msg = """
+        This is the full PDF provided here for context, 
+        use this PDF to answer all further queries.
+        
+        Quickly read through and process this PDF. 
+    """
+    
+    try:
+        # Call API utility with combined text and mode-specific instructions
+        # Pass image_base64 if it exists
+        explanation = API_text_input(text=full_text, dev_msg=dev_msg)
+        print(explanation)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
     
     return jsonify({"message": "File uploaded successfully", "filename": file.filename})
 
