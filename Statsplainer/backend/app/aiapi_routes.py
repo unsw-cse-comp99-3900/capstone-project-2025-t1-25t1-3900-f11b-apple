@@ -2,8 +2,7 @@ from flask import request, jsonify, Blueprint, current_app
 import os
 from API import API_text_input
 from util import extract_text_from_pdf, prompt_builder
-from datetime import datetime
-from log_interface import execute_statement, insert_message
+from log_interface import log_insert
 
 aiapi_routes = Blueprint("aiapi_routes", __name__)
 
@@ -58,9 +57,7 @@ def explain_highlight():
         session_id = "placeholder_id"
         message = explanation
         sender = "Statsplainer"
-        dt = datetime.now()
-        ts = datetime.timestamp(dt)
-        execute_statement(insert_message(session_id, message, sender, dt, ts))
+        log_insert(session_id, message, sender)
         return jsonify({
             "explanation": explanation
         })

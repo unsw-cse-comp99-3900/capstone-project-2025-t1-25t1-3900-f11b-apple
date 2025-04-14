@@ -2,32 +2,31 @@ import sqlite3 as sq
 
 log_path = "app_log.db"
 
-def execute_statement(statement):
+def log_init():
     con = sq.connect(log_path)
     cur = con.cursor()
-    cur.execute(statement)
+
+    cur.execute("CREATE TABLE IF NOT EXISTS log(session_id, message, sender)")
+
     con.commit()
     con.close()
 
-def init():
-    return "CREATE TABLE IF NOT EXISTS log(session_ID, sender, message, datetime, timestamp)"
+def log_clear():
+    con = sq.connect(log_path)
+    cur = con.cursor()
+    
+    cur.execute("DROP TABLE IF EXISTS log")
 
-def clear():
-    return "DROP TABLE IF EXISTS log"
+    con.commit()
+    con.close()
 
-def insert_message(session_id, sender, message, datetime, timestamp):
-    return f"""
-        INSERT INTO log VALUES
-            ({session_id}, {sender}, {message}, {datetime}, {timestamp})
-    """
+def log_insert(session_id, message, sender):
+    con = sq.connect(log_path)
+    cur = con.cursor()
 
-""" Returns chat log 
-    - session_id: specifies session_id for which chat log belongs to
-    - mode: specifies mode for which chat log belongs to
-"""
-def get_messages():
-    return """
-        SELECT sender, message, time
-        FROM log 
-        ODER BY time DESC
-    """
+    statement = """INSERT INTO log (session_id, message, sender) 
+        VALUES (?, ?, ?)"""
+    cur.execute(statement, (session_id, message, sender))
+    
+    con.commit()
+    con.close()
