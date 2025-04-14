@@ -2,6 +2,8 @@ from flask import request, jsonify, Blueprint, current_app
 import os
 from API import API_text_input
 from util import extract_text_from_pdf, prompt_builder
+from datetime import datetime
+from log_interface import execute_statement, insert_message
 
 aiapi_routes = Blueprint("aiapi_routes", __name__)
 
@@ -53,6 +55,12 @@ def explain_highlight():
         # Pass image_base64 if it exists
         explanation = API_text_input(text=combined_text, dev_msg=dev_msg, image_base64=image_base64)
         print(explanation)
+        session_id = "placeholder_id"
+        message = explanation
+        sender = "Statsplainer"
+        dt = datetime.now()
+        ts = datetime.timestamp(dt)
+        execute_statement(insert_message(session_id, message, sender, dt, ts))
         return jsonify({
             "explanation": explanation
         })
