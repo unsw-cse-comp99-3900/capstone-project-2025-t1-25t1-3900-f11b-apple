@@ -1,12 +1,15 @@
 from app import create_app
+from log_interface import execute_statement, init, clear
 import os
-import logging
 
 app = create_app()
 
 if __name__ == "__main__":
-    #logging.basicConfig(level=logging.DEBUG)
     
+    # Create new database table for storing chat log
+    execute_statement(clear())
+    execute_statement(init())
+
     app.run(
         debug=True,
         host="0.0.0.0",
