@@ -3,7 +3,9 @@ import Grid from '@mui/material/Grid2';
 import React, {useState, useRef, useEffect} from "react";
 import Tooltip from './Tooltips';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
-import SendIcon from "@mui/icons-material/Send"
+import SendIcon from "@mui/icons-material/Send";
+import MicIcon from '@mui/icons-material/Mic';
+import MicOffIcon from '@mui/icons-material/MicOff';
 
 // Sidebar Function
 
@@ -14,7 +16,7 @@ export default function Sidebar({
   setChatType,
   activePdfFilename,
   // Receive state and setters from parent
-  messageDefinition,
+  messageDefinition = [],
   setMessageDefinition,
   messageRealWorldAnalogy,
   setMessageRealWorldAnalogy,
@@ -27,9 +29,7 @@ export default function Sidebar({
     // intialised the state of hasSeenTour
     localStorage.setItem("hasSeenTour", "false");
     // Store which chat is currently selected (default Definition)
-    // This state remains local to Sidebar as it controls UI selection here
     const [selectedChat, setSelectedChat] = useState("Definition");
-
     //set tooltips state
     const [open,setOpen] = useState(false);
 
@@ -51,7 +51,6 @@ export default function Sidebar({
         <Grid
             container
             sx={{
-
                 height:"82vh",
                 width:"30vw",
                 borderRadius: "20px",
@@ -281,6 +280,53 @@ const ChatMessageInput = ({addMessage, selectedChat, activePdfFilename, setIsLoa
     // store current input inside the message box
     const [userMessageInput, setUserMessageInput] = useState("");
 
+    const [isListening,setIsListening] = useState(false);
+
+    const recognitionRef = useRef(null);
+
+    useEffect(() => {
+
+        if ("webkitSpeechRecognition" in window) {
+            recognitionRef.current = new window.webkitSpeechRecognition();
+            recognitionRef.current.continous = false;
+            recognitionRef.current.interimResults = false;
+            recognitionRef.current.lang = "en-US";
+
+            recognitionRef.current.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                setUserMessageInput(prev => prev + (prev ? " ":"") + transcript);
+            };
+
+            recognitionRef.current.onend = () => {
+                setIsListening(false);
+            };
+
+            recognitionRef.current.onerror = (event) => {
+                console.error("Speech recognition error:", event.error);
+                setIsListening(false);
+            }
+        }
+
+        return () => {
+            if (recognitionRef.current) {
+                recognitionRef.current.stop();
+            }
+        };
+    }, []);
+
+    const toggleListening = () => {
+        if (!recognitionRef.current) {
+            console.error("speech recognition not supported");
+            return;
+        }
+
+        if (isListening) {
+            recognitionRef.current.stop();
+        } else {
+            recognitionRef.current.start();
+            setIsListening(true);
+        }
+    };
     // send message function
     const sendMessage = () => {
         // if message is not empty then we send the message
@@ -377,6 +423,32 @@ const ChatMessageInput = ({addMessage, selectedChat, activePdfFilename, setIsLoa
 
 
             />
+            <IconButton
+                onClick={toggleListening}
+                sx={{
+                    color: isListening ? `rgba(255,0,0,0.9)` : `rgba(147,197,253,0.9)`,
+                    backgroundColor: isListening ? `rgba(2, 1, 1, 0.1) `: `rgba(147,197,253,0.1)`,
+                    borderRadius: "12px",
+                    padding: "8px",
+                    transition: "all 0.3s ease",
+                    "&:hover": {
+                        backgroundColor: isListening ? `rgba(255,0,0,0.25)` : `rgba(147,197,253,0.2)`,
+                        transform: `scale(1.05)`,
+                    },
+                    "&:active": {
+                        transform: `scale(0.95)`,
+                    },
+                    animation : isListening ? `${keyframes`
+                            0% {transform: scale(1);}
+                            50% {transform: scale(1.1);}
+                            100% {transform: scale(1);}
+                            
+                        `} 1.5s infinite` : "none",
+                    
+                }}
+            >
+                {isListening ? <MicOffIcon /> : <MicIcon />}
+            </IconButton>
             <IconButton
                 onClick={sendMessage}
                 disabled={!userMessageInput.trim()}
