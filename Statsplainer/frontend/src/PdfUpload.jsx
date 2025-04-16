@@ -146,7 +146,6 @@ export const PdfUpload = ({ file, setSideBarTriggered, currentMode, addMessage, 
                    pageNumber={index + 1}
                    scale={pageScale}
                    width={windowWidth}
-                   //onRenderSuccess={onPageRenderSuccess}
                    onRenderSuccess={(page) => onPageRenderSuccess(page)}
                 />
              </Box>
@@ -238,7 +237,7 @@ export const PdfUpload = ({ file, setSideBarTriggered, currentMode, addMessage, 
          </IconButton>
       </Box>
 
-      {numPages && numPages > 1 && (
+      {/* {numPages && numPages > 1 && (
         <Box sx={{ position: 'absolute', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 2, width: 'auto', zIndex: '10', bottom: '10px', backgroundColor: 'rgba(255,255,255,0.8)', padding: '4px 8px', borderRadius: 1 }}>
           <IconButton size="small" onClick={goToPreviousPage} disabled={pageNumber <= 1} title="Previous Page">
             <ArrowBackRoundedIcon />
@@ -250,7 +249,7 @@ export const PdfUpload = ({ file, setSideBarTriggered, currentMode, addMessage, 
             <ArrowForwardRoundedIcon />
           </IconButton>
         </Box>
-      )}
+      )} */}
     </Grid>
   );
 };
