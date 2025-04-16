@@ -84,16 +84,6 @@ export const PdfUpload = ({ file, setSideBarTriggered, currentMode, addMessage, 
   const zoomOut = () => changeZoom(-0.1);
 
   // Fix's zoom bug
-  // const onPageRenderSuccess = useCallback(() => {
-  //   if (pageRef.current && containerRef.current) {
-  //     const pageElementWidth = pageRef.current.clientWidth;
-  //     const containerElementWidth = containerRef.current.clientWidth;
-  //     const overflows = pageElementWidth > containerElementWidth + 1;
-  //     // Only update state if it changes to prevent potential loops
-  //     setIsHorizontallyOverflowing(prev => overflows !== prev ? overflows : prev);
-  //   }
-  // }, []);
-
   const onPageRenderSuccess = useCallback((page) => {
     // Get the specific page element using the page number from the callback
     const pageElement = pageElementsRef.current[page.pageNumber - 1];
@@ -102,23 +92,13 @@ export const PdfUpload = ({ file, setSideBarTriggered, currentMode, addMessage, 
     if (pageElement && containerRef.current) {
       const pageElementWidth = pageElement.clientWidth;
       const containerElementWidth = containerRef.current.clientWidth;
-      const overflows = pageElementWidth > containerElementWidth + 1; // Add tolerance
+      const overflows = pageElementWidth > containerElementWidth + 1;
 
-      // Update overflow state - This simple check sets true if ANY page overflows.
-      // Consider if you only want it based on the *current* page or a max width calculation.
       if (overflows) {
           setIsHorizontallyOverflowing(true);
       }
-      // NOTE: This logic doesn't automatically reset to false if the overflowing page
-      // is no longer overflowing after a resize/zoom out, unless reset elsewhere (like useEffect [pageScale]).
     }
-  // Dependencies: include refs if their change should trigger re-memoization.
-  // However, refs themselves changing (.current) doesn't trigger re-renders/re-memoization.
-  // Relying on re-renders from pageScale/numPages/window resize is usually sufficient.
-  // Empty array `[]` might be okay if the logic inside doesn't depend on state/props,
-  // but accessing refs might warrant including them IF their identity could change (unlikely here).
-  // Let's remove dependencies for now as the core logic uses direct ref access.
-  }, []); // Keep dependencies minimal, reset state elsewhere
+  }, []);
 
   return (
     <Grid sx={{ 
