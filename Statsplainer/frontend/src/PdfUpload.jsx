@@ -17,19 +17,21 @@ import PhotoCameraRoundedIcon from '@mui/icons-material/PhotoCameraRounded';
 import worker from "pdfjs-dist/build/pdf.worker?worker";
 pdfjs.GlobalWorkerOptions.workerPort = new worker();
 
-export const PdfUpload = ({ file, setSideBarTriggered, currentMode, addMessage, setIsLoading }) => { // Add setIsLoading prop
+export const PdfUpload = ({ file, setSideBarTriggered, currentMode, addMessage, setIsLoading }) => {
   const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
   const [pageScale, setPageScale] = useState(1);
-  const [lastHighlightPoint, setlastHighlightPoint] = useState(null);
+  const [lastHighlightPoint, setLastHighlightPoint] = useState(null);
   const [confirmPopup, setConfirmPopup] = useState(false);
   const [snipHighlightSwitch, setSnipHighlightSwitch] = useState("Highlight");
   const containerRef = useRef(null);
-  const pageRef = useRef(null);
   const [isHorizontallyOverflowing, setIsHorizontallyOverflowing] = useState(false);
 
-  const onDocumentLoadSuccess = ({ numPages }) => {
-    setNumPages(numPages);
+  const pageElementsRef = useRef([]);
+  const onDocumentLoadSuccess = ({ numPages: loadedNumPages }) => {
+    setNumPages(loadedNumPages);
+    setPageNumber(1);
+    pageElementsRef.current = Array(loadedNumPages).fill(null);
   };
   
   const {
@@ -40,7 +42,7 @@ export const PdfUpload = ({ file, setSideBarTriggered, currentMode, addMessage, 
     handleMouseUp,
     highlightedBoxes,
     highlightReset
-  } = Highlight(containerRef, pageNumber, snipHighlightSwitch, pageScale, pageRef);
+  } = Highlight(containerRef, pageNumber, snipHighlightSwitch, pageScale, pageElementsRef);
 
   useEffect(() => {
     if (highlights.length > 0) {
@@ -49,7 +51,7 @@ export const PdfUpload = ({ file, setSideBarTriggered, currentMode, addMessage, 
       } else if (highlights[0].boxes.length > 0) {
         setConfirmPopup(true);
       }
-      setlastHighlightPoint({
+      setLastHighlightPoint({
         x: highlights[0].x,
         y: highlights[0].y,
         width: highlights[0].width,
@@ -62,13 +64,10 @@ export const PdfUpload = ({ file, setSideBarTriggered, currentMode, addMessage, 
 
   useEffect(() => {
     highlightReset();
-  }, [pageScale, numPages, snipHighlightSwitch])
+    setIsHorizontallyOverflowing(false);
+  }, [pageScale, numPages, snipHighlightSwitch, window.innerWidth, window.innerHeight])
 
-  let width = 70;
-  let height = 92;
-  let containerWidth = width + 'vw';
-  let containerHeight = height + 'vh';
-  let windowWidth = window.innerWidth * (width / 100) * 0.9;
+  let windowWidth = window.innerWidth * (70 / 100) * 0.9;
 
   const changePage = (newPageNumber) => {
     if (newPageNumber >= 1 && newPageNumber <= numPages) {
@@ -85,21 +84,57 @@ export const PdfUpload = ({ file, setSideBarTriggered, currentMode, addMessage, 
   const zoomOut = () => changeZoom(-0.1);
 
   // Fix's zoom bug
-  const onPageRenderSuccess = useCallback(() => {
-    if (pageRef.current && containerRef.current) {
-      const pageElementWidth = pageRef.current.clientWidth;
+  // const onPageRenderSuccess = useCallback(() => {
+  //   if (pageRef.current && containerRef.current) {
+  //     const pageElementWidth = pageRef.current.clientWidth;
+  //     const containerElementWidth = containerRef.current.clientWidth;
+  //     const overflows = pageElementWidth > containerElementWidth + 1;
+  //     // Only update state if it changes to prevent potential loops
+  //     setIsHorizontallyOverflowing(prev => overflows !== prev ? overflows : prev);
+  //   }
+  // }, []);
+
+  const onPageRenderSuccess = useCallback((page) => {
+    // Get the specific page element using the page number from the callback
+    const pageElement = pageElementsRef.current[page.pageNumber - 1];
+
+    // Check the container exists too
+    if (pageElement && containerRef.current) {
+      const pageElementWidth = pageElement.clientWidth;
       const containerElementWidth = containerRef.current.clientWidth;
-      const overflows = pageElementWidth > containerElementWidth + 1;
-      // Only update state if it changes to prevent potential loops
-      setIsHorizontallyOverflowing(prev => overflows !== prev ? overflows : prev);
+      const overflows = pageElementWidth > containerElementWidth + 1; // Add tolerance
+
+      // Update overflow state - This simple check sets true if ANY page overflows.
+      // Consider if you only want it based on the *current* page or a max width calculation.
+      if (overflows) {
+          setIsHorizontallyOverflowing(true);
+      }
+      // NOTE: This logic doesn't automatically reset to false if the overflowing page
+      // is no longer overflowing after a resize/zoom out, unless reset elsewhere (like useEffect [pageScale]).
     }
-  }, []);
+  // Dependencies: include refs if their change should trigger re-memoization.
+  // However, refs themselves changing (.current) doesn't trigger re-renders/re-memoization.
+  // Relying on re-renders from pageScale/numPages/window resize is usually sufficient.
+  // Empty array `[]` might be okay if the logic inside doesn't depend on state/props,
+  // but accessing refs might warrant including them IF their identity could change (unlikely here).
+  // Let's remove dependencies for now as the core logic uses direct ref access.
+  }, []); // Keep dependencies minimal, reset state elsewhere
 
   return (
-    <Grid sx={{ position: 'relative', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', backgroundColor: 'lightgrey', width: containerWidth, height: containerHeight}}>
+    <Grid sx={{ 
+      position: 'relative', 
+      display: 'flex', 
+      flexDirection: 'column', 
+      justifyContent: 'center', 
+      alignItems: 'center', 
+      backgroundColor: 'lightgrey', 
+      width: '100%', 
+      height: '100%'
+    }}>
 
       <Box 
         sx={{
+          flexGrow: 1,
           display: 'flex',
           position: 'relative',
           flexDirection: 'column',
@@ -113,7 +148,6 @@ export const PdfUpload = ({ file, setSideBarTriggered, currentMode, addMessage, 
         onMouseDown={(e) => {setConfirmPopup(false); handleMouseDown(e);}}
         onMouseMove={handleMouseMove}
         onMouseUp={(e) => {setConfirmPopup(false); handleMouseUp(e);}}
-        onScroll={highlightReset}
         ref={containerRef}
       >
 
@@ -122,20 +156,21 @@ export const PdfUpload = ({ file, setSideBarTriggered, currentMode, addMessage, 
           onLoadSuccess={onDocumentLoadSuccess}
           sx={{ display: 'flex', position: 'relative', flexDirection: 'column', alignItems: 'center', overflow: 'auto', width: '100%', height: '100%', userSelect: "none",}}
         >
-          {numPages && (
-            <Box
-              key={`page_container_${pageNumber}`}
-              ref={pageRef}
-              sx={{ position: 'relative', boxShadow: '0px 4px 8px rgba(0,0,0,0.2)' }}
-            >
-              <Page
-                pageNumber={pageNumber}
-                scale={pageScale}
-                width={windowWidth}
-                onRenderSuccess={onPageRenderSuccess}
-              />
+          {Array.from({ length: numPages || 0 }, (_, index) => (
+             <Box
+                key={`page_container_${index + 1}`}
+                ref={(el) => { if (el) pageElementsRef.current[index] = el; }}
+                sx={{ marginBottom: '10px', position: 'relative', boxShadow: '0px 4px 8px rgba(0,0,0,0.2)' }}
+             >
+                <Page
+                   pageNumber={index + 1}
+                   scale={pageScale}
+                   width={windowWidth}
+                   //onRenderSuccess={onPageRenderSuccess}
+                   onRenderSuccess={(page) => onPageRenderSuccess(page)}
+                />
              </Box>
-          )}
+          ))}
         </Document>
 
         {currentHighlight && (
