@@ -1,8 +1,8 @@
 from flask import request, jsonify, Blueprint, current_app
 import os
 from API import API_text_input
-from util import extract_text_from_pdf, prompt_builder
 from log_interface import log_insert
+from prompts import prompt_builder
 
 aiapi_routes = Blueprint("aiapi_routes", __name__)
 
@@ -31,19 +31,10 @@ def explain_highlight():
 
         if not os.path.exists(file_path):
             return jsonify({"error": f"File not found: {filename}"}), 404
-            
-    try:
-        full_text = extract_text_from_pdf(file_path)
-    except Exception as e:
-        # Log the error e for debugging
-        print(f"Error extracting PDF text: {e}")
-        return jsonify({"error": "Failed to extract text from PDF"}), 500
 
     # Combine highlighted text and context for the API
-    combined_text = f"""Highlighted Text (If the highlighted text is not part of the pdf then it is a user enquiry):
+    combined_text = f"""Highlighted Text:
                         '{highlighted_text}'
-                        Full Context from PDF:
-                        {full_text}
                     """
 
     if image_base64:

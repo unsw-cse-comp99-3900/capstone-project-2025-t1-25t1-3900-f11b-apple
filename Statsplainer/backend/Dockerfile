@@ -18,6 +18,7 @@ COPY key.txt .
 COPY util.py .
 COPY log_interface.py .
 COPY app_log.db .
+COPY prompts.py .
 
 # Expose the port your backend listens on
 EXPOSE 5000
