@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, make_response, request, Blueprint
+from flask import make_response, request, Blueprint
 from uuid import uuid4
 
 cookie_handler = Blueprint("cookie_handler", __name__)

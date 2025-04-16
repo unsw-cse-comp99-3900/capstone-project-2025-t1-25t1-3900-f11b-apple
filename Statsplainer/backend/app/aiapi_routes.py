@@ -1,4 +1,4 @@
-from flask import g, redirect, request, jsonify, Blueprint, current_app, url_for
+from flask import request, jsonify, Blueprint, current_app
 import os
 from API import API_text_input
 from util import extract_text_from_pdf, prompt_builder
