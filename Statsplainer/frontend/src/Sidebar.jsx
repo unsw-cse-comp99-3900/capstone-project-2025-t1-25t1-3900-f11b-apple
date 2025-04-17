@@ -295,6 +295,7 @@ const ChatMessageInput = ({addMessage, selectedChat, activePdfFilename, setIsLoa
 
             fetch("http://localhost:5000/explain-highlight", {
                 method: "post",
+                credentials: 'include',
                 headers: {
                     "Content-Type" : "application/json",
                 },

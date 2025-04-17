@@ -1,6 +1,7 @@
 from flask import request, jsonify, Blueprint, current_app
 import os
 from API import API_text_input
+from log_interface import log_insert
 from prompts import prompt_builder
 
 aiapi_routes = Blueprint("aiapi_routes", __name__)
@@ -8,6 +9,10 @@ aiapi_routes = Blueprint("aiapi_routes", __name__)
 # Endpoint for handling highlighted text explanations
 @aiapi_routes.route("/explain-highlight", methods=["POST"])
 def explain_highlight():
+    uid = request.cookies.get('uid')
+    if not uid:
+        uid = "No uid found ;-;."
+
     data = request.json
     if not data or "highlighted_text" not in data or "mode" not in data or "filename" not in data:
         return jsonify({"error": "Missing highlighted_text, mode, or filename in request"}), 400
@@ -44,6 +49,11 @@ def explain_highlight():
         # Pass image_base64 if it exists
         explanation = API_text_input(text=combined_text, dev_msg=dev_msg, image_base64=image_base64)
         print(explanation)
+
+        message = explanation
+        sender = "Statsplainer"
+        log_insert(uid, message, sender)
+        
         return jsonify({
             "explanation": explanation
         })
