@@ -82,9 +82,10 @@ export default function Sidebar({
         <Grid
             container
             sx={{
-                height:"82vh",
-                width:"30vw",
-                borderRadius: "20px",
+                display: 'flex',
+                height:"92vh",
+                width: "100%",
+                //borderRadius: "20px",
                 backgroundColor: "#37383C",
                 flexDirection:"column",
                 p:1,
@@ -412,6 +413,7 @@ const ChatMessageInput = ({addMessage, onTranslateClick, selectedChat, activePdf
 
             fetch("http://localhost:5000/explain-highlight", {
                 method: "post",
+                credentials: 'include',
                 headers: {
                     "Content-Type" : "application/json",
                 },

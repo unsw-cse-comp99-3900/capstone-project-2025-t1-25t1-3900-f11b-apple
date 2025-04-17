@@ -17,19 +17,21 @@ import PhotoCameraRoundedIcon from '@mui/icons-material/PhotoCameraRounded';
 import worker from "pdfjs-dist/build/pdf.worker?worker";
 pdfjs.GlobalWorkerOptions.workerPort = new worker();
 
-export const PdfUpload = ({ file, setSideBarTriggered, currentMode, addMessage, setIsLoading }) => { // Add setIsLoading prop
+export const PdfUpload = ({ file, setSideBarTriggered, currentMode, addMessage, setIsLoading }) => {
   const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
   const [pageScale, setPageScale] = useState(1);
-  const [lastHighlightPoint, setlastHighlightPoint] = useState(null);
+  const [lastHighlightPoint, setLastHighlightPoint] = useState(null);
   const [confirmPopup, setConfirmPopup] = useState(false);
   const [snipHighlightSwitch, setSnipHighlightSwitch] = useState("Highlight");
   const containerRef = useRef(null);
-  const pageRef = useRef(null);
   const [isHorizontallyOverflowing, setIsHorizontallyOverflowing] = useState(false);
 
-  const onDocumentLoadSuccess = ({ numPages }) => {
-    setNumPages(numPages);
+  const pageElementsRef = useRef([]);
+  const onDocumentLoadSuccess = ({ numPages: loadedNumPages }) => {
+    setNumPages(loadedNumPages);
+    setPageNumber(1);
+    pageElementsRef.current = Array(loadedNumPages).fill(null);
   };
   
   const {
@@ -40,7 +42,7 @@ export const PdfUpload = ({ file, setSideBarTriggered, currentMode, addMessage, 
     handleMouseUp,
     highlightedBoxes,
     highlightReset
-  } = Highlight(containerRef, pageNumber, snipHighlightSwitch, pageScale, pageRef);
+  } = Highlight(containerRef, pageNumber, snipHighlightSwitch, pageScale, pageElementsRef);
 
   useEffect(() => {
     if (highlights.length > 0) {
@@ -49,7 +51,7 @@ export const PdfUpload = ({ file, setSideBarTriggered, currentMode, addMessage, 
       } else if (highlights[0].boxes.length > 0) {
         setConfirmPopup(true);
       }
-      setlastHighlightPoint({
+      setLastHighlightPoint({
         x: highlights[0].x,
         y: highlights[0].y,
         width: highlights[0].width,
@@ -62,13 +64,10 @@ export const PdfUpload = ({ file, setSideBarTriggered, currentMode, addMessage, 
 
   useEffect(() => {
     highlightReset();
-  }, [pageScale, numPages, snipHighlightSwitch])
+    setIsHorizontallyOverflowing(false);
+  }, [pageScale, numPages, snipHighlightSwitch, window.innerWidth, window.innerHeight])
 
-  let width = 70;
-  let height = 92;
-  let containerWidth = width + 'vw';
-  let containerHeight = height + 'vh';
-  let windowWidth = window.innerWidth * (width / 100) * 0.9;
+  let windowWidth = window.innerWidth * (70 / 100) * 0.9;
 
   const changePage = (newPageNumber) => {
     if (newPageNumber >= 1 && newPageNumber <= numPages) {
@@ -85,21 +84,37 @@ export const PdfUpload = ({ file, setSideBarTriggered, currentMode, addMessage, 
   const zoomOut = () => changeZoom(-0.1);
 
   // Fix's zoom bug
-  const onPageRenderSuccess = useCallback(() => {
-    if (pageRef.current && containerRef.current) {
-      const pageElementWidth = pageRef.current.clientWidth;
+  const onPageRenderSuccess = useCallback((page) => {
+    // Get the specific page element using the page number from the callback
+    const pageElement = pageElementsRef.current[page.pageNumber - 1];
+
+    // Check the container exists too
+    if (pageElement && containerRef.current) {
+      const pageElementWidth = pageElement.clientWidth;
       const containerElementWidth = containerRef.current.clientWidth;
       const overflows = pageElementWidth > containerElementWidth + 1;
-      // Only update state if it changes to prevent potential loops
-      setIsHorizontallyOverflowing(prev => overflows !== prev ? overflows : prev);
+
+      if (overflows) {
+          setIsHorizontallyOverflowing(true);
+      }
     }
   }, []);
 
   return (
-    <Grid sx={{ position: 'relative', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', backgroundColor: 'lightgrey', width: containerWidth, height: containerHeight}}>
+    <Grid sx={{ 
+      position: 'relative', 
+      display: 'flex', 
+      flexDirection: 'column', 
+      justifyContent: 'center', 
+      alignItems: 'center', 
+      backgroundColor: 'lightgrey', 
+      width: '100%', 
+      height: '100%'
+    }}>
 
       <Box 
         sx={{
+          flexGrow: 1,
           display: 'flex',
           position: 'relative',
           flexDirection: 'column',
@@ -113,7 +128,6 @@ export const PdfUpload = ({ file, setSideBarTriggered, currentMode, addMessage, 
         onMouseDown={(e) => {setConfirmPopup(false); handleMouseDown(e);}}
         onMouseMove={handleMouseMove}
         onMouseUp={(e) => {setConfirmPopup(false); handleMouseUp(e);}}
-        onScroll={highlightReset}
         ref={containerRef}
       >
 
@@ -122,20 +136,20 @@ export const PdfUpload = ({ file, setSideBarTriggered, currentMode, addMessage, 
           onLoadSuccess={onDocumentLoadSuccess}
           sx={{ display: 'flex', position: 'relative', flexDirection: 'column', alignItems: 'center', overflow: 'auto', width: '100%', height: '100%', userSelect: "none",}}
         >
-          {numPages && (
-            <Box
-              key={`page_container_${pageNumber}`}
-              ref={pageRef}
-              sx={{ position: 'relative', boxShadow: '0px 4px 8px rgba(0,0,0,0.2)' }}
-            >
-              <Page
-                pageNumber={pageNumber}
-                scale={pageScale}
-                width={windowWidth}
-                onRenderSuccess={onPageRenderSuccess}
-              />
+          {Array.from({ length: numPages || 0 }, (_, index) => (
+             <Box
+                key={`page_container_${index + 1}`}
+                ref={(el) => { if (el) pageElementsRef.current[index] = el; }}
+                sx={{ marginBottom: '10px', position: 'relative', boxShadow: '0px 4px 8px rgba(0,0,0,0.2)' }}
+             >
+                <Page
+                   pageNumber={index + 1}
+                   scale={pageScale}
+                   width={windowWidth}
+                   onRenderSuccess={(page) => onPageRenderSuccess(page)}
+                />
              </Box>
-          )}
+          ))}
         </Document>
 
         {currentHighlight && (
@@ -223,7 +237,7 @@ export const PdfUpload = ({ file, setSideBarTriggered, currentMode, addMessage, 
          </IconButton>
       </Box>
 
-      {numPages && numPages > 1 && (
+      {/* {numPages && numPages > 1 && (
         <Box sx={{ position: 'absolute', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 2, width: 'auto', zIndex: '10', bottom: '10px', backgroundColor: 'rgba(255,255,255,0.8)', padding: '4px 8px', borderRadius: 1 }}>
           <IconButton size="small" onClick={goToPreviousPage} disabled={pageNumber <= 1} title="Previous Page">
             <ArrowBackRoundedIcon />
@@ -235,7 +249,7 @@ export const PdfUpload = ({ file, setSideBarTriggered, currentMode, addMessage, 
             <ArrowForwardRoundedIcon />
           </IconButton>
         </Box>
-      )}
+      )} */}
     </Grid>
   );
 };
