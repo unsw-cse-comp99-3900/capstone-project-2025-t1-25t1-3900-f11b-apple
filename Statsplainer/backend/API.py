@@ -1,7 +1,7 @@
 from openai import OpenAI
 import base64
 
-ai_model = "google/gemini-2.5-pro-preview-03-25"
+ai_model = "anthropic/claude-3.7-sonnet"
 
 #------------------------------------------------------------------------------------
 #                   SETTING UP API CLIENT/KEY
@@ -92,16 +92,24 @@ def API_text_input(text, dev_msg, image_base64=None):
     ]
     
   else:
-    msg=[
-      {
-        "role": "developer",
-        "content": dev_msg
-      },
-      {
-        "role": "user",
-        "content": text
-      }
-    ]
+      msg = [
+          {
+              "role": "user",
+              "content": [
+                  {
+                      "type": "text",
+                      "text": text,
+                      "cache_control": {
+                          "type": "ephemeral"
+                      }
+                  }
+              ]
+          },
+          {
+              "role": "user",
+              "content": dev_msg
+          }
+      ]
 
   completion = client.chat.completions.create(
     model=ai_model,
