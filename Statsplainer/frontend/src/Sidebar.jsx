@@ -18,8 +18,8 @@ export default function Sidebar({
   setChatType,
   activePdfFilename,
   // Receive state and setters from parent
-  //messageDefinition = [],
-  //setMessageDefinition,
+  messageDefinition = [],
+  setMessageDefinition,
   messageRealWorldAnalogy,
   setMessageRealWorldAnalogy,
   messageELI5,
