@@ -186,11 +186,10 @@ const ChatResponseSection = ({ messages, isLoading }) => { // Add isLoading prop
             // iterate through each message and change the value of the text to the translate language
             for (let i = 0; i < messages.length; i++) {
                 const message = messages[i];
-                const translatedText = "你好";
                 if (message.sender === "AI" && message.text && !message.image) {
-                    //const response = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${LanguageCode}&dt=t&q=${encodeURIComponent(message.text)}`);
-                    //const data = await response.json();
-                    //translatedText = data[0].map(item => item[0]).join('');
+                    let response = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${LanguageCode}&dt=t&q=${encodeURIComponent(message.text)}`);
+                    const data = await response.json();
+                    const translatedText = data[0].map(item => item[0]).join('');
                     messages[i] = {
                         ...message,
                         text: translatedText,
