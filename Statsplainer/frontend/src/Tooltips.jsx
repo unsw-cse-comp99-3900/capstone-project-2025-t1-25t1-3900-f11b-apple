@@ -21,7 +21,7 @@ const tourGuide = [
     content: 'You can switch between highlighting text/sentences or highlight images by clicking the button ',
     slideDirection : 'down',
     position: {top: "10%",left: "20%"},
-    arrowDirecton: "right",
+    arrowDirecton: "left",
   },
   {
     target: 'pdf-zoom in and out',
