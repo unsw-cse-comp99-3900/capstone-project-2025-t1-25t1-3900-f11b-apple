@@ -25,7 +25,18 @@ def upload_pdf():
         This is the full PDF provided here for context, 
         use this PDF to answer all further queries.
         
-        Quickly read through and process this PDF. 
+        Here is a research article. Please extract:
+        1. The topic and field of study
+        2. The study's goal
+        3. Key statistical findings (e.g., p-values, confidence intervals)
+        4. Limitations or uncertainties
+        
+        Break the paper into:
+        1. First page → infer title/authors
+        2. Abstract
+        3. Methods
+        4. Results
+        5. Discussion
     """
     
     try:
