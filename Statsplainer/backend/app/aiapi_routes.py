@@ -3,6 +3,7 @@ import os
 from API import API_text_input
 from log_interface import log_insert
 from prompts import prompt_builder
+from util import extract_text_from_pdf
 
 aiapi_routes = Blueprint("aiapi_routes", __name__)
 
@@ -16,11 +17,20 @@ def explain_highlight():
     data = request.json
     if not data or "highlighted_text" not in data or "mode" not in data or "filename" not in data:
         return jsonify({"error": "Missing highlighted_text, mode, or filename in request"}), 400
-    
+
     highlighted_text = data["highlighted_text"]
     mode = data["mode"]
     filename = data["filename"]
     image_base64 = data.get("image_base64")
+    
+    file_path = os.path.join(current_app.config['PDF_FOLDER'], filename)
+    
+    try:
+        full_text = extract_text_from_pdf(file_path)
+    except Exception as e:
+        # Log the error e for debugging
+        print(f"Error extracting PDF text: {e}")
+        return jsonify({"error": "Failed to extract text from PDF"}), 500
 
     # Validate filename to prevent path traversal issues (basic example)
     if filename:
@@ -43,11 +53,12 @@ def explain_highlight():
 
     # Determine the developer message based on the mode
     dev_msg = prompt_builder(mode)
+    combined_text += dev_msg
     
     try:
         # Call API utility with combined text and mode-specific instructions
         # Pass image_base64 if it exists
-        explanation = API_text_input(text=combined_text, dev_msg=dev_msg, image_base64=image_base64)
+        explanation = API_text_input(text=full_text, dev_msg=combined_text, image_base64=image_base64)
         print(explanation)
 
         message = explanation
