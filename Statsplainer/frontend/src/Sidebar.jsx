@@ -34,7 +34,6 @@ export default function Sidebar({
     const [selectedChat, setSelectedChat] = useState("Definition");
     //set tooltips state
     const [open,setOpen] = useState(false);
-    const [messageDefinition, setMessageDefinition] = useState([{sender: "AI", text: "testing testing!!"}]);
     
     //handle open/close tooltip
     const handleOpenTooltip = () => setOpen(true);
