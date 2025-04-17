@@ -1,4 +1,4 @@
-import { Box, Button, Paper, TextField, IconButton, keyframes } from '@mui/material'; // Added keyframes
+import { Box, Button, Paper, TextField, IconButton, keyframes, Menu, MenuItem, collapseClasses } from '@mui/material'; // Added keyframes
 import Grid from '@mui/material/Grid2';
 import React, {useState, useRef, useEffect} from "react";
 import Tooltip from './Tooltips';
@@ -6,6 +6,8 @@ import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import SendIcon from "@mui/icons-material/Send";
 import MicIcon from '@mui/icons-material/Mic';
 import MicOffIcon from '@mui/icons-material/MicOff';
+import TranslateIcon from '@mui/icons-material/Translate';
+import LanguageIcon from '@mui/icons-material/Language'
 
 // Sidebar Function
 
@@ -16,8 +18,8 @@ export default function Sidebar({
   setChatType,
   activePdfFilename,
   // Receive state and setters from parent
-  messageDefinition = [],
-  setMessageDefinition,
+  //messageDefinition = [],
+  //setMessageDefinition,
   messageRealWorldAnalogy,
   setMessageRealWorldAnalogy,
   messageELI5,
@@ -32,7 +34,8 @@ export default function Sidebar({
     const [selectedChat, setSelectedChat] = useState("Definition");
     //set tooltips state
     const [open,setOpen] = useState(false);
-
+    const [messageDefinition, setMessageDefinition] = useState([{sender: "AI", text: "testing testing!!"}]);
+    
     //handle open/close tooltip
     const handleOpenTooltip = () => setOpen(true);
     const handleCloseTooltip = () => setOpen(false);
@@ -145,13 +148,71 @@ const ChatResponseSection = ({ messages, isLoading }) => { // Add isLoading prop
     // interaction to be complete
     const messagesEndRef = useRef(null);
 
+    // check which language is selected
+    const [anchorEl, setAnchorEl] = useState(null);
+
+    // check the state of whether the translate button is being pressed
+    const [isTranslating, setIsTranslating] = useState(false);
+
+
+    // language code array
+    // add more desired langauge here
+    const languages = [
+        {code: "es", name: "Spanish"},
+        {code: "fr", name: "French"},
+        {code: "de", name: "German"},
+        {code: "it", name: "Italian"},
+        {code: "pt", name: "Portuguese"},
+        {code: "ru", name: "Russian"},
+        {code: "ja", name: "Japanese"},
+        {code: "ko", name: "Korean"},
+        {code: "zh", name: "Chinese"},
+    ];
+
+    const handleTranslateClick = (event, messageIndex) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+    const handleLanguageSelect = async (LanguageCode) => {
+        setIsTranslating(true);
+        
+        //translate all messages send from the ai into desired selected language
+        try {
+            console.log("start translate");
+            // iterate through each message and change the value of the text to the translate language
+            for (let i = 0; i < messages.length; i++) {
+                const message = messages[i];
+                const translatedText = "你好";
+                if (message.sender === "AI" && message.text && !message.image) {
+                    //const response = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${LanguageCode}&dt=t&q=${encodeURIComponent(message.text)}`);
+                    //const data = await response.json();
+                    //translatedText = data[0].map(item => item[0]).join('');
+                    messages[i] = {
+                        ...message,
+                        text: translatedText,
+                    };
+                } 
+            }
+            
+            
+        } catch (error) {
+            console.error("Translation error:", error);
+        } finally {
+            setIsTranslating(false);
+        }
+        handleClose();
+    };
+
     useEffect(() => {
         if (messagesEndRef.current) {
             messagesEndRef.current.scrollIntoView({behavior: "smooth"});
         }
     },[messages]);
     
-
 
     return (
         <Box
@@ -211,6 +272,8 @@ const ChatResponseSection = ({ messages, isLoading }) => { // Add isLoading prop
                             backgroundColor: `rgba(147,197,253,0.9)`,
                             borderRadius: "50%",
                             boxShadow: `0 0 10px rgba(147,197,253, 0.5)`,
+                            display:"flex",
+                            flexDirection:"column",
                         },
 
                     }}
@@ -230,17 +293,67 @@ const ChatResponseSection = ({ messages, isLoading }) => { // Add isLoading prop
                     ) : (
                       message.text // Render text if not an image or imageUrl is missing
                     )}
+                    
                 </Paper>
 
+                {/* translate button located on the top right corner of the response section */}
+                <IconButton
+                            size="small"
+                            onClick={(e) => handleTranslateClick(e, index)}
+                            disabled={isTranslating}
+                            sx={{
+                                position : "absolute",
+                                right: "8px",
+                                top:"8px",
+                                color: isTranslating ? `rgba(0,0,0,0.3)` : `rgba(0,0,0,0.5)`,
+                                "&:hover" : {
+                                    color: isTranslating ? `rgba(0,0,0,0.3)` : `rgba(0,0,0,0.5)`,
+                                },
+                            }}
+                        >
+                            <TranslateIcon fontSize="small" />
+                        </IconButton>    
             </Box>
         ))}
         {/* Render loading indicator if loading */}
         {isLoading && <LoadingDots />}
         <div ref={messagesEndRef} />
+
+        {/* drop down menu to select between different language */}
+        <Menu
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={handleClose}
+            sx={{
+                "& .MuiPaper-root": {
+                    backgroundColor: `rgba(55,56,60,0.9)`,
+                    backdropFilter: `blur(8px)`,
+                }
+            }}
+        >
+            {languages.map((Language) => (
+                <MenuItem
+                    key={Language.code}
+                    onClick={() => handleLanguageSelect(Language.code)}
+                    disabled={isTranslating}
+                    sx={{
+                        color: isTranslating ? `rgba(255,255,255,0.5)` : `white`,
+                        "&:hover" : {
+                            backgroundColor: `rgba(255,255,255,0.1)`,
+                        },
+                    }}
+                >
+                    <LanguageIcon sx={{ mr:1}} />
+                    {Language.name}
+                </MenuItem>
+            ))}
+
+        </Menu>
         </Box>
         
-    )
-}
+    );
+};
+
 // Helper component for the loading dots animation (using MUI)
 const LoadingDots = () => (
   <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', p: 1, width: '100%' }}>
@@ -269,9 +382,6 @@ const LoadingDots = () => (
     </Paper>
   </Box>
 );
-
-
-// chat messageInputFunction
 
 // chat messageInputFunction
 
