@@ -34,7 +34,7 @@ export default function Sidebar({
     const [selectedChat, setSelectedChat] = useState("Definition");
     //set tooltips state
     const [open,setOpen] = useState(false);
-    
+
     //handle open/close tooltip
     const handleOpenTooltip = () => setOpen(true);
     const handleCloseTooltip = () => setOpen(false);
@@ -54,13 +54,13 @@ export default function Sidebar({
         
         const setCurrentMessages = selectedChat === "Definition" ? setMessageDefinition :
                                 selectedChat === "Real world analogy" ? setMessageRealWorldAnalogy : setMessageELI5;
-
+        
         
         try {
             console.log("start translate");
             for (let i = 0; i < currentMessages.length; i++) {
                 const message = currentMessages[i];
-                if (message.ssender === "AI" && message.text && !message.image) {
+                if (message.sender === "AI" && message.text && !message.image) {
                     let response = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${LanguageCode}&dt=t&q=${encodeURIComponent(message.text)}`);
                     const data = await response.json();
                     const translatedText = data[0].map(item => item[0]).join('');
@@ -70,10 +70,11 @@ export default function Sidebar({
                     };
                 }
             }
-            setCurrentMessages(currentMessages);
+            
         } catch (error) {
             console.error("Translation error:", error);
         }
+        setCurrentMessages(currentMessages);
 
 
     };
