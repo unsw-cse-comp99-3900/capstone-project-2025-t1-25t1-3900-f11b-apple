@@ -29,7 +29,7 @@ def prompt_builder(mode):
                 1. Do not use complicated words and do not use jargon.
                 
                 Here is an exemplar of the type of response I want from you:
-                Alright kiddo, here’s how it works: your body has little messengers called melatonin that help you get sleepy. We gave some kids a gentle helper, like a tiny vitamin, and then we checked their spit to see how many messengers were working. About an hour and a half later, there were lots more of them! Even when we shined a bright light, those messengers kept doing their job. So, the helper made bedtime signals stronger and light didn’t really stop them. Cool, right?
+                Alright here’s how it works: your body has little messengers called melatonin that help you get sleepy. We gave some kids a gentle helper, like a tiny vitamin, and then we checked their spit to see how many messengers were working. About an hour and a half later, there were lots more of them! Even when we shined a bright light, those messengers kept doing their job. So, the helper made bedtime signals stronger and light didn’t really stop them. Cool, right?
                 
                 Note that the user can also send queries, answer these naturally using the same rules provided previously without restating the highlighted text or telling the user how their query is a query.
             """
