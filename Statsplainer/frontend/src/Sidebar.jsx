@@ -48,34 +48,35 @@ export default function Sidebar({
         }
     }, []);
 
-    const handleTranslate = (LanguageCode) => {
+    const handleTranslate = async (LanguageCode) => {
         const currentMessages = selectedChat === "Definition" ? messageDefinition :
                                 selectedChat === "Real world analogy" ? messageRealWorldAnalogy : messageELI5;
         
         const setCurrentMessages = selectedChat === "Definition" ? setMessageDefinition :
                                 selectedChat === "Real world analogy" ? setMessageRealWorldAnalogy : setMessageELI5;
 
-        //create a new array with the selected language to be translated
-        const translatedMessages = [...currentMessages];
-        translatedMessages.forEach(async (message, index) => {
-            if (message.sender === "AI" && message.text && !message.image) {
-                try {
+        
+        try {
+            console.log("start translate");
+            for (let i = 0; i < currentMessages.length; i++) {
+                const message = currentMessages[i];
+                if (message.ssender === "AI" && message.text && !message.image) {
                     let response = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${LanguageCode}&dt=t&q=${encodeURIComponent(message.text)}`);
                     const data = await response.json();
                     const translatedText = data[0].map(item => item[0]).join('');
-                    translatedMessages[index] = {
+                    currentMessages[i] = {
                         ...message,
                         text: translatedText,
-                        originalText: message.text,
-                    }
-                    setCurrentMessages(translatedMessages);
-                } catch (error) {
-                    console.error("Translation error:", error);
+                    };
                 }
             }
-        })
+            setCurrentMessages(translatedMessages);
+        } catch (error) {
+            console.error("Translation error:", error);
+        }
 
-    }
+
+    };
 
     return (
         
