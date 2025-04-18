@@ -70,7 +70,7 @@ export default function Sidebar({
                     };
                 }
             }
-            setCurrentMessages(translatedMessages);
+            setCurrentMessages(currentMessages);
         } catch (error) {
             console.error("Translation error:", error);
         }
