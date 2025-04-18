@@ -23,7 +23,7 @@ export const NavBar = ({ page, pdfUploaded, setPdfUploaded, setUploadedFile }) =
   let nav = <></>;
   if (page === '/history') {
     nav = (
-      <IconButton color="inherit" variant="contained" onClick={() => reset()} component={Link} to="/" sx={buttonStyles}>
+      <IconButton color="inherit" variant="contained" onClick={() => reset()} component={Link} to="/" sx={buttonStyles} aria-label="Add New">
         <AddRoundedIcon />
       </IconButton>
     );
@@ -31,11 +31,11 @@ export const NavBar = ({ page, pdfUploaded, setPdfUploaded, setUploadedFile }) =
     nav = (
       <>
         {pdfUploaded && (
-          <IconButton color="inherit" variant="contained" onClick={() => reset()} component={Link} to="/" sx={buttonStyles}>
+          <IconButton color="inherit" variant="contained" onClick={() => reset()} component={Link} to="/" sx={buttonStyles} aria-label="Add New">
             <AddRoundedIcon />
           </IconButton>
         )}
-        <IconButton color="inherit" variant="contained" component={Link} to="/history" sx={buttonStyles}>
+        <IconButton color="inherit" variant="contained" component={Link} to="/history" sx={buttonStyles} aria-label="View History">
           <HistoryRoundedIcon />
         </IconButton>
       </>
