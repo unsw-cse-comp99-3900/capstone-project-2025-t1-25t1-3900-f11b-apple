@@ -61,9 +61,7 @@ def explain_highlight():
         explanation = API_text_input(text=full_text, dev_msg=combined_text, image_base64=image_base64)
         print(explanation)
 
-        message = explanation
-        sender = "Statsplainer"
-        log_insert(uid, message, sender)
+        log_insert(uid, highlighted_text, explanation, mode, filename)
         
         return jsonify({
             "explanation": explanation
