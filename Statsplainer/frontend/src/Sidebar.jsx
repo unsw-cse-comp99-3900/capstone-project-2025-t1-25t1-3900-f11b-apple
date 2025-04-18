@@ -54,17 +54,17 @@ export default function Sidebar({
         
         const setCurrentMessages = selectedChat === "Definition" ? setMessageDefinition :
                                 selectedChat === "Real world analogy" ? setMessageRealWorldAnalogy : setMessageELI5;
-        
-        
+
+        const translatedMessages = [...currentMessages];
         try {
             console.log("start translate");
-            for (let i = 0; i < currentMessages.length; i++) {
-                const message = currentMessages[i];
+            for (let i = 0; i < translatedMessages.length; i++) {
+                const message = translatedMessages[i];
                 if (message.sender === "AI" && message.text && !message.image) {
                     let response = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${LanguageCode}&dt=t&q=${encodeURIComponent(message.text)}`);
                     const data = await response.json();
                     const translatedText = data[0].map(item => item[0]).join('');
-                    currentMessages[i] = {
+                    translatedMessages[i] = {
                         ...message,
                         text: translatedText,
                     };
@@ -74,8 +74,10 @@ export default function Sidebar({
         } catch (error) {
             console.error("Translation error:", error);
         }
-        setCurrentMessages(currentMessages);
 
+        setCurrentMessages(translatedMessages);
+
+        
 
     };
 
