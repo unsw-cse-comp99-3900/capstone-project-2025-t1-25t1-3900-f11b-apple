@@ -7,7 +7,8 @@ import SendIcon from "@mui/icons-material/Send";
 import MicIcon from '@mui/icons-material/Mic';
 import MicOffIcon from '@mui/icons-material/MicOff';
 import TranslateIcon from '@mui/icons-material/Translate';
-import LanguageIcon from '@mui/icons-material/Language'
+import LanguageIcon from '@mui/icons-material/Language';
+import ReactMarkdown from 'react-markdown'; // Import ReactMarkdown
 
 // Sidebar Function
 
@@ -262,8 +263,10 @@ const ChatResponseSection = ({ messages, isLoading }) => { // Add isLoading prop
                           display: 'block' // Ensure image behaves like a block element
                         }}
                       />
+                    ) : message.sender === "AI" ? (
+                      <ReactMarkdown>{message.text}</ReactMarkdown> // Render AI text as Markdown
                     ) : (
-                      message.text // Render text if not an image or imageUrl is missing
+                      message.text // Render user text normally
                     )}
                     
                 </Paper>
