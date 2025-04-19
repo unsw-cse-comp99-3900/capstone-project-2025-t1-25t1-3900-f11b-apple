@@ -10,8 +10,6 @@ import TranslateIcon from '@mui/icons-material/Translate';
 import LanguageIcon from '@mui/icons-material/Language'
 
 // Sidebar Function
-
-//update here where the border of the side bar starts
 const NAVBAR_HEIGHT = 60;
 
 export default function Sidebar({
@@ -135,17 +133,22 @@ export default function Sidebar({
                 zIndex:2,
             }}    
         >
-        <ChatResponseSection 
-            messages={
-            selectedChat === "Definition" ? messageDefinition :
-            selectedChat === "Real world analogy" ? messageRealWorldAnalogy : messageELI5
-            }
+        <ChatResponseSection
+            selectedChat={selectedChat} // Pass selectedChat
+            messagesDefinition={messageDefinition}
+            messagesRealWorldAnalogy={messageRealWorldAnalogy}
+            messagesELI5={messageELI5}
+            setMessageDefinition={setMessageDefinition} // Pass setters
+            setMessageRealWorldAnalogy={setMessageRealWorldAnalogy}
+            setMessageELI5={setMessageELI5}
             isLoading={isLoading} // Pass isLoading down
+            setIsLoading={setIsLoading} // Pass setIsLoading down
+            activePdfFilename={activePdfFilename} // Pass activePdfFilename
            />
         </Box>
 
-        {/* chat box input section */}
 
+        {/* chat box input section */}
         <Box 
             id="chat-input"
             sx={{
@@ -174,7 +177,18 @@ export default function Sidebar({
 
 
 // Chat message container function
-const ChatResponseSection = ({ messages, isLoading }) => { // Add isLoading prop
+const ChatResponseSection = ({
+    selectedChat,
+    messagesDefinition,
+    messagesRealWorldAnalogy,
+    messagesELI5,
+    isLoading,
+}) => { // Adjust props
+
+    // Determine which messages to display based on selectedChat
+    const messages = selectedChat === "Definition" ? messagesDefinition :
+                     selectedChat === "Real world analogy" ? messagesRealWorldAnalogy : messagesELI5;
+
     // interaction to be complete
     const messagesEndRef = useRef(null);
 
@@ -183,7 +197,7 @@ const ChatResponseSection = ({ messages, isLoading }) => { // Add isLoading prop
         if (messagesEndRef.current) {
             messagesEndRef.current.scrollIntoView({behavior: "smooth"});
         }
-    },[messages]);
+    },[messages]); // Keep dependency on the derived 'messages' state for scrolling
     
 
     return (
@@ -204,8 +218,9 @@ const ChatResponseSection = ({ messages, isLoading }) => { // Add isLoading prop
 
         {/* Render messages from AI and User */}
         {messages.map((message, index) => (
-            <Box 
+            <Box
                 key={index}
+                // Remove onMouseUp handler from here
                 sx={{
                     display:"flex",
                     flexDirection:"column",
@@ -223,6 +238,7 @@ const ChatResponseSection = ({ messages, isLoading }) => { // Add isLoading prop
                 {/* Message Section*/}
                 <Paper
                     key={index}
+                    // Remove mouse up handler from here
                     sx={{
                         marginBtoom: "10px",
                         maxWidth: "75%",
@@ -403,7 +419,7 @@ const ChatMessageInput = ({addMessage, onTranslateClick, selectedChat, activePdf
     // send message function
     const sendMessage = () => {
         // if message is not empty then we send the message
-        if (userMessageInput.trim()) {
+        if (userMessageInput.trim() && activePdfFilename) { // Ensure filename is available
             //append message to the end of the message array
             addMessage(prevMessages => [...prevMessages, {text: userMessageInput, sender: "user"}]);
             
@@ -412,7 +428,7 @@ const ChatMessageInput = ({addMessage, onTranslateClick, selectedChat, activePdf
             setUserMessageInput("");
             setIsLoading(true); // Set loading before fetch
 
-            fetch("http://localhost:5000/explain-highlight", {
+            fetch("http://localhost:5000/explain-highlight", { // This fetch remains for typed input
                 method: "post",
                 credentials: 'include',
                 headers: {
@@ -431,6 +447,9 @@ const ChatMessageInput = ({addMessage, onTranslateClick, selectedChat, activePdf
               setIsLoading(false); // Clear loading on error
             });
 
+        }
+        else if (!activePdfFilename) {
+          addMessage(prevMessages => [...prevMessages, {sender: "AI", text: "Please upload a PDF first."}]);
         }
     };
 
