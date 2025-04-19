@@ -26,6 +26,10 @@ def user_query(query):
     model=ai_model,
     messages=[
       {
+        "role": "system",
+        "content": "Please format your response using Markdown."
+      },
+      {
         "role": "user",
         "content": query
       }
@@ -75,6 +79,10 @@ def API_text_input(text, dev_msg, image_base64=None):
   if image_base64:
     msg=[
       {
+        "role": "system",
+        "content": "Please format your response using Markdown."
+      },
+      {
         "role": "developer",
         "content": dev_msg
       },
@@ -93,6 +101,10 @@ def API_text_input(text, dev_msg, image_base64=None):
     
   else:
       msg = [
+          {
+            "role": "system",
+            "content": "Please format your response using Markdown."
+          },
           {
               "role": "user",
               "content": [
