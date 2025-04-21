@@ -10,7 +10,7 @@ import {
   PanelResizeHandle,
 } from "react-resizable-panels";
 
-export const PdfSidebar = ({ file }) => {
+export const PdfSidebar = ({ file, setTaskCompletion }) => {
   const [sideBarTriggered, setSideBarTriggered] = useState(false);
   const [chatType, setChatType] = useState("Definition"); // Mode selected
   const [isLoading, setIsLoading] = useState(false); // State for loading indicator
@@ -20,10 +20,32 @@ export const PdfSidebar = ({ file }) => {
   const [messageRealWorldAnalogy, setMessageRealWorldAnalogy] = useState([]);
   const [messageELI5, setMessageELI5] = useState([]);
 
+  // used for tracking between
+  const [modeCompletion, setModeCompletion] = useState(false);
+  const [highlightCompletion, setHighlightCompletion] = useState(1);
+
+  const highlightCompletionFunc = () => {
+    setHighlightCompletion(highlightCompletion + 1);
+    setModeCompletion(false);
+    setChatTaskArray([chatType]);
+  }
+
+  // tracks if user has gone into every mode
+  const [chatTaskArray, setChatTaskArray] = useState([chatType]);
+
+  useEffect(() => {
+    console.log(highlightCompletion)
+    if (!chatTaskArray.includes(chatType)) {
+      setChatTaskArray(prevArray => [...prevArray, chatType]);
+    } else if (chatTaskArray.length === 3 && highlightCompletion !== 2) {
+      setModeCompletion(true);
+    } else if (chatTaskArray.length === 3) {
+      setTaskCompletion(true);
+    }
+  }, [chatType]);
+  
 
   localStorage.setItem("hasSeenTour", "false");
-  // store which chat is currently selected  (default Defintion)
-  const [selectedChat, setSelectedChat] = useState("Definition"); 
 
   //set tooltips state
   const [open,setOpen] = useState(false);
@@ -49,30 +71,28 @@ export const PdfSidebar = ({ file }) => {
     return setMessageDefinition; // Default
   };
 
-  let containerWidth = '70vw';
   let containerHeight = '92vh';
 
   return (
     <>
       {!sideBarTriggered ? (
         <Box sx={{ width: '100vw', height: containerHeight }}>
-          <PdfUpload file={file} setSideBarTriggered={setSideBarTriggered} currentMode={chatType} addMessage={getAddMessageFunc()} setIsLoading={setIsLoading} />
+          <PdfUpload file={file} setSideBarTriggered={setSideBarTriggered} currentMode={chatType} addMessage={getAddMessageFunc()} setIsLoading={setIsLoading} highlightCompletionFunc={highlightCompletionFunc} modeCompletion={modeCompletion}/>
         </Box>
       ) : (
         <Box sx={{ width: '100vw', height: containerHeight }}>
           <PanelGroup direction="horizontal">
             <Panel
-              defaultSize={70} // Default width percentage
-              minSize={30}      // Minimum width percentage
-              order={1}         // Define order
-              style={{ overflow: 'hidden' }} // Prevent panel from causing overflow issues
+              defaultSize={70}
+              minSize={30}
+              order={1}
+              style={{ overflow: 'hidden' }}
             >
-              <PdfUpload file={file} setSideBarTriggered={setSideBarTriggered} currentMode={chatType} addMessage={getAddMessageFunc()} setIsLoading={setIsLoading} />
+              <PdfUpload file={file} setSideBarTriggered={setSideBarTriggered} currentMode={chatType} addMessage={getAddMessageFunc()} setIsLoading={setIsLoading} highlightCompletionFunc={highlightCompletionFunc} modeCompletion={modeCompletion}/>
             </Panel>
 
             <PanelResizeHandle
-              style={{ width: '6px', background: '#e0e0e0', cursor: 'col-resize', borderLeft: '1px solid #bdbdbd', borderRight: '1px solid #bdbdbd' }} // Basic MUI-like styling
-              // Or use className if you have global CSS or Tailwind
+              style={{ width: '6px', background: '#e0e0e0', cursor: 'col-resize', borderLeft: '1px solid #bdbdbd', borderRight: '1px solid #bdbdbd' }}
             />
 
             <Panel

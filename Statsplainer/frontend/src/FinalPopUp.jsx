@@ -1,6 +1,6 @@
 import { AppBar, Toolbar, Button, Box, Typography, IconButton, TextField, Input, InputAdornment, FormControl, Rating, InputLabel, Backdrop } from '@mui/material';
 import EmailRoundedIcon from '@mui/icons-material/EmailRounded';
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 
 export const FinalPopUp = ({ setPopUpDisplay, setFeedbackButton }) => {
   const [submissionReady, setSubmissionReady] = useState(false);
@@ -29,7 +29,7 @@ export const FinalPopUp = ({ setPopUpDisplay, setFeedbackButton }) => {
         email: email,
         feedback: feedback,
     };
-    
+
     setFeedbackButton(false);
     reset();
     console.log("Submitting Feedback:", feedbackData);

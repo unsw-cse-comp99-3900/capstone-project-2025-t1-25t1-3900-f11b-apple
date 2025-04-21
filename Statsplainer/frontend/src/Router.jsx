@@ -1,11 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Routes,
   Route,
   // useNavigate,
   useLocation
 } from 'react-router-dom';
-import { DashboardPage } from './Dashboard.jsx';
 import { NavBar } from './Navbar.jsx'
 import { LandingPage } from './Landingpage.jsx';
 import { HistoryPage } from './History.jsx';
@@ -18,8 +17,16 @@ export default function Router() {
 
   const [pdfUploaded, setPdfUploaded] = useState(false);
   const [uploadedFile, setUploadedFile] = useState(null);
-  const [popUpDisplay, setPopUpDisplay] = useState(true);
+  const [popUpDisplay, setPopUpDisplay] = useState(false);
   const [feedBackButton, setFeedbackButton] = useState(false);
+
+  const [taskCompletion, setTaskCompletion] = useState(false);
+
+  useEffect(() => {
+    if (taskCompletion) {
+      setPopUpDisplay(true);
+    }
+  }, [taskCompletion]);
   
   return (
     <Grid
@@ -39,12 +46,9 @@ export default function Router() {
       )}
       <NavBar pdfUploaded={pdfUploaded} setPdfUploaded={setPdfUploaded} setUploadedFile={setUploadedFile} page={location.pathname} feedBackButton={feedBackButton} setPopUpDisplay={setPopUpDisplay}/>
       <Routes>
-        <Route path='/' element={<LandingPage setPdfUploaded={setPdfUploaded} setUploadedFile={setUploadedFile} uploadedFile={uploadedFile}/>}/>
-          
-        <Route path='/dashboard' element={<DashboardPage />}/>
+        <Route path='/' element={<LandingPage setPdfUploaded={setPdfUploaded} setUploadedFile={setUploadedFile} uploadedFile={uploadedFile} setTaskCompletion={setTaskCompletion}/>}/>
 
         <Route path='/history' element={<HistoryPage />}/>
-
       </Routes>
     </Grid>
   )
