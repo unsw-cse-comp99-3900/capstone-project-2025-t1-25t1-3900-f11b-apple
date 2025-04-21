@@ -30,7 +30,6 @@ def explain_highlight():
         full_text = extract_text_from_pdf(file_path)
     except Exception as e:
         # Log the error e for debugging
-        print(f"Error extracting PDF text: {e}")
         return jsonify({"error": "Failed to extract text from PDF"}), 500
 
     # Validate filename to prevent path traversal issues (basic example)
@@ -46,7 +45,7 @@ def explain_highlight():
     # Tell the AI whether the query is a highlighted text or a user query
     if is_user_input:
         combined_text = f"""This query is related to the user input and thus there is no highlight text, 
-                            replace all explainations for the highlighted text for this user query
+                            replace all explainations for the highlighted text for this user query: {highlighted_text}
                         """
     else:
         combined_text = f"""Highlighted Text:
@@ -69,7 +68,6 @@ def explain_highlight():
             dev_msg=combined_text, 
             image_base64=image_base64,
             temperature=ai_temperature_control(mode))
-        print(explanation)
 
         log_insert(user_id, highlighted_text, explanation, mode, filename)
         pass_to_google_forms(user_id, highlighted_text, explanation, mode, filename)
