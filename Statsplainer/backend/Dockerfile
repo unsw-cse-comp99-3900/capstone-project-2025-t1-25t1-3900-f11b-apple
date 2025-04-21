@@ -16,7 +16,9 @@ COPY img_uploads/ img_uploads/
 COPY API.py .
 COPY key.txt .
 COPY util.py .
-COPY prompts.py .
+COPY log_interface.py .
+COPY app_log.db .
+COPY ai_prompt_util.py .
 
 # Expose the port your backend listens on
 EXPOSE 5000

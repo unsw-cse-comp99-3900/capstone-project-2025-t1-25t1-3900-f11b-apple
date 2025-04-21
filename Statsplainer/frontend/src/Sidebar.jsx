@@ -1,20 +1,23 @@
-import { Box, Button, Paper, TextField, IconButton, keyframes } from '@mui/material'; // Added keyframes
+import { Box, Button, Paper, TextField, IconButton, keyframes, Menu, MenuItem } from '@mui/material'; // Added keyframes
 import Grid from '@mui/material/Grid2';
 import React, {useState, useRef, useEffect} from "react";
 import Tooltip from './Tooltips';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
-import SendIcon from "@mui/icons-material/Send"
+import SendIcon from "@mui/icons-material/Send";
+import MicIcon from '@mui/icons-material/Mic';
+import MicOffIcon from '@mui/icons-material/MicOff';
+import TranslateIcon from '@mui/icons-material/Translate';
+import LanguageIcon from '@mui/icons-material/Language';
+import ReactMarkdown from 'react-markdown'; // Import ReactMarkdown
 
 // Sidebar Function
-
-//update here where the border of the side bar starts
 const NAVBAR_HEIGHT = 60;
 
 export default function Sidebar({
   setChatType,
   activePdfFilename,
   // Receive state and setters from parent
-  messageDefinition,
+  messageDefinition = [],
   setMessageDefinition,
   messageRealWorldAnalogy,
   setMessageRealWorldAnalogy,
@@ -27,12 +30,10 @@ export default function Sidebar({
     // intialised the state of hasSeenTour
     localStorage.setItem("hasSeenTour", "false");
     // Store which chat is currently selected (default Definition)
-    // This state remains local to Sidebar as it controls UI selection here
     const [selectedChat, setSelectedChat] = useState("Definition");
-
     //set tooltips state
     const [open,setOpen] = useState(false);
-
+    
     //handle open/close tooltip
     const handleOpenTooltip = () => setOpen(true);
     const handleCloseTooltip = () => setOpen(false);
@@ -45,6 +46,35 @@ export default function Sidebar({
             localStorage.setItem("hasSeenTour", "true");
         }
     }, []);
+
+    const handleTranslate = (LanguageCode) => {
+        const currentMessages = selectedChat === "Definition" ? messageDefinition :
+                                selectedChat === "Real world analogy" ? messageRealWorldAnalogy : messageELI5;
+        
+        const setCurrentMessages = selectedChat === "Definition" ? setMessageDefinition :
+                                selectedChat === "Real world analogy" ? setMessageRealWorldAnalogy : setMessageELI5;
+
+        //create a new array with the selected language to be translated
+        const translatedMessages = [...currentMessages];
+        translatedMessages.forEach(async (message, index) => {
+            if (message.sender === "AI" && message.text && !message.image) {
+                try {
+                    let response = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${LanguageCode}&dt=t&q=${encodeURIComponent(message.text)}`);
+                    const data = await response.json();
+                    const translatedText = data[0].map(item => item[0]).join('');
+                    translatedMessages[index] = {
+                        ...message,
+                        text: translatedText,
+                        originalText: message.text,
+                    }
+                    setCurrentMessages(translatedMessages);
+                } catch (error) {
+                    console.error("Translation error:", error);
+                }
+            }
+        })
+
+    }
 
     return (
         
@@ -104,17 +134,22 @@ export default function Sidebar({
                 zIndex:2,
             }}    
         >
-        <ChatResponseSection 
-            messages={
-            selectedChat === "Definition" ? messageDefinition :
-            selectedChat === "Real world analogy" ? messageRealWorldAnalogy : messageELI5
-            }
+        <ChatResponseSection
+            selectedChat={selectedChat} // Pass selectedChat
+            messagesDefinition={messageDefinition}
+            messagesRealWorldAnalogy={messageRealWorldAnalogy}
+            messagesELI5={messageELI5}
+            setMessageDefinition={setMessageDefinition} // Pass setters
+            setMessageRealWorldAnalogy={setMessageRealWorldAnalogy}
+            setMessageELI5={setMessageELI5}
             isLoading={isLoading} // Pass isLoading down
+            setIsLoading={setIsLoading} // Pass setIsLoading down
+            activePdfFilename={activePdfFilename} // Pass activePdfFilename
            />
         </Box>
 
-        {/* chat box input section */}
 
+        {/* chat box input section */}
         <Box 
             id="chat-input"
             sx={{
@@ -131,7 +166,8 @@ export default function Sidebar({
             selectedChat === "Definition" ? setMessageDefinition :
             selectedChat === "Real world analogy" ? setMessageRealWorldAnalogy : setMessageELI5
             }
-            setIsLoading={setIsLoading} // Pass setIsLoading down
+            setIsLoading={setIsLoading} // Pass setIsLoading down 
+            onTranslateClick={handleTranslate} // Pass down handle translate
         />
         </Box>
         
@@ -142,17 +178,28 @@ export default function Sidebar({
 
 
 // Chat message container function
-const ChatResponseSection = ({ messages, isLoading }) => { // Add isLoading prop
+const ChatResponseSection = ({
+    selectedChat,
+    messagesDefinition,
+    messagesRealWorldAnalogy,
+    messagesELI5,
+    isLoading,
+}) => { // Adjust props
+
+    // Determine which messages to display based on selectedChat
+    const messages = selectedChat === "Definition" ? messagesDefinition :
+                     selectedChat === "Real world analogy" ? messagesRealWorldAnalogy : messagesELI5;
+
     // interaction to be complete
     const messagesEndRef = useRef(null);
+
 
     useEffect(() => {
         if (messagesEndRef.current) {
             messagesEndRef.current.scrollIntoView({behavior: "smooth"});
         }
-    },[messages]);
+    },[messages]); // Keep dependency on the derived 'messages' state for scrolling
     
-
 
     return (
         <Box
@@ -172,8 +219,9 @@ const ChatResponseSection = ({ messages, isLoading }) => { // Add isLoading prop
 
         {/* Render messages from AI and User */}
         {messages.map((message, index) => (
-            <Box 
+            <Box
                 key={index}
+                // Remove onMouseUp handler from here
                 sx={{
                     display:"flex",
                     flexDirection:"column",
@@ -191,6 +239,7 @@ const ChatResponseSection = ({ messages, isLoading }) => { // Add isLoading prop
                 {/* Message Section*/}
                 <Paper
                     key={index}
+                    // Remove mouse up handler from here
                     sx={{
                         marginBtoom: "10px",
                         maxWidth: "75%",
@@ -202,6 +251,7 @@ const ChatResponseSection = ({ messages, isLoading }) => { // Add isLoading prop
                         border: message.sender ==="AI" ? `1px solid rgba(255,255,255, 0.1)` : `1px solid rgba(255,255,255,0.2)`,
                         color: message.sender === "AI" ? "#000000" : "#ffffff",
                         position: "relative",
+                        textAlign: message.sender === "AI" ? "left" : "right",
                         "&::before": message.sender === "AI" ? {} : {
                             content: `""`,
                             position: "absolute",
@@ -212,6 +262,8 @@ const ChatResponseSection = ({ messages, isLoading }) => { // Add isLoading prop
                             backgroundColor: `rgba(147,197,253,0.9)`,
                             borderRadius: "50%",
                             boxShadow: `0 0 10px rgba(147,197,253, 0.5)`,
+                            display:"flex",
+                            flexDirection:"column",
                         },
 
                     }}
@@ -228,20 +280,26 @@ const ChatResponseSection = ({ messages, isLoading }) => { // Add isLoading prop
                           display: 'block' // Ensure image behaves like a block element
                         }}
                       />
+                    ) : message.sender === "AI" ? (
+                      <ReactMarkdown>{message.text}</ReactMarkdown> // Render AI text as Markdown
                     ) : (
-                      message.text // Render text if not an image or imageUrl is missing
+                      message.text // Render user text normally
                     )}
+                    
                 </Paper>
 
+                 
             </Box>
         ))}
         {/* Render loading indicator if loading */}
         {isLoading && <LoadingDots />}
         <div ref={messagesEndRef} />
+
         </Box>
         
-    )
-}
+    );
+};
+
 // Helper component for the loading dots animation (using MUI)
 const LoadingDots = () => (
   <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', p: 1, width: '100%' }}>
@@ -271,20 +329,101 @@ const LoadingDots = () => (
   </Box>
 );
 
-
 // chat messageInputFunction
 
-// chat messageInputFunction
-
-const ChatMessageInput = ({addMessage, selectedChat, activePdfFilename, setIsLoading}) => { // Add setIsLoading prop
+const ChatMessageInput = ({addMessage, onTranslateClick, selectedChat, activePdfFilename, setIsLoading}) => { // Add setIsLoading prop
 
     // store current input inside the message box
     const [userMessageInput, setUserMessageInput] = useState("");
 
+    const [isListening,setIsListening] = useState(false);
+
+    const recognitionRef = useRef(null);
+
+
+    // check which language is selected
+    const [anchorEl, setAnchorEl] = useState(null);
+
+    // check the state of whether the translate button is being pressed
+    const [isTranslating, setIsTranslating] = useState(false);
+
+
+    // language code array
+    // add more desired langauge here
+    const languages = [
+        { code: "zh", name: "Chinese" },
+        { code: "en", name: "English" },
+        { code: "fr", name: "French" },
+        { code: "de", name: "German" },
+        { code: "it", name: "Italian" },
+        { code: "ja", name: "Japanese" },
+        { code: "ko", name: "Korean" },
+        { code: "pt", name: "Portuguese" },
+        { code: "ru", name: "Russian" },
+        { code: "es", name: "Spanish" }
+      ];
+
+    const handleTranslateClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+    const handleLanguageSelect = (LanguageCode) => {
+        onTranslateClick(LanguageCode);
+        handleClose();
+    }
+
+
+    useEffect(() => {
+
+        if ("webkitSpeechRecognition" in window) {
+            recognitionRef.current = new window.webkitSpeechRecognition();
+            recognitionRef.current.continous = false;
+            recognitionRef.current.interimResults = false;
+            recognitionRef.current.lang = "en-US";
+
+            recognitionRef.current.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                setUserMessageInput(prev => prev + (prev ? " ":"") + transcript);
+            };
+
+            recognitionRef.current.onend = () => {
+                setIsListening(false);
+            };
+
+            recognitionRef.current.onerror = (event) => {
+                console.error("Speech recognition error:", event.error);
+                setIsListening(false);
+            }
+        }
+
+        return () => {
+            if (recognitionRef.current) {
+                recognitionRef.current.stop();
+            }
+        };
+    }, []);
+
+    const toggleListening = () => {
+        if (!recognitionRef.current) {
+            console.error("speech recognition not supported");
+            return;
+        }
+
+        if (isListening) {
+            recognitionRef.current.stop();
+        } else {
+            recognitionRef.current.start();
+            setIsListening(true);
+        }
+    };
     // send message function
     const sendMessage = () => {
         // if message is not empty then we send the message
-        if (userMessageInput.trim()) {
+        if (userMessageInput.trim() && activePdfFilename) { // Ensure filename is available
             //append message to the end of the message array
             addMessage(prevMessages => [...prevMessages, {text: userMessageInput, sender: "user"}]);
             
@@ -293,12 +432,13 @@ const ChatMessageInput = ({addMessage, selectedChat, activePdfFilename, setIsLoa
             setUserMessageInput("");
             setIsLoading(true); // Set loading before fetch
 
-            fetch("http://localhost:5000/explain-highlight", {
+            fetch("http://localhost:5000/explain-highlight", { // This fetch remains for typed input
                 method: "post",
+                credentials: 'include',
                 headers: {
                     "Content-Type" : "application/json",
                 },
-                body: JSON.stringify({highlighted_text : userMessageInput, mode: selectedChat, filename: activePdfFilename})
+                body: JSON.stringify({highlighted_text : userMessageInput, mode: selectedChat, filename: activePdfFilename, is_user_input: "yes"})
             })
             .then(response => response.json())
             .then(data => {
@@ -311,6 +451,9 @@ const ChatMessageInput = ({addMessage, selectedChat, activePdfFilename, setIsLoa
               setIsLoading(false); // Clear loading on error
             });
 
+        }
+        else if (!activePdfFilename) {
+          addMessage(prevMessages => [...prevMessages, {sender: "AI", text: "Please upload a PDF first."}]);
         }
     };
 
@@ -378,6 +521,51 @@ const ChatMessageInput = ({addMessage, selectedChat, activePdfFilename, setIsLoa
 
             />
             <IconButton
+                onClick={toggleListening}
+                sx={{
+                    color: isListening ? `rgba(255,0,0,0.9)` : `rgba(147,197,253,0.9)`,
+                    backgroundColor: isListening ? `rgba(2, 1, 1, 0.1) `: `rgba(147,197,253,0.1)`,
+                    borderRadius: "12px",
+                    padding: "8px",
+                    transition: "all 0.3s ease",
+                    "&:hover": {
+                        backgroundColor: isListening ? `rgba(255,0,0,0.25)` : `rgba(147,197,253,0.2)`,
+                        transform: `scale(1.05)`,
+                    },
+                    "&:active": {
+                        transform: `scale(0.95)`,
+                    },
+                    animation : isListening ? `${keyframes`
+                            0% {transform: scale(1);}
+                            50% {transform: scale(1.1);}
+                            100% {transform: scale(1);}
+                            
+                        `} 1.5s infinite` : "none",
+                    
+                }}
+            >
+                {isListening ? <MicOffIcon /> : <MicIcon />}
+            </IconButton>
+            {/* translate button located on the top right corner of the response section */}
+            <IconButton
+                            
+                            onClick={handleTranslateClick}
+                            disabled={isTranslating}
+                            sx={{
+                                color: isTranslating ? `rgba(0,0,0,0.3)` : `rgba(147,197,253,0.9)`,
+                                backgroundColor: isTranslating? `rgba(2,1,1,0.1)` : `rgba(147,197,253,0.1)`,
+                                borderRadius: "12px",
+                                padding: "8px",
+                                transition: "all 0.3s ease",
+                                "&:hover" : {
+                                    color: isTranslating ? `rgba(0,0,0,0.3)` : `rgba(0,0,0,0.5)`,
+                                    transform: `scale(0.95)`,
+                                },
+                            }}
+                        >
+                            <TranslateIcon  />
+                </IconButton>   
+            <IconButton
                 onClick={sendMessage}
                 disabled={!userMessageInput.trim()}
                 sx={{
@@ -398,6 +586,38 @@ const ChatMessageInput = ({addMessage, selectedChat, activePdfFilename, setIsLoa
             >
                 <SendIcon />
             </IconButton>
+
+
+        {/* drop down menu to select between different language */}
+        <Menu
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={handleClose}
+            sx={{
+                "& .MuiPaper-root": {
+                    backgroundColor: `rgba(55,56,60,0.9)`,
+                    backdropFilter: `blur(8px)`,
+                }
+            }}
+        >
+            {languages.map((Language) => (
+                <MenuItem
+                    key={Language.code}
+                    onClick={() => handleLanguageSelect(Language.code)}
+                    disabled={isTranslating}
+                    sx={{
+                        color: isTranslating ? `rgba(255,255,255,0.5)` : `white`,
+                        "&:hover" : {
+                            backgroundColor: `rgba(255,255,255,0.1)`,
+                        },
+                    }}
+                >
+                    <LanguageIcon sx={{ mr:1}} />
+                    {Language.name}
+                </MenuItem>
+            ))}
+
+        </Menu>
         </Grid>
     )
 }

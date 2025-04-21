@@ -14,36 +14,42 @@ const tourGuide = [
     content: 'To the left is the PDF section where you can view the pdf and click the arrow key located on the bottom ofthe screen to navigate between different pages.',
     slideDirection : 'down',
     position: {top: "30%",left: "50%"},
+    arrowDirecton: "left",
   },
   {
     target: 'pdf-higlight text/image',
     content: 'You can switch between highlighting text/sentences or highlight images by clicking the button ',
     slideDirection : 'down',
     position: {top: "10%",left: "20%"},
+    arrowDirecton: "left",
   },
   {
     target: 'pdf-zoom in and out',
     content: 'You can zoom in and out of the pdf by clicking the magnifier + to zoom in and - to zoom out',
     slideDirection : 'down',
     position: {top: "10%",left: "50%"},
+    arrowDirecton: "right",
   },
   {
     target: 'sidebar-buttons',
     content: 'You can select between three different chat modes to help you understand the PDF better: Definition, Real World Analogy, and ELI5.',
     slideDirection : 'left',
     position: {top: "20%",right: "0%"},
+    arrowDirecton: "right",
   },
   {
     target: 'message-response',
     content: 'This section will show the response to your highlighted sentences, providing definitions or statistical analyses based on your selection.',
     slideDirection : 'up',
     position: {top: "40%",right: "0%"},
+    arrowDirecton: "right",
   },
   {
     target: 'chat-input',
     content: 'You can type and ask questions to the AI here. Press Enter to send your message.',
     slideDirection : 'right',
     position: {top: "85%",right: "18%"},
+    arrowDirecton: "right",
   },
 ];
 
@@ -139,6 +145,7 @@ export default function Tooltip({state,open, handleClose }) {
               width: '100%',
               padding: '16px',
               margin: 0,
+              position:"relative",
             }
           }}
         >
@@ -149,17 +156,44 @@ export default function Tooltip({state,open, handleClose }) {
             timeout={500}
             mountOnEnter
             unmountOnExit
+            
           >
             <Box
               sx={{
                 width:"auto",
                 
                 color: 'white',
-                backgroundColor: `rbga(55, 56, 60, 0.8)`,
                 borderRadius: '10px',
                 padding: '16px',
                 boxShadow: 10,
                 backdropFilter: `blur(8px)`,
+                postion: "relative",
+                zIndex: 1001,
+                "&::before" : {
+                content: `""`,
+                position: "absolute",
+                width: "30px",
+                height: "30px",
+                backgroundColor: "#37383C",
+                ...(steps[currentStep].arrowDirecton === "left" ? {
+                    clipPath: "polygon(100% 0, 0 50%, 100% 100%)",
+                    backdropFilter: `blur(8px)`,
+                    right: "100%",
+                    top: "50%",
+                    transform: `translateY(-50%)`,
+                    borderRadius: "0 5px 5px 0",
+                    marginRight: "5px",
+                } : {
+                    clipPath: "polygon(0 0, 100% 50%, 0 100%)",
+                    left: "100%",
+                    top: "50%",
+                    backdropFilter: `blur(8px)`,
+                    transform: `translateY(-50%)`,
+                    borderRadius: "5px 0 0 5px",
+                    marginLeft: "5px",
+                }),
+              },
+
               }}
             >
               <Typography
@@ -211,4 +245,3 @@ export default function Tooltip({state,open, handleClose }) {
     </>
   );
 }
-

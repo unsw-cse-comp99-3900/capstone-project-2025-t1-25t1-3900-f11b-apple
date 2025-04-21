@@ -5,7 +5,7 @@ import os
 def create_app():
     print("🚀 create_app() called")
     app = Flask(__name__)
-    CORS(app)
+    CORS(app, supports_credentials=True)
 
     base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
@@ -18,9 +18,11 @@ def create_app():
     from .img_routes import img_routes
     from .pdf_routes import pdf_routes
     from .aiapi_routes import aiapi_routes
+    #from .cookie_handler import cookie_handler 
 
     app.register_blueprint(img_routes)
     app.register_blueprint(pdf_routes)
     app.register_blueprint(aiapi_routes)
+    #app.register_blueprint(cookie_handler)
 
     return app

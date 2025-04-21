@@ -21,4 +21,5 @@ services:
     volumes:
       - ./backend/img_uploads:/app/img_uploads
       - ./backend/pdf_uploads:/app/pdf_uploads
+      - ./backend/app_log.db:/app/app_log.db
 

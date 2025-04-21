@@ -1,12 +1,13 @@
 from app import create_app
+from log_interface import log_init, log_clear
 import os
-import logging
 
 app = create_app()
 
 if __name__ == "__main__":
-    #logging.basicConfig(level=logging.DEBUG)
-    
+    log_clear()
+    log_init()
+
     app.run(
         debug=True,
         host="0.0.0.0",

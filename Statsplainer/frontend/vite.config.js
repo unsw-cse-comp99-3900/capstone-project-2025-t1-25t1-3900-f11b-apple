@@ -10,6 +10,6 @@ export default defineConfig({
     setupFiles: './src/__test__/setup.js',
   },
   server: {
-    port: 5000,
+    port: 5001,
   },
 })
