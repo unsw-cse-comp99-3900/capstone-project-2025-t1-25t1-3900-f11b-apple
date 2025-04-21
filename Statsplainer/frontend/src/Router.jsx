@@ -11,12 +11,15 @@ import { LandingPage } from './Landingpage.jsx';
 import { HistoryPage } from './History.jsx';
 import { Box } from '@mui/material';
 import Grid from '@mui/material/Grid2';
+import { FinalPopUp } from './FinalPopUp';
 
 export default function Router() {
   const location = useLocation();
 
   const [pdfUploaded, setPdfUploaded] = useState(false);
   const [uploadedFile, setUploadedFile] = useState(null);
+  const [popUpDisplay, setPopUpDisplay] = useState(true);
+  const [feedBackButton, setFeedbackButton] = useState(false);
   
   return (
     <Grid
@@ -31,7 +34,10 @@ export default function Router() {
         width: '100vw'
       }}
     >
-      <NavBar pdfUploaded={pdfUploaded} setPdfUploaded={setPdfUploaded} setUploadedFile={setUploadedFile} page={location.pathname}/>
+      {popUpDisplay && (
+        <FinalPopUp setPopUpDisplay={setPopUpDisplay} setFeedbackButton={setFeedbackButton}/>
+      )}
+      <NavBar pdfUploaded={pdfUploaded} setPdfUploaded={setPdfUploaded} setUploadedFile={setUploadedFile} page={location.pathname} feedBackButton={feedBackButton} setPopUpDisplay={setPopUpDisplay}/>
       <Routes>
         <Route path='/' element={<LandingPage setPdfUploaded={setPdfUploaded} setUploadedFile={setUploadedFile} uploadedFile={uploadedFile}/>}/>
           
