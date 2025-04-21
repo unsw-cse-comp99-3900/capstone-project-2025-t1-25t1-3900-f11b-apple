@@ -2,7 +2,7 @@ from flask import request, jsonify, Blueprint, current_app
 import os
 from API import API_text_input
 from log_interface import log_insert
-from prompts import prompt_builder
+from ai_prompt_util import prompt_builder, ai_temperature_control
 from util import extract_text_from_pdf, pass_to_google_forms
 
 aiapi_routes = Blueprint("aiapi_routes", __name__)
@@ -58,7 +58,11 @@ def explain_highlight():
     try:
         # Call API utility with combined text and mode-specific instructions
         # Pass image_base64 if it exists
-        explanation = API_text_input(text=full_text, dev_msg=combined_text, image_base64=image_base64)
+        explanation = API_text_input(
+            text=full_text, 
+            dev_msg=combined_text, 
+            image_base64=image_base64,
+            temperature=ai_temperature_control(mode))
         print(explanation)
 
         log_insert(user_id, highlighted_text, explanation, mode, filename)
