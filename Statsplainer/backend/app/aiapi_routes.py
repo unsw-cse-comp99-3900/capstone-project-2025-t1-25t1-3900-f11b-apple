@@ -3,16 +3,16 @@ import os
 from API import API_text_input
 from log_interface import log_insert
 from prompts import prompt_builder
-from util import extract_text_from_pdf
+from util import extract_text_from_pdf, pass_to_google_forms
 
 aiapi_routes = Blueprint("aiapi_routes", __name__)
 
 # Endpoint for handling highlighted text explanations
 @aiapi_routes.route("/explain-highlight", methods=["POST"])
 def explain_highlight():
-    uid = request.cookies.get('uid')
-    if not uid:
-        uid = "No uid found ;-;."
+    user_id = request.cookies.get('user_id')
+    if user_id == "null":
+        user_id = "No user_id found."
 
     data = request.json
     if not data or "highlighted_text" not in data or "mode" not in data or "filename" not in data:
@@ -61,7 +61,8 @@ def explain_highlight():
         explanation = API_text_input(text=full_text, dev_msg=combined_text, image_base64=image_base64)
         print(explanation)
 
-        log_insert(uid, highlighted_text, explanation, mode, filename)
+        log_insert(user_id, highlighted_text, explanation, mode, filename)
+        pass_to_google_forms(user_id, highlighted_text, explanation, mode, filename)
         
         return jsonify({
             "explanation": explanation
