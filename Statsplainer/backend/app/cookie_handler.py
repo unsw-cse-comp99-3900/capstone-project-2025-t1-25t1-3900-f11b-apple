@@ -1,4 +1,4 @@
-from flask import make_response, request, Blueprint
+""" from flask import make_response, request, Blueprint
 from uuid import uuid4
 
 cookie_handler = Blueprint("cookie_handler", __name__)
@@ -17,6 +17,6 @@ def set_cookie():
             samesite='Lax'
             )
         return resp
-    return f"Cookie already set. Value: {request.cookies.get('uid')}" 
+    return f"Cookie already set. Value: {request.cookies.get('uid')}"  """
 
 
