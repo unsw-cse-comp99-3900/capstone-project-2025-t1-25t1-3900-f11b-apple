@@ -251,6 +251,7 @@ const ChatResponseSection = ({
                         border: message.sender ==="AI" ? `1px solid rgba(255,255,255, 0.1)` : `1px solid rgba(255,255,255,0.2)`,
                         color: message.sender === "AI" ? "#000000" : "#ffffff",
                         position: "relative",
+                        textAlign: message.sender === "AI" ? "left" : "right",
                         "&::before": message.sender === "AI" ? {} : {
                             content: `""`,
                             position: "absolute",
