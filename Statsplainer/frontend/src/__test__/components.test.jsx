@@ -3,6 +3,8 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event'
 import { NavBar } from '../Navbar.jsx'
 import { BrowserRouter } from 'react-router-dom';
+import { Sidebar } from '../Sidebar';
+import { Tooltip } from '../Tooltips';
 
 //  Checks if function existing in files being tested are called
 vi.mock('../apiCalls', () => ({
@@ -53,3 +55,16 @@ describe('<NavBar>', () => {
         expect(screen.queryByRole('link', { name: /view history/i })).not.toBeInTheDocument();
     });
 });
+
+
+
+
+// Component test for Sidebar
+describe('<Sidebar>', ()=> {
+
+})
+
+// Component test for Tooltip
+describe('<Tooltip>', () => {
+    
+})
