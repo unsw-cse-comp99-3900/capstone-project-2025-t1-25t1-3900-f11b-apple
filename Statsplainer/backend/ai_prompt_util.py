@@ -8,7 +8,7 @@ def prompt_builder(mode):
                 2. If statistics are highlighted focus on explaining what these statistics mean including their implications and significance (e.g if
                 P values are said explain in a short sentence what a P value is then continue on with explaining the implications and significance of the statistics).
                 
-                3. Use clear, precise language and be concise (under 200 words). Implement markdown in your response and structure it with either paragraphs or dot-points and ensure the paragraph is aligned to the left. 
+                3. Use clear, precise language and be concise (under 200 words). Implement markdown in your response and structure it with either paragraphs and/or dot-points and numbering and ensure the paragraph is aligned to the left. 
                     For markdown use:
                     **Bold** for bolding
                     *Italics* for emphasis
@@ -53,7 +53,7 @@ def prompt_builder(mode):
                 
                 2. If statistics are highlighted focus on explaining what these statistics mean including their implications and significance (e.g if P values are said explain in a short sentence what a P value is then continue on with explaining the implications and significance of the statistics).
                 
-                3. Use clear, precise language and be concise (under 150 words). Implement markdown in your response and structure it with either paragraphs or dot-points and ensure the paragraph is aligned to the left.
+                3. Use clear, precise language and be concise (under 150 words). Implement markdown in your response and structure it with either paragraphs and/or dot-points and numbering and ensure the paragraph is aligned to the left.
                     For markdown use:
                     **Bold** for bolding
                     *Italics* for emphasis
