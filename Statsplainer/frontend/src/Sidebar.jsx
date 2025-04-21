@@ -438,7 +438,7 @@ const ChatMessageInput = ({addMessage, onTranslateClick, selectedChat, activePdf
                 headers: {
                     "Content-Type" : "application/json",
                 },
-                body: JSON.stringify({highlighted_text : userMessageInput, mode: selectedChat, filename: activePdfFilename})
+                body: JSON.stringify({highlighted_text : userMessageInput, mode: selectedChat, filename: activePdfFilename, is_user_input: "yes"})
             })
             .then(response => response.json())
             .then(data => {
