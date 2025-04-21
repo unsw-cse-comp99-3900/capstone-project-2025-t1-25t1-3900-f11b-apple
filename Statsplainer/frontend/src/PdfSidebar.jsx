@@ -24,6 +24,7 @@ export const PdfSidebar = ({ file, setTaskCompletion }) => {
   const [modeCompletion, setModeCompletion] = useState(false);
   const [highlightCompletion, setHighlightCompletion] = useState(1);
 
+  // passed into pdfupload to execute when something is highlighted
   const highlightCompletionFunc = () => {
     setHighlightCompletion(highlightCompletion + 1);
     setModeCompletion(false);
@@ -33,17 +34,20 @@ export const PdfSidebar = ({ file, setTaskCompletion }) => {
   // tracks if user has gone into every mode
   const [chatTaskArray, setChatTaskArray] = useState([chatType]);
 
+  // 1 highlight, all modes have been checked, another highlight, all modes checked again
+  // passes true value back to route file to render feedback popup
   useEffect(() => {
-    console.log(highlightCompletion)
+    var temp = chatTaskArray.length;
     if (!chatTaskArray.includes(chatType)) {
       setChatTaskArray(prevArray => [...prevArray, chatType]);
-    } else if (chatTaskArray.length === 3 && highlightCompletion !== 2) {
+      temp += 1;
+    } 
+    if (temp === 3 && highlightCompletion !== 2) {
       setModeCompletion(true);
-    } else if (chatTaskArray.length === 3) {
+    } else if (temp === 3) {
       setTaskCompletion(true);
     }
   }, [chatType]);
-  
 
   localStorage.setItem("hasSeenTour", "false");
 
