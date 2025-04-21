@@ -3,16 +3,70 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event'
 import { NavBar } from '../Navbar.jsx'
 import { BrowserRouter } from 'react-router-dom';
-import { Sidebar } from '../Sidebar';
+import Sidebar from '../Sidebar';
 import { Tooltip } from '../Tooltips';
+import { Typography } from "@mui/material";
 
 //  Checks if function existing in files being tested are called
 vi.mock('../apiCalls', () => ({
     apiCallPost: vi.fn(),
 }));
 
+vi.mock("@mui/material", ()=> ({
+    ...vi.importActual('react-router-dom'),
+    BrowserRouter: ({ children}) => <div>{children}</div>,
+    Link: ({children, to}) => <a href={to}>{children}</a>,
+}));
+
+
 vi.mock('../elements/helpers/createElement', () => ({
     createElement: vi.fn(),
+}));
+
+Element.prototype.scrollIntoView = vi.fn();
+
+vi.mock('@mui/material', () => ({
+    Box: ({ children}) => <div data-testid="mui-box">{children}</div>,
+    Button: ({ children, onClick }) => <button onClick={onClick}>{children}</button>,
+    TextField: ({ placeholder }) => <input placeholder={placeholder} />,
+    IconButton: ({ children, onClick, 'aria-label' : ariaLabel }) => (
+        <button onClick={onClick} aria-label={ariaLabel}>
+            {children}
+        </button>
+    ),
+    Paper: ({ children }) => <div>{children}</div>,
+    Grid: ({ children }) => <div>{children}</div>,
+    Grid2: ({ children }) => <div>{children}</div>,
+    AppBar: ({children}) => <div data-testid="mnui-appbar">{children}</div>,
+    Backdrop: ({ children,open}) => open ? <div data-testid="mui-backdrop">{children}</div> : null,
+    Snackbar: ({children,open}) => open ? <div data-testid="mui-snackbar">{children}</div> : null,
+    Slide: ({children}) => <div>{children}</div>,
+    Typography: ({ children}) => <div>{children}</div>,
+    Toolbar: ({children}) => <div data-testi="mui-toolbar">{children}</div>,
+}));
+
+vi.mock("@mui/icons-material/HelpOutline", () => ({
+    default: () => <span data-testid="HelpOutlineIcon">HelpIcon</span>
+}));
+
+vi.mock("@mui/icons-material/Send", () => ({
+    default: () => <span>SendIcon</span>
+}));
+
+vi.mock("@mui/icons-material/Close", () => ({
+    default: () => <span>CloseIcon</span> 
+}));
+
+vi.mock("@mui/icons-material/ArrowForward", () => ({
+    default: () => <span>ArrowForwardIcon</span> 
+}));
+
+vi.mock("@mui/icons-material/HistoryRounded", () => ({
+    default: () => <span>HistoryIcon</span>
+}));
+
+vi.mock("@mui/icons-material/AddRounded", () => ({
+    default: () => <span>AddIcon</span>
 }));
 
 afterEach(() => {
@@ -29,8 +83,8 @@ describe('<NavBar>', () => {
             </BrowserRouter>
         );
 
-        expect(screen.queryByRole('link', { name: /add new/i })).not.toBeInTheDocument();
-        expect(screen.getByRole('link', { name: /view history/i })).toBeInTheDocument();
+        expect(screen.queryByRole('button', {name: /add new/i })).not.toBeInTheDocument();
+        expect(screen.getByRole('button', {name: /view history/i })).toBeInTheDocument();
     });
 
     it('renders on pdf page', () => {
@@ -40,8 +94,8 @@ describe('<NavBar>', () => {
             </BrowserRouter>
         );
 
-        expect(screen.getByRole('link', { name: /add new/i })).toBeInTheDocument();
-        expect(screen.getByRole('link', { name: /view history/i })).toBeInTheDocument();
+        expect(screen.getByRole('button', {name: /add new/i})).toBeInTheDocument();
+        expect(screen.getByRole('button', {name: /view history/i})).toBeInTheDocument();
     });
 
     it('renders on history page', () => {
@@ -51,8 +105,8 @@ describe('<NavBar>', () => {
             </BrowserRouter>
         );
 
-        expect(screen.getByRole('link', { name: /add new/i })).toBeInTheDocument();
-        expect(screen.queryByRole('link', { name: /view history/i })).not.toBeInTheDocument();
+        expect(screen.getByRole('button', {name : /add new/i})).toBeInTheDocument();
+        expect(screen.queryByRole('button', {name: /view history/i})).not.toBeInTheDocument();
     });
 });
 
@@ -62,9 +116,45 @@ describe('<NavBar>', () => {
 // Component test for Sidebar
 describe('<Sidebar>', ()=> {
 
-})
+    beforeEach(() => {
+        // Clear LocalStorage before testing
+        localStorage.clear();
+    })
+
+    it("renders with default state", () => {
+        render(
+            // assign all parameter empty list or false
+            // assign each state to the vi.fn()
+            <Sidebar 
+                setChatType={vi.fn()}
+                activePdfFilename={"test.pdf"}
+                messageDefinition={[]}
+                setMessageDefinition={vi.fn()}
+                messageRealWorldAnalogy={[]}
+                setMessageRealWorldAnalogy={vi.fn()}
+                messageELI5={[]}
+                setMessageELI5={vi.fn()}
+                isLoading={false}
+                mockSetIsLoading={vi.fn()}
+            
+            />
+        );
+
+        //check if prompt button selectors are present
+        expect(screen.getByRole('button', {name : "Defintion"})).toBeInTheDocument();
+        expect(screen.getByRole('button', {name : "ELI5"})).toBeInTheDocument();
+        expect(screen.getByRole('button', {name : "Real world analogy"})).toBeInTheDocument();
+
+        //check if help icon is present for tooltips
+        expect(screen.getByRole('button', {name : "HelpIcon"})).toBeInTheDocument();
+
+        //check if chat input section is present
+        expect(screen.getByPlaceholderText("Ask Anything")).toBeInTheDocument();
+        expect(screen.getByRole('button', {name : "SendIcon"})).toBeInTheDocument();
+    })
+});
 
 // Component test for Tooltip
-describe('<Tooltip>', () => {
-    
-})
+//describe('<Tooltip>', () => {
+
+//})
