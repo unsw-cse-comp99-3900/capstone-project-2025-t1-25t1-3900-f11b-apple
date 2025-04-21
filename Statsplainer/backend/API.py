@@ -39,24 +39,24 @@ def user_query(query):
   return completion.choices[0].message.content
 
 # Gives a brief summary of text provided by user
-def text_explanation(subject):
-    return API_text_input(subject, "Give an explanation of the text provided by the user.")
+#def text_explanation(subject):
+#    return API_text_input(subject, "Give an explanation of the text provided by the user.")
 
 # Gives a brief summary of image provided by user
 #def image_explanation(subject):
 #    return API_image_input(subject, "Give an explanation of the image provided by the user.")
 
 # Gives a eli5 explanation of text provided by user
-def text_eli5(subject):
-    return API_text_input(subject, "Explain the text provided by the user in a way that a five-year old can understand.")
+#def text_eli5(subject):
+#    return API_text_input(subject, "Explain the text provided by the user in a way that a five-year old can understand.")
 
 # Gives a eli5 explanation of image provided by user 
 #def image_eli5(subject):
 #    return API_image_input(subject, "Explain the image provided by the user in a way that a five-year old can understand.")
  
 # Gives a real world analogy of concepts in text provided by user
-def text_real_world_analogy(subject):
-  return API_text_input(subject, "Give a real world analogy of the concepts in the text provided by the user.")
+#def text_real_world_analogy(subject):
+#  return API_text_input(subject, "Give a real world analogy of the concepts in the text provided by the user.")
   
 # Gives a real world analogy of concepts in image provided by user
 #def image_real_world_analogy(subject):
@@ -66,7 +66,7 @@ def text_real_world_analogy(subject):
 #                   API WRAPPERS
 #------------------------------------------------------------------------------------
 
-def API_text_input(text, dev_msg, image_base64=None):
+def API_text_input(text, dev_msg, image_base64=None, temperature=0.7):
   """
   Returns generated text from LLM with text argument
   Arguments:
@@ -125,7 +125,8 @@ def API_text_input(text, dev_msg, image_base64=None):
 
   completion = client.chat.completions.create(
     model=ai_model,
-    messages=msg
+    messages=msg,
+    temperature=temperature
   )
   return completion.choices[0].message.content
 
