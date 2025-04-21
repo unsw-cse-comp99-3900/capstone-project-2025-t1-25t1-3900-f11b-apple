@@ -8,7 +8,12 @@ def prompt_builder(mode):
                 2. If statistics are highlighted focus on explaining what these statistics mean including their implications and significance (e.g if
                 P values are said explain in a short sentence what a P value is then continue on with explaining the implications and significance of the statistics).
                 
-                3. Use clear, precise language and be concise (under 200 words).
+                3. Use clear, precise language and be concise (under 200 words). Implement markdown in your response and structure it with either paragraphs or dot-points and ensure the paragraph is aligned to the left. 
+                    For markdown use:
+                    **Bold** for bolding
+                    *Italics* for emphasis
+                
+                4. Ensure you bold important sections and add emojis in your response to help the response look more inviting.
                 
                 Here is an exemplar of the type of response I want from you:
                 When a study says Drug A reduced stroke risk by 30% (RR = 0.70, 95% CI: 0.55–0.89, p = 0.004), here’s what that really means. The relative risk is 30% lower, but what matters more is the absolute risk: if 7% of people on placebo had strokes, and only 4.9% on the drug did, that’s a 2.1% absolute reduction. In real terms, that means 210 strokes prevented per 10,000 people. The Number Needed to Treat (NNT) is 48, so 48 people need to take the drug for 5 years to prevent one stroke. That’s a meaningful, if modest, benefit.
@@ -23,7 +28,14 @@ def prompt_builder(mode):
                 Your explaination must:
                 1. Act as an expert in the field of the provided pdf with 20 years of experience explaining the highlighted text to a five year old, be creative and interesting. 
                 
-                2. Use clear, precise language and be concise (under 100 words).
+                2. Use clear, precise language and be concise (under 100 words). 
+                
+                3. Implement markdown and alaign the text to the left.
+                    For markdown use:
+                    **Bold** for bolding
+                    *Italics* for emphasis
+                
+                4. Ensure you bold important sections and add emojis in your response to help the response look more inviting.
                 
                 What your explaination must not do:
                 1. Do not use complicated words and do not use jargon.
@@ -41,7 +53,12 @@ def prompt_builder(mode):
                 
                 2. If statistics are highlighted focus on explaining what these statistics mean including their implications and significance (e.g if P values are said explain in a short sentence what a P value is then continue on with explaining the implications and significance of the statistics).
                 
-                3. Use clear, precise language and be concise (under 150 words).
+                3. Use clear, precise language and be concise (under 150 words). Implement markdown in your response and structure it with either paragraphs or dot-points and ensure the paragraph is aligned to the left.
+                    For markdown use:
+                    **Bold** for bolding
+                    *Italics* for emphasis
+                    
+                4. Ensure you bold important sections and add emojis in your response to help the response look more inviting.
                 
                 What your explaination must not do:
                 1. Do not use complicated words and do not use jargon.
@@ -57,3 +74,12 @@ def prompt_builder(mode):
             """
     else:
         prompt_builder("Definition")
+        
+def ai_temperature_control(mode):
+    temperature = 0.6
+    if mode == "Definition":
+        temperature = 0.0
+    elif mode == "Real world analogy":
+        temperature = 0.3
+    
+    return temperature
