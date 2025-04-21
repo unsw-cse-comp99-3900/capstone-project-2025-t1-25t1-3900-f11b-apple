@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event'
 import { NavBar } from '../Navbar.jsx'
 import { BrowserRouter } from 'react-router-dom';
 import Sidebar from '../Sidebar';
-import { Tooltip } from '../Tooltips';
+import  Tooltip  from '../Tooltips';
 import { Typography } from "@mui/material";
 
 //  Checks if function existing in files being tested are called
@@ -155,6 +155,92 @@ describe('<Sidebar>', ()=> {
 });
 
 // Component test for Tooltip
-//describe('<Tooltip>', () => {
+describe('<Tooltip>', () => {
+    const mockHandleClose = vi.fn();
+    it("renders with tour guide state", ()=> {
+        render(
+            <Tooltip
+                state="tour"
+                open={true}
+                handleClose={vi.fn()}
+            />
+        );
 
-//})
+        expect(screen.getByTestId('mui-backdrop')).toBeInTheDocument();
+
+        expect(screen.getByText(/To the left is the PDF section/)).toBeInTheDocument();
+
+        expect(screen.getByText("Dismiss")).toBeInTheDocument();
+        expect(screen.getByText('Next')).toBeInTheDocument();
+
+    });
+
+    it("renders with highlight state", ()=> {
+        render(
+            <Tooltip 
+                state="highlight"
+                open={true}
+                handleClose={vi.fn()}
+            
+            />
+        );
+
+        expect(screen.getByTestId('mui-backdrop')).toBeInTheDocument();
+        expect(screen.getByText(/you can select between highlighting and image-snip/)).toBeInTheDocument();
+
+        expect(screen.getByText('Dismiss')).toBeInTheDocument();
+        expect(screen.getByText('Finish')).toBeInTheDocument();
+    });
+
+    it("calls handleClose when dismiss button is clicked", async() => {
+        const user = userEvent.setup();
+
+        render(
+            <Tooltip 
+                state="tour"
+                open={true}
+                handleClose={mockHandleClose}
+            />
+        );
+
+        await user.click(screen.getByText("Dismiss"));
+
+        expect(mockHandleClose).toHaveBeenCalled();
+    });
+
+    it("progresses through steps when next button is clicked", async() => {
+        const user = userEvent.setup();
+
+        render(
+            <Tooltip 
+                state="tour"
+                open={true}
+                handleClose={vi.fn()}
+            
+            />
+        );
+
+        await user.click(screen.getByText('Next'));
+
+        expect(screen.getByText(/You can switch between highlighting text/)).toBeInTheDocument();
+    });
+
+    it("shows finish button on last step", async() => {
+        const user = userEvent.setup();
+
+        render(
+            <Tooltip 
+                state="highlight"
+                open={true}
+                handleClose={mockHandleClose}
+            />
+        );
+
+        expect(screen.getByText('Finish')).toBeInTheDocument();
+
+        await user.click(screen.getByText("Finish"));
+
+        expect(mockHandleClose).toHaveBeenCalled();
+    });
+    
+})
