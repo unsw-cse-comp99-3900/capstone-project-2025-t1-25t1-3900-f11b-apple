@@ -3,7 +3,7 @@ import { AppBar, Toolbar, Button, Box, Typography, IconButton } from '@mui/mater
 import HistoryRoundedIcon from '@mui/icons-material/HistoryRounded';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 
-export const NavBar = ({ page, pdfUploaded, setPdfUploaded, setUploadedFile }) => {
+export const NavBar = ({ page, pdfUploaded, setPdfUploaded, setUploadedFile, feedBackButton, setPopUpDisplay }) => {
   const buttonStyles = { 
     height: '80%',
     color: 'white',
@@ -23,7 +23,7 @@ export const NavBar = ({ page, pdfUploaded, setPdfUploaded, setUploadedFile }) =
   let nav = <></>;
   if (page === '/history') {
     nav = (
-      <IconButton color="inherit" variant="contained" onClick={() => reset()} component={Link} to="/" sx={buttonStyles}>
+      <IconButton color="inherit" variant="contained" onClick={() => reset()} component={Link} to="/" sx={buttonStyles} aria-label="Add New">
         <AddRoundedIcon />
       </IconButton>
     );
@@ -31,11 +31,11 @@ export const NavBar = ({ page, pdfUploaded, setPdfUploaded, setUploadedFile }) =
     nav = (
       <>
         {pdfUploaded && (
-          <IconButton color="inherit" variant="contained" onClick={() => reset()} component={Link} to="/" sx={buttonStyles}>
+          <IconButton color="inherit" variant="contained" onClick={() => reset()} component={Link} to="/" sx={buttonStyles} aria-label="Add New">
             <AddRoundedIcon />
           </IconButton>
         )}
-        <IconButton color="inherit" variant="contained" component={Link} to="/history" sx={buttonStyles}>
+        <IconButton color="inherit" variant="contained" component={Link} to="/history" sx={buttonStyles} aria-label="View History">
           <HistoryRoundedIcon />
         </IconButton>
       </>
@@ -56,6 +56,11 @@ export const NavBar = ({ page, pdfUploaded, setPdfUploaded, setUploadedFile }) =
           STATSPLAINER
         </Typography>
         <Box sx={{ height: '6vh', display: 'flex', alignItems: 'center' }}>
+          {feedBackButton && (
+            <IconButton color="inherit" variant="contained" onClick={() => setPopUpDisplay(true)} sx={buttonStyles} aria-label="Feedback">
+              feedback
+            </IconButton>
+          )}
           {nav}
         </Box>
       </Toolbar>

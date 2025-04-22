@@ -11,7 +11,7 @@ import {
 } from "react-resizable-panels";
 import { apiCallPostText } from './ApiCalls'; // Import API call function
 
-export const PdfSidebar = ({ file }) => {
+export const PdfSidebar = ({ file, setTaskCompletion }) => {
   const [sideBarTriggered, setSideBarTriggered] = useState(false);
   const [chatType, setChatType] = useState("Definition"); // Mode selected
   const [isLoading, setIsLoading] = useState(false); // State for loading indicator
@@ -21,10 +21,36 @@ export const PdfSidebar = ({ file }) => {
   const [messageRealWorldAnalogy, setMessageRealWorldAnalogy] = useState([]);
   const [messageELI5, setMessageELI5] = useState([]);
 
+  // used for tracking between
+  const [modeCompletion, setModeCompletion] = useState(false);
+  const [highlightCompletion, setHighlightCompletion] = useState(1);
+
+  // passed into pdfupload to execute when something is highlighted
+  const highlightCompletionFunc = () => {
+    setHighlightCompletion(highlightCompletion + 1);
+    setModeCompletion(false);
+    setChatTaskArray([chatType]);
+  }
+
+  // tracks if user has gone into every mode
+  const [chatTaskArray, setChatTaskArray] = useState([chatType]);
+
+  // 1 highlight, all modes have been checked, another highlight, all modes checked again
+  // passes true value back to route file to render feedback popup
+  useEffect(() => {
+    var temp = chatTaskArray.length;
+    if (!chatTaskArray.includes(chatType)) {
+      setChatTaskArray(prevArray => [...prevArray, chatType]);
+      temp += 1;
+    } 
+    if (temp === 3 && highlightCompletion !== 2) {
+      setModeCompletion(true);
+    } else if (temp === 3) {
+      setTaskCompletion(true);
+    }
+  }, [chatType]);
 
   localStorage.setItem("hasSeenTour", "false");
-  // store which chat is currently selected  (default Defintion)
-  const [selectedChat, setSelectedChat] = useState("Definition"); 
 
   //set tooltips state
   const [open,setOpen] = useState(false);
@@ -43,12 +69,12 @@ export const PdfSidebar = ({ file }) => {
   }, []);
 
   // Function to get the correct setter based on chatType
-  const getAddMessageFunc = () => {
-    if (chatType === "Definition") return setMessageDefinition;
-    if (chatType === "Real world analogy") return setMessageRealWorldAnalogy;
-    if (chatType === "ELI5") return setMessageELI5;
-    return setMessageDefinition; // Default
-  };
+  // const getAddMessageFunc = () => {
+  //   if (chatType === "Definition") return setMessageDefinition;
+  //   if (chatType === "Real world analogy") return setMessageRealWorldAnalogy;
+  //   if (chatType === "ELI5") return setMessageELI5;
+  //   return setMessageDefinition; // Default
+  // };
 
   // Function to handle PDF highlight/snip and send to all modes
   const handlePdfHighlight = async (highlightData) => {
@@ -109,7 +135,6 @@ export const PdfSidebar = ({ file }) => {
     }
   };
 
-  let containerWidth = '70vw';
   let containerHeight = '92vh';
 
   return (
@@ -119,24 +144,23 @@ export const PdfSidebar = ({ file }) => {
           {/* Pass handlePdfHighlight even when sidebar isn't triggered yet,
               though the confirmation button won't appear until highlight */}
           {/* <PdfUpload file={file} setSideBarTriggered={setSideBarTriggered} onHighlightConfirm={handlePdfHighlight} setIsLoading={setIsLoading} /> */}
-          <PdfUpload file={file} setSideBarTriggered={setSideBarTriggered} onHighlightConfirm={handlePdfHighlight} setIsLoading={setIsLoading} />
+          <PdfUpload file={file} setSideBarTriggered={setSideBarTriggered} onHighlightConfirm={handlePdfHighlight} setIsLoading={setIsLoading} highlightCompletionFunc={highlightCompletionFunc} modeCompletion={modeCompletion}/>
         </Box>
       ) : (
         <Box sx={{ width: '100vw', height: containerHeight }}>
           <PanelGroup direction="horizontal">
             <Panel
-              defaultSize={70} // Default width percentage
-              minSize={30}      // Minimum width percentage
-              order={1}         // Define order
-              style={{ overflow: 'hidden' }} // Prevent panel from causing overflow issues
+              defaultSize={70}
+              minSize={30}
+              order={1}
+              style={{ overflow: 'hidden' }}
             >
               {/* Pass handlePdfHighlight here as well */}
-              <PdfUpload file={file} setSideBarTriggered={setSideBarTriggered} onHighlightConfirm={handlePdfHighlight} setIsLoading={setIsLoading} />
+              <PdfUpload file={file} setSideBarTriggered={setSideBarTriggered} onHighlightConfirm={handlePdfHighlight} setIsLoading={setIsLoading} highlightCompletionFunc={highlightCompletionFunc} modeCompletion={modeCompletion}/>
             </Panel>
 
             <PanelResizeHandle
-              style={{ width: '6px', background: '#e0e0e0', cursor: 'col-resize', borderLeft: '1px solid #bdbdbd', borderRight: '1px solid #bdbdbd' }} // Basic MUI-like styling
-              // Or use className if you have global CSS or Tailwind
+              style={{ width: '6px', background: '#e0e0e0', cursor: 'col-resize', borderLeft: '1px solid #bdbdbd', borderRight: '1px solid #bdbdbd' }}
             />
 
             <Panel

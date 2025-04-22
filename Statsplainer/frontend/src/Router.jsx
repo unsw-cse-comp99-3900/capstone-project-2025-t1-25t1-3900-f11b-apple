@@ -1,22 +1,32 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Routes,
   Route,
   // useNavigate,
   useLocation
 } from 'react-router-dom';
-import { DashboardPage } from './Dashboard.jsx';
 import { NavBar } from './Navbar.jsx'
 import { LandingPage } from './Landingpage.jsx';
 import { HistoryPage } from './History.jsx';
 import { Box } from '@mui/material';
 import Grid from '@mui/material/Grid2';
+import { FinalPopUp } from './FinalPopUp';
 
 export default function Router() {
   const location = useLocation();
 
   const [pdfUploaded, setPdfUploaded] = useState(false);
   const [uploadedFile, setUploadedFile] = useState(null);
+  const [popUpDisplay, setPopUpDisplay] = useState(false);
+  const [feedBackButton, setFeedbackButton] = useState(false);
+
+  const [taskCompletion, setTaskCompletion] = useState(false);
+
+  useEffect(() => {
+    if (taskCompletion) {
+      setPopUpDisplay(true);
+    }
+  }, [taskCompletion]);
   
   return (
     <Grid
@@ -31,14 +41,14 @@ export default function Router() {
         width: '100vw'
       }}
     >
-      <NavBar pdfUploaded={pdfUploaded} setPdfUploaded={setPdfUploaded} setUploadedFile={setUploadedFile} page={location.pathname}/>
+      {popUpDisplay && (
+        <FinalPopUp setPopUpDisplay={setPopUpDisplay} setFeedbackButton={setFeedbackButton}/>
+      )}
+      <NavBar pdfUploaded={pdfUploaded} setPdfUploaded={setPdfUploaded} setUploadedFile={setUploadedFile} page={location.pathname} feedBackButton={feedBackButton} setPopUpDisplay={setPopUpDisplay}/>
       <Routes>
-        <Route path='/' element={<LandingPage setPdfUploaded={setPdfUploaded} setUploadedFile={setUploadedFile} uploadedFile={uploadedFile}/>}/>
-          
-        <Route path='/dashboard' element={<DashboardPage />}/>
+        <Route path='/' element={<LandingPage setPdfUploaded={setPdfUploaded} setUploadedFile={setUploadedFile} uploadedFile={uploadedFile} setTaskCompletion={setTaskCompletion}/>}/>
 
         <Route path='/history' element={<HistoryPage />}/>
-
       </Routes>
     </Grid>
   )
