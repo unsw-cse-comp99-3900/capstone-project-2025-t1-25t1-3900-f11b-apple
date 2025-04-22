@@ -48,36 +48,35 @@ export default function Sidebar({
     }, []);
 
     const handleTranslate = async (LanguageCode) => {
-        const currentMessages = selectedChat === "Definition" ? messageDefinition :
-                                selectedChat === "Real world analogy" ? messageRealWorldAnalogy : messageELI5;
-        
-        const setCurrentMessages = selectedChat === "Definition" ? setMessageDefinition :
-                                selectedChat === "Real world analogy" ? setMessageRealWorldAnalogy : setMessageELI5;
+        const modes = [
+            { messages: messageDefinition, setter: setMessageDefinition },
+            { messages: messageRealWorldAnalogy, setter: setMessageRealWorldAnalogy },
+            { messages: messageELI5, setter: setMessageELI5 },
+        ];
 
-        const translatedMessages = [...currentMessages];
         try {
-            console.log("start translate");
-            for (let i = 0; i < translatedMessages.length; i++) {
-                const message = translatedMessages[i];
-                if (message.sender === "AI" && message.text && !message.image) {
-                    let response = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${LanguageCode}&dt=t&q=${encodeURIComponent(message.text)}`);
-                    const data = await response.json();
-                    const translatedText = data[0].map(item => item[0]).join('');
-                    translatedMessages[i] = {
-                        ...message,
-                        text: translatedText,
-                    };
+            console.log("start translate for all modes");
+
+            for (const mode of modes) {
+                const translatedMessages = [...mode.messages];
+                for (let i = 0; i < translatedMessages.length; i++) {
+                    const message = translatedMessages[i];
+                    if (message.sender === "AI" && message.text && !message.image) {
+                        let response = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${LanguageCode}&dt=t&q=${encodeURIComponent(message.text)}`);
+                        const data = await response.json();
+                        const translatedText = data[0].map(item => item[0]).join('');
+                        translatedMessages[i] = {
+                            ...message,
+                            text: translatedText,
+                        };
+                    }
                 }
+                mode.setter(translatedMessages);
             }
             
         } catch (error) {
             console.error("Translation error:", error);
         }
-
-        setCurrentMessages(translatedMessages);
-
-        
-
     };
 
     return (
