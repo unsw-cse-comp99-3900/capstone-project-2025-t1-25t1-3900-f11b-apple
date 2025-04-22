@@ -1,6 +1,6 @@
 import { PdfUpload } from "./PdfUpload";
 import Sidebar from './Sidebar';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Typography, Button, Box } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import Tooltip from './Tooltips';
@@ -15,6 +15,7 @@ export const PdfSidebar = ({ file }) => {
   const [sideBarTriggered, setSideBarTriggered] = useState(false);
   const [chatType, setChatType] = useState("Definition"); // Mode selected
   const [isLoading, setIsLoading] = useState(false); // State for loading indicator
+  const isInitialMount = useRef(true); // check if user click from history page to access PdfSidebar
 
   // Lifted state for chat messages
   const [messageDefinition, setMessageDefinition] = useState([]);
@@ -32,6 +33,48 @@ export const PdfSidebar = ({ file }) => {
   //handle open/close tooltip
   const handleOpenTooltip = () => setOpen(true);
   const handleCloseTooltip = () => setOpen(false);
+
+  //Load chat history of the uploaded pdf
+  useEffect(() => {
+    if (isInitialMount.current && file?.name) {
+      try {
+        const storedHistory = localStorage.getItem(file.name);
+        if(storedHistory) {
+          const history = JSON.parse(storedHistory);
+          if (history.Definition) {
+            setMessageDefinition(history.Definition);
+          }
+
+          if (history["Real world analogy"]) {
+            setMessageRealWorldAnalogy(history["Real world analogy"]);
+          }
+
+          if (history.ELI5) {
+            setMessageELI5(history.ELI5);
+          }
+        }
+      } catch (error) {
+        console.error("error loading chat history:", error);
+      }
+
+      isInitialMount.current = false;
+    }
+  }, [file]);
+
+
+  // update localstorage everytime user interact in the sidebar message 
+  useEffect(() => {
+    if (file?.name) {
+      const history ={
+        Definition: messageDefinition,
+        "Real world analogy": messageRealWorldAnalogy,
+        ELI5: messageELI5,
+      };
+      localStorage.setItem(file.name, JSON.stringify(history));
+    }
+  }, [file?.name, messageDefinition,messageRealWorldAnalogy,messageELI5]);
+
+
 
   useEffect (() => {
       const hasSeenTour = localStorage.getItem("hasSeenTour");
