@@ -52,6 +52,16 @@ export const PdfSidebar = ({ file }) => {
           if (history.ELI5) {
             setMessageELI5(history.ELI5);
           }
+        } else {
+          try{
+            const existingFiles = JSON.parse(localStorage.getItem("pdf_files") || '[]');
+
+            if (!existingFiles.includes(file.name)) {
+              localStorage.setItem("pdf_files", JSON.stringify([...existingFiles, file.name]));
+            }
+          } catch (error) {
+            console.error("error loading chat history:", error);
+          }
         }
       } catch (error) {
         console.error("error loading chat history:", error);
