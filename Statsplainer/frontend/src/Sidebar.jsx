@@ -693,7 +693,7 @@ const PromptButtonSelector = ({ selectedChat, setSelectedChat, setChatType }) =>
                 fullWidth
                 sx={{
                     color: "#ffffff",
-                    background: selectedChat === "Definition" ? `linear-gradient(145deg, rgba(217,217,217,0.9),rgba(180,180,180,0.7))`: `linear-gradient(145deg, rgba(217,217,217,0.4), rgba(180,180,180,0.2))`,
+                    background: selectedChat === "Real world analogy" ? `linear-gradient(145deg, rgba(217,217,217,0.9),rgba(180,180,180,0.7))`: `linear-gradient(145deg, rgba(217,217,217,0.4), rgba(180,180,180,0.2))`,
                     width: "33.33%",
                     display: "inherit",
                     minWidth: 10,
@@ -702,7 +702,7 @@ const PromptButtonSelector = ({ selectedChat, setSelectedChat, setChatType }) =>
                     textTransform: "none",
                     borderRadius: "10px",
                     transition: "all 0,3s ease",
-                    boxShadow: selectedChat === "Definition" ? `0 4px 20px rgba(217,217,217, 0.3), 0 0 0 1px rgba(255,255,255, 0.1)` : `0 2px 10px rgba(217,217,217, 0.1)`,
+                    boxShadow: selectedChat === "Real world analogy" ? `0 4px 20px rgba(217,217,217, 0.3), 0 0 0 1px rgba(255,255,255, 0.1)` : `0 2px 10px rgba(217,217,217, 0.1)`,
                     backdropFilter: `blur(8px)`,
                     border: `1px solid rgba(255, 255,255,0.1)`,
                     whiteSpace:"normal",
@@ -723,7 +723,7 @@ const PromptButtonSelector = ({ selectedChat, setSelectedChat, setChatType }) =>
                 fullWidth
                 sx={{
                     color: "#ffffff",
-                    background: selectedChat === "Definition" ? `linear-gradient(145deg, rgba(217,217,217,0.9),rgba(180,180,180,0.7))`: `linear-gradient(145deg, rgba(217,217,217,0.4), rgba(180,180,180,0.2))`,
+                    background: selectedChat === "ELI5" ? `linear-gradient(145deg, rgba(217,217,217,0.9),rgba(180,180,180,0.7))`: `linear-gradient(145deg, rgba(217,217,217,0.4), rgba(180,180,180,0.2))`,
                     width: "33.33%",
                     display: "inherit",
                     minWidth: 10,
@@ -732,7 +732,7 @@ const PromptButtonSelector = ({ selectedChat, setSelectedChat, setChatType }) =>
                     textTransform: "none",
                     borderRadius: "10px",
                     transition: "all 0,3s ease",
-                    boxShadow: selectedChat === "Definition" ? `0 4px 20px rgba(217,217,217, 0.3), 0 0 0 1px rgba(255,255,255, 0.1)` : `0 2px 10px rgba(217,217,217, 0.1)`,
+                    boxShadow: selectedChat === "ELI5" ? `0 4px 20px rgba(217,217,217, 0.3), 0 0 0 1px rgba(255,255,255, 0.1)` : `0 2px 10px rgba(217,217,217, 0.1)`,
                     backdropFilter: `blur(8px)`,
                     border: `1px solid rgba(255, 255,255,0.1)`,
                     whiteSpace:"normal",
