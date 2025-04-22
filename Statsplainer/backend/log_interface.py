@@ -6,7 +6,7 @@ def log_init():
     con = sq.connect(log_path)
     cur = con.cursor()
 
-    cur.execute("CREATE TABLE IF NOT EXISTS log(session_id, message, sender)")
+    cur.execute("CREATE TABLE IF NOT EXISTS log(user_id, user_provided_text, app_response, mode, uploaded_pdf)")
 
     con.commit()
     con.close()
@@ -20,13 +20,14 @@ def log_clear():
     con.commit()
     con.close()
 
-def log_insert(session_id, message, sender):
+def log_insert(user_id, user_provided_text, app_response, mode, uploaded_pdf):
     con = sq.connect(log_path)
     cur = con.cursor()
 
-    statement = """INSERT INTO log (session_id, message, sender) 
-        VALUES (?, ?, ?)"""
-    cur.execute(statement, (session_id, message, sender))
+    # Insert data rows into SQLite database app_log.db
+    statement = """INSERT INTO log (user_id, user_provided_text, app_response, mode, uploaded_pdf) 
+        VALUES (?, ?, ?, ?, ?)"""
+    cur.execute(statement, (user_id, user_provided_text, app_response, mode, uploaded_pdf))
     
     con.commit()
     con.close()

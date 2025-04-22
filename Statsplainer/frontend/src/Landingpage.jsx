@@ -7,7 +7,7 @@ import { PdfSidebar } from './PdfSidebar';
 import { apiCallPost } from './ApiCalls';
 
 
-export const LandingPage = ({ uploadedFile, setPdfUploaded, setUploadedFile }) => {
+export const LandingPage = ({ uploadedFile, setPdfUploaded, setUploadedFile, setTaskCompletion }) => {
 
   const onDrop = useCallback(async (acceptedFiles) => {
     const file = acceptedFiles[0];
@@ -67,7 +67,7 @@ export const LandingPage = ({ uploadedFile, setPdfUploaded, setUploadedFile }) =
 
         </Grid>
       ) : (
-        <PdfSidebar file={uploadedFile} />
+        <PdfSidebar file={uploadedFile} setTaskCompletion={setTaskCompletion} />
       )}
     </>
   );
