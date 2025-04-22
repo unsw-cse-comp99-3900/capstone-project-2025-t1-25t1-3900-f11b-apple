@@ -12,6 +12,31 @@ import ReactMarkdown from 'react-markdown'; // Import ReactMarkdown
 
 // Sidebar Function
 const NAVBAR_HEIGHT = 60;
+const escapeMarkdown = (text) => {
+    return text
+      // Headings
+      .replace(/^### (.*$)/gim, '<<h3>>$1<</h3>>')
+      .replace(/^## (.*$)/gim, '<<h2>>$1<</h2>>')
+      .replace(/^# (.*$)/gim, '<<h1>>$1<</h1>>')
+      // Bold, Italic, Code, Strikethrough
+      .replace(/\*\*(.*?)\*\*/g, '<<b>>$1<</b>>')
+      .replace(/\*(.*?)\*/g, '<<i>>$1<</i>>')
+      .replace(/`(.*?)`/g, '<<code>>$1<</code>>')
+      .replace(/~~(.*?)~~/g, '<<del>>$1<</del>>');
+  };
+
+  const unescapeMarkdown = (text) => {
+    return text
+      // Headings
+      .replace(/<<h1>>(.*?)<<\/h1>>/gim, '# $1')
+      .replace(/<<h2>>(.*?)<<\/h2>>/gim, '## $1')
+      .replace(/<<h3>>(.*?)<<\/h3>>/gim, '### $1')
+      // Bold, Italic, Code, Strikethrough
+      .replace(/<<b>>(.*?)<<\/b>>/g, '**$1**')
+      .replace(/<<i>>(.*?)<<\/i>>/g, '*$1*')
+      .replace(/<<code>>(.*?)<<\/code>>/g, '`$1`')
+      .replace(/<<del>>(.*?)<<\/del>>/g, '~~$1~~');
+  };
 
 export default function Sidebar({
   setChatType,
@@ -62,12 +87,17 @@ export default function Sidebar({
                 for (let i = 0; i < translatedMessages.length; i++) {
                     const message = translatedMessages[i];
                     if (message.sender === "AI" && message.text && !message.image) {
-                        let response = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${LanguageCode}&dt=t&q=${encodeURIComponent(message.text)}`);
+                        const protectedText = escapeMarkdown(message.text);
+
+                        let response = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${LanguageCode}&dt=t&q=${encodeURIComponent(protectedText)}`);
                         const data = await response.json();
-                        const translatedText = data[0].map(item => item[0]).join('');
+
+                        const translatedText = data?.[0]?.map(item => item?.[0] || '').join('') || message.text;
+                        const markdownRestored = unescapeMarkdown(translatedText);
+
                         translatedMessages[i] = {
                             ...message,
-                            text: translatedText,
+                            text: markdownRestored,
                         };
                     }
                 }
