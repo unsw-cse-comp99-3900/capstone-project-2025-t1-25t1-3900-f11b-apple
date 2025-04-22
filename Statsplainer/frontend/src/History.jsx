@@ -15,9 +15,69 @@ export const HistoryPage = () => {
 
   // Used https://kovart.github.io/dashed-border-generator/ for dashed border
   const [pdfFiles, setPdfFiles] = useState([]);
+  const navigate = useNavigate();
   const handlePdfClick = async (pdfName) => {
+    try {
+      //fetch pdf from backend api
+      const response = await fetch(`http://localhost:5000/get-pdf/${encodeURIComponent(pdfName)}`, {
+        method:"GET",
+        credentials: "include"
+      });
 
+      const fileBlob = await response.blob();
+
+      const file = new File([fileBlob], pdfName, {
+        type: "application/pdf",
+        lastModified: Date.now()
+      });
+
+      localStorage.setItem("selectedPdf", pdfName);
+
+      const fileUrl = URL.createObjectURL(file);
+
+      navigate("/dashboard", {
+        state: {
+          file: file,
+          fileUrl: fileUrl,
+          filename: pdfName
+        }
+      });
+
+    } catch (error) {
+      console.error("Error fetching PDF:", error);
+    }
   };
+
+
+  useEffect(() => {
+    try{
+      const storedFiles = localStorage.getItem('pdf_files');
+
+      // if storedFiles is null then return
+      if (!storedFiles) {
+        setPdfFiles([]);
+        return;
+      }
+
+      let parsedFiles;
+
+      try{
+        parsedFiles = JSON.parse(storedFiles);
+      } catch (parseError) {
+        console.error("error parsing JSON:", parseError);
+      }
+
+      if (Array.isArray(parsedFiles)) {
+        setPdfFiles(parsedFiles);
+      } else {
+        console.error("parsed data is not an array:", parsedFiles);
+        setPdfFiles([]);
+      }
+    } catch (error) {
+      console.error("error processing pdf_files:", error);
+      setPdfFiles([]);
+    }
+  }, []);
 
   return (
     <Grid
