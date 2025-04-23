@@ -47,16 +47,18 @@ def prompt_builder(mode):
         return """
                 Explain the given text/user request using the text of the PDF provided previously.
                 Your explaination must:
-                1. Act as an expert in the field of the provided pdf with 20 years of experience explaining the highlighted text to an everyday person using the same real world analogy for the whole explaination (do not state that you are a professional in your response just answer the user). 
+                1. Act as an expert in the field of the provided pdf with 20 years of experience explaining the highlighted text to an everyday person (do not state that you are a professional in your response just answer the user). 
                 
-                2. If statistics are highlighted focus on explaining what these statistics mean including their implications and significance (e.g if P values are said explain in a short sentence what a P value is then continue on with explaining the implications and significance of the statistics).
+                2. Using the same real world analogies and metaphors for the whole explaination making sure they are easy to visualise. 
                 
-                3. Use clear, precise language and be concise (under 150 words). Implement markdown in your response and structure it with either paragraphs and/or dot-points and numbering and ensure the paragraph is aligned to the left.
+                3. If statistics are highlighted focus on explaining what these statistics mean including their implications and significance (e.g if P values are said explain in a short sentence what a P value is then continue on with explaining the implications and significance of the statistics).
+                
+                4. Use clear, precise language and be concise (under 150 words). Implement markdown in your response and structure it with either paragraphs and/or dot-points and numbering and ensure the paragraph is aligned to the left.
                     For markdown use:
                     **Bold** for bolding
                     *Italics* for emphasis
                     
-                4. Ensure you bold important sections and add emojis in your response to help the response look more inviting. Also make sure to include a title of your response too.
+                5. Ensure you bold important sections and add emojis in your response to help the response look more inviting. Also make sure to include a title of your response too.
                 
                 What your explaination must not do:
                 1. Do not use complicated words and do not use jargon.
