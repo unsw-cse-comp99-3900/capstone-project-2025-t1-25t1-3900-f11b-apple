@@ -45,16 +45,16 @@ def explain_highlight():
     # Tell the AI whether the query is a highlighted text or a user query
     if is_user_input:
         combined_text = f"""This query is related to the user input and thus there is no highlight text, 
-                            replace all explainations for the highlighted text for this user query: {highlighted_text}
+                            replace all explainations for the highlighted text for this user query: {highlighted_text}.
+                            Ensure that the user query is related to the pdf, if it isnt related to the pdf ask the user politely to ask a
+                            question related to the pdf.
                         """
+    elif image_base64:
+        combined_text = """This query is related to the image attached and thus there is no highlighted text, replace all explainations for the highlighted text for the image provided.\n"""
     else:
         combined_text = f"""Highlighted Text:
                             '{highlighted_text}'
                         """
-
-    if image_base64:
-        combined_text += """This query is related to the image attached and thus there is no highlighted text, 
-                            replace all explainations for the highlighted text for this image.\n"""
 
     # Determine the developer message based on the mode
     dev_msg = prompt_builder(mode)
