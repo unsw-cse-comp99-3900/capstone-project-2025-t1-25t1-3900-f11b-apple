@@ -54,14 +54,39 @@ export const LandingPage = ({ uploadedFile, setPdfUploaded, setUploadedFile }) =
         >
           <input {...getInputProps()} />
 
-          <Typography color="white">
+          <Typography 
+            color="white"
+            sx={{
+              fontSize:`clamp(2vh, 4vw, 5vh)`,
+              fontWeight: "bold",
+              marginBottom: "0.5rem",
+              width: "100%",
+              textAlign: "center",
+            }}
+          >
             {isDragActive ? 'Drop the PDF here...' : 'Upload PDF'}
           </Typography>
-          <Typography color="gray">
+          <Typography 
+            color="gray"
+            sx={{
+              fontSize:`clamp(2vh, 4vw, 5vh)`,
+              fontWeight: "bold",
+              marginBottom: "0.5rem",
+              width: "100%",
+              textAlign: "center",
+            }}
+          >
             Drag and drop or choose a file to upload
           </Typography>
 
-          <Button variant="outlined" sx={{ color: 'white', borderColor: 'white' }}>
+          <Button 
+            variant="outlined" 
+            sx={{ 
+              color: 'white',
+              borderColor: 'white', 
+              fontSize: `clamp(1.2vh, 2.5vw, 3vh)`,
+              padding: `clamp(0.5vh, 1vw, 1.5vh) clamp(1vh, 2vw, 3vh)`,
+            }}>
             Choose PDF File
           </Button>
 
