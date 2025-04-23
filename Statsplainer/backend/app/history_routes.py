@@ -5,7 +5,7 @@ import json
 history_routes = Blueprint("history_routes", __name__)
 
 # This function saves a JSON file with the given file name and contents
-@history_routes.route('/upload_history', methods=['POST'])
+@history_routes.route('/upload_history/<filename>', methods=['POST'])
 def upload_history():
     if not request.is_json:
         return jsonify({"error": "Request must be in JSON format"}), 400
@@ -29,7 +29,7 @@ def upload_history():
     return jsonify({"message": "File saved successfully", "file": safe_filename}), 200
 
 # This function sends a JSON file with the given file name
-@history_routes.route('/retrieve_history', methods=['GET'])
+@history_routes.route('/retrieve_history/<filename>', methods=['GET'])
 def retrieve_history():
     requested_file = request.args.get("filename")
 
