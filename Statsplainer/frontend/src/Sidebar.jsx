@@ -25,11 +25,7 @@ export default function Sidebar({
   // Add loading state props
   isLoading,
   setIsLoading,
-<<<<<<< HEAD
   onHelpClick,
-=======
-  onHelpClick
->>>>>>> main
 }) {
     // intialised the state of hasSeenTour
     localStorage.setItem("hasSeenTour", "false");
@@ -434,7 +430,7 @@ const ChatMessageInput = ({addMessage, onTranslateClick, selectedChat, activePdf
             setUserMessageInput("");
             setIsLoading(true); // Set loading before fetch
 
-            fetch("http://localhost:6000/explain-highlight", { // This fetch remains for typed input
+            fetch("http://localhost:5000/explain-highlight", { // This fetch remains for typed input
                 method: "post",
                 credentials: 'include',
                 headers: {
