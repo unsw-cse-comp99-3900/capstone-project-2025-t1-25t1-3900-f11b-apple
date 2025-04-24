@@ -27,6 +27,6 @@ export const DashboardPage = () => {
     )
   }
   return (
-    <PdfSidebar file={file} />
+    <PdfSidebar file={file} isFromDashboard={true}/>
   )
 }
