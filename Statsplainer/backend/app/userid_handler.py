@@ -1,9 +1,10 @@
-""" from flask import make_response, request, Blueprint
+from flask import jsonify, make_response, request, Blueprint
 from uuid import uuid4
+from util import pass_to_google_forms
 
-cookie_handler = Blueprint("cookie_handler", __name__)
+userid_handler = Blueprint("cookie_handler", __name__)
 
-@cookie_handler.route('/set-cookie')
+""" @cookie_handler.route('/set-cookie')
 def set_cookie():
     if 'uid' not in request.cookies:
         uid = str(uuid4())
@@ -19,4 +20,10 @@ def set_cookie():
         return resp
     return f"Cookie already set. Value: {request.cookies.get('uid')}"  """
 
-
+@userid_handler.route('/user_id', methods=["POST"])
+def get_id():
+    user_id = request.cookies.get('user_id')
+    if user_id == "null":
+        user_id = "No user_id found."
+    pass_to_google_forms(user_id)
+    return jsonify(message="Success"), 200
