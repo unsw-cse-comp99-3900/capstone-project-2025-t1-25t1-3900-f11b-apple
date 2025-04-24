@@ -2,8 +2,6 @@ import { Link } from 'react-router-dom';
 import { AppBar, Toolbar, Button, Box, Typography, IconButton } from '@mui/material';
 import HistoryRoundedIcon from '@mui/icons-material/HistoryRounded';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
-import { transform } from 'html2canvas/dist/types/css/property-descriptors/transform';
-import { boxShadow } from 'html2canvas/dist/types/css/property-descriptors/box-shadow';
 
 export const NavBar = ({ page, pdfUploaded, setPdfUploaded, setUploadedFile, feedBackButton, setPopUpDisplay }) => {
   const buttonStyles = { 
