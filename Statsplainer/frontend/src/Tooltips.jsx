@@ -74,7 +74,7 @@ export default function Tooltip({state,open, handleClose }) {
  // check the state whether the tooltip guide is on or off
   const [isTourActive, setTourActive] = useState(false);
   const steps = (state === "highlight") ? highlight : tourGuide;
-
+  console.log(steps);
   useEffect(() => {
     if (open) {
       setShowBackdrop(true);
