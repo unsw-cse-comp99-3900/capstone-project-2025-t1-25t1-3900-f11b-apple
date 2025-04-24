@@ -18,11 +18,11 @@ def create_app():
     from .img_routes import img_routes
     from .pdf_routes import pdf_routes
     from .aiapi_routes import aiapi_routes
-    #from .cookie_handler import cookie_handler 
+    from .userid_handler import userid_handler
 
     app.register_blueprint(img_routes)
     app.register_blueprint(pdf_routes)
     app.register_blueprint(aiapi_routes)
-    #app.register_blueprint(cookie_handler)
+    app.register_blueprint(userid_handler)
 
     return app
