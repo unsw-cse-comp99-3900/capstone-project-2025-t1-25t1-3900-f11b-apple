@@ -1,4 +1,4 @@
-import { Box, Button, Paper, TextField, IconButton, keyframes, Menu, MenuItem, collapseClasses } from '@mui/material'; // Added keyframes
+import { Box, Button, Paper, TextField, IconButton, keyframes, Menu, MenuItem } from '@mui/material'; // Added keyframes
 import Grid from '@mui/material/Grid2';
 import React, {useState, useRef, useEffect} from "react";
 import Tooltip from './Tooltips';
@@ -33,7 +33,7 @@ export default function Sidebar({
     const [selectedChat, setSelectedChat] = useState("Definition");
     //set tooltips state
     const [open,setOpen] = useState(false);
-    
+
     //handle open/close tooltip
     const handleOpenTooltip = () => setOpen(true);
     const handleCloseTooltip = () => setOpen(false);
@@ -47,34 +47,37 @@ export default function Sidebar({
         }
     }, []);
 
-    const handleTranslate = (LanguageCode) => {
-        const currentMessages = selectedChat === "Definition" ? messageDefinition :
-                                selectedChat === "Real world analogy" ? messageRealWorldAnalogy : messageELI5;
-        
-        const setCurrentMessages = selectedChat === "Definition" ? setMessageDefinition :
-                                selectedChat === "Real world analogy" ? setMessageRealWorldAnalogy : setMessageELI5;
+    const handleTranslate = async (LanguageCode) => {
+        const modes = [
+            { messages: messageDefinition, setter: setMessageDefinition },
+            { messages: messageRealWorldAnalogy, setter: setMessageRealWorldAnalogy },
+            { messages: messageELI5, setter: setMessageELI5 },
+        ];
 
-        //create a new array with the selected language to be translated
-        const translatedMessages = [...currentMessages];
-        translatedMessages.forEach(async (message, index) => {
-            if (message.sender === "AI" && message.text && !message.image) {
-                try {
-                    let response = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${LanguageCode}&dt=t&q=${encodeURIComponent(message.text)}`);
-                    const data = await response.json();
-                    const translatedText = data[0].map(item => item[0]).join('');
-                    translatedMessages[index] = {
-                        ...message,
-                        text: translatedText,
-                        originalText: message.text,
+        try {
+            console.log("start translate for all modes");
+
+            for (const mode of modes) {
+                const translatedMessages = [...mode.messages];
+                for (let i = 0; i < translatedMessages.length; i++) {
+                    const message = translatedMessages[i];
+                    if (message.sender === "AI" && message.text && !message.image) {
+                        let response = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${LanguageCode}&dt=t&q=${encodeURIComponent(message.text)}`);
+                        const data = await response.json();
+                        const translatedText = data[0].map(item => item[0]).join('');
+                        translatedMessages[i] = {
+                            ...message,
+                            text: translatedText,
+                        };
                     }
-                    setCurrentMessages(translatedMessages);
-                } catch (error) {
-                    console.error("Translation error:", error);
                 }
+                mode.setter(translatedMessages);
             }
-        })
-
-    }
+            
+        } catch (error) {
+            console.error("Translation error:", error);
+        }
+    };
 
     return (
         

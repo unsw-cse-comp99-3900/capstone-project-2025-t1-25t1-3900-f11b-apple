@@ -9,7 +9,6 @@ import ZoomOutRoundedIcon from '@mui/icons-material/ZoomOutRounded';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
 import { Highlight } from "./Highlight";
-import { apiCallPostText } from "./ApiCalls";
 import CheckRoundedIcon from '@mui/icons-material/CheckRounded';
 import HighlightAltRoundedIcon from '@mui/icons-material/HighlightAltRounded';
 import PhotoCameraRoundedIcon from '@mui/icons-material/PhotoCameraRounded';
@@ -17,7 +16,7 @@ import PhotoCameraRoundedIcon from '@mui/icons-material/PhotoCameraRounded';
 import worker from "pdfjs-dist/build/pdf.worker?worker";
 pdfjs.GlobalWorkerOptions.workerPort = new worker();
 
-export const PdfUpload = ({ file, setSideBarTriggered, onHighlightConfirm, setIsLoading }) => { // Changed props: removed currentMode, addMessage; added onHighlightConfirm
+export const PdfUpload = ({ file, setSideBarTriggered, onHighlightConfirm, highlightCompletionFunc, modeCompletion }) => { // Changed props: removed currentMode, addMessage; added onHighlightConfirm
   const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
   const [pageScale, setPageScale] = useState(1);
@@ -26,6 +25,13 @@ export const PdfUpload = ({ file, setSideBarTriggered, onHighlightConfirm, setIs
   const [snipHighlightSwitch, setSnipHighlightSwitch] = useState("Highlight");
   const containerRef = useRef(null);
   const [isHorizontallyOverflowing, setIsHorizontallyOverflowing] = useState(false);
+
+  //  on highlight trigger execute highlightCompletionFunc for parent
+  const taskChecker = () => {
+    if (modeCompletion === true) {
+      highlightCompletionFunc();
+    }
+  };
 
   const pageElementsRef = useRef([]);
   const onDocumentLoadSuccess = ({ numPages: loadedNumPages }) => {
@@ -48,8 +54,10 @@ export const PdfUpload = ({ file, setSideBarTriggered, onHighlightConfirm, setIs
     if (highlights.length > 0) {
       if (snipHighlightSwitch === "Snip") {
         setConfirmPopup(true);
+        taskChecker();
       } else if (highlights[0].boxes.length > 0) {
         setConfirmPopup(true);
+        taskChecker();
       }
       setLastHighlightPoint({
         x: highlights[0].x,
@@ -68,14 +76,6 @@ export const PdfUpload = ({ file, setSideBarTriggered, onHighlightConfirm, setIs
   }, [pageScale, numPages, snipHighlightSwitch, window.innerWidth, window.innerHeight])
 
   let windowWidth = window.innerWidth * (70 / 100) * 0.9;
-
-  const changePage = (newPageNumber) => {
-    if (newPageNumber >= 1 && newPageNumber <= numPages) {
-      setPageNumber(newPageNumber);
-    }
-  };
-  const goToPreviousPage = () => changePage(pageNumber - 1);
-  const goToNextPage = () => changePage(pageNumber + 1);
 
   const changeZoom = (delta) => {
       setPageScale((prevScale) => Math.max(0.5, Math.min(prevScale + delta, 3.0)));
