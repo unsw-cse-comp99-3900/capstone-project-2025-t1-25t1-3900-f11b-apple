@@ -40,7 +40,7 @@ export const PdfSidebar = ({ file }) => {
     if (file?.name) {
       const existingFiles = JSON.parse(localStorage.getItem("pdf_files") || '[]');
       if (!existingFiles.includes(file.name)) {
-        localStorage.setItem('pdf_files', JSON.stringify([...existingFiles. file?.name]));
+        localStorage.setItem('pdf_files', JSON.stringify([...existingFiles, file?.name]));
       }
     }
   }, [file]);
@@ -53,7 +53,7 @@ export const PdfSidebar = ({ file }) => {
         if(pdfFiles.includes(file.name)) {
           //fetch pdf chat history from backend
           const response = await fetch(`http://localhost:5000/retrieve_history/${encodeURIComponent(file.name)}`, {
-            method: "GET", credentials: "incldue"
+            method: "GET", credentials: "include"
           });
 
           if (response.status !== 404) {
@@ -87,7 +87,7 @@ export const PdfSidebar = ({ file }) => {
         ELI5: messageELI5,
       };
 
-      fetch(`http://locahost:5000/upload_history/${encodeURIComponent(file.name)}`, {
+      fetch(`http://localhost:5000/upload_history/${encodeURIComponent(file.name)}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
