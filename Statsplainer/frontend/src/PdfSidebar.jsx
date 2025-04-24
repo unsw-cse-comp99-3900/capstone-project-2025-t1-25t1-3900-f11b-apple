@@ -69,6 +69,7 @@ export const PdfSidebar = ({ file, setTaskCompletion, isFromDashboard = false })
 
   //set tooltips state
   const [open,setOpen] = useState(false);
+  const[tooltipState, setTooltipState] = useState("highlight");
 
   //handle open/close tooltip
   const handleOpenTooltip = () => {
