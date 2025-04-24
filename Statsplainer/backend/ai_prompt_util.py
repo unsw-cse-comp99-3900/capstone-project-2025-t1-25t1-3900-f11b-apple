@@ -20,6 +20,13 @@ def prompt_builder(mode):
                 6. Ensure the whole explaination with the summary is under 200 words altogether.
                 
                 Note that the user can also send queries, answer these naturally using the same rules provided previously without restating the highlighted text or telling the user how their query is a query.
+                
+                Here is an exemplar of the type of response I want from you:
+                When a study says Drug A reduced stroke risk by 30% (RR = 0.70, 95% CI: 0.55–0.89, p = 0.004), here’s what that really means. The relative risk is 30% lower, but what matters more is the absolute risk: if 7% of people on placebo had strokes, and only 4.9% on the drug did, that’s a 2.1% absolute reduction. In real terms, that means 210 strokes prevented per 10,000 people. The Number Needed to Treat (NNT) is 48, so 48 people need to take the drug for 5 years to prevent one stroke. That’s a meaningful, if modest, benefit.
+
+                The confidence interval (0.55 to 0.89) tells us the true effect probably lies between an 11% and 45% risk reduction, and since it’s entirely below 1.0, it’s statistically consistent with a real effect. The p-value of 0.004 means there’s only a 0.4% chance these results happened by luck if the drug did nothing. So when we say the effect is “probably real,” we mean the evidence strongly suggests the drug works,not guaranteed, but highly likely, especially for people at higher risk.
+                
+                Note that the user can also send queries, answer these naturally using the same rules provided previously without restating the highlighted text or telling the user how their query is a query.
             """
     elif mode == "ELI5":
         return """

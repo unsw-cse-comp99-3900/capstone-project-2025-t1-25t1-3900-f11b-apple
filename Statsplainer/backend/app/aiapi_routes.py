@@ -44,8 +44,16 @@ def explain_highlight():
     messages = []
 
     for entry in current_mode_history:
-        role = "user" if entry["sender"] == "user" else "assistant"
-        messages.append({"role": role, "content": entry["text"]})
+        if entry["sender"] == "user":
+            messages.append({
+                "role": "user",
+                "content": f"(Highlighted Text / user query)\n{entry['text']}"
+            })
+        elif entry["sender"] == "AI":
+            messages.append({
+                "role": "assistant",
+                "content": f"(Explanation)\n{entry['text']}"
+            })
     # End of chat history logic
 
     # Tell the AI whether the query is a highlighted text or a user query
@@ -58,9 +66,9 @@ def explain_highlight():
         combined_text = f"""Highlighted Text:
                             '{highlighted_text}'
                         """
-    
-    prompt = prompt_builder(mode)
-    messages.insert(0, {"role": "system", "content": prompt})
+
+    messages.insert(0, {"role": "user", "content": full_text})
+    messages.append({"role": "user", "content": combined_text})
     
     if image_base64:
         messages.append({
@@ -70,18 +78,13 @@ def explain_highlight():
                 {"type": "image_url", "image_url": {"url": f"data:image/png;base64,{image_base64}"}}
             ]
         })
-    else:
-        messages.append({
-            "role": "user",
-            "content": full_text
-        })
     
     try:
         # Call API utility with combined text and mode-specific instructions
         # Pass image_base64 if it exists
         explanation = API_text_input(
             messages=messages, 
-            dev_msg=combined_text, 
+            dev_msg=prompt_builder(mode), 
             image_base64=image_base64,
             temperature=ai_temperature_control(mode))
 
