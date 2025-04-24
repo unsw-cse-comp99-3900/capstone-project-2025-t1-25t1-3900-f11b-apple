@@ -34,9 +34,9 @@ def clean_pdf_text(text):
 
 def pass_to_google_forms(user_id):
     # Send app log object to google Forms
-    url = "https://docs.google.com/forms/d/e/1FAIpQLSdWEFlG2ciIRUB7LchAd1K-ka8UUF8htg6ikMpG65t15E3dBA/formResponse"
+    url = "https://docs.google.com/forms/d/e/1FAIpQLSflKM9wbXoNShp1reRQIuarEjVJlfw3ug5xepwIunceWUK45g/formResponse"
     data = {
-        'entry.933644349': user_id,
+        'entry.2029882290': user_id,
         #'entry.760993200': uploaded_pdf,
         #'entry.1031824723': mode,
         #'entry.773728676': user_provided_text,
