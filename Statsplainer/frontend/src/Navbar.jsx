@@ -9,7 +9,7 @@ export const NavBar = ({ page, pdfUploaded, setPdfUploaded, setUploadedFile, fee
   const buttonStyles = { 
     height: '80%',
     color: 'white',
-    background: `linear-gradient(145deg, #0A8FF, #0066CC)`,
+    background: `linear-gradient(145deg, #0A85FF, #0066CC)`,
     borderRadius: 1,
     mx: 1,
     boxShadow: `0 4px 6px rgba(0,0,0,0.1)`,
