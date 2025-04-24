@@ -25,7 +25,7 @@ export const NavBar = ({ page, pdfUploaded, setPdfUploaded, setUploadedFile, fee
 
   const feedbackButtonStyles = {
     ...buttonStyles,
-    background: 'linear-gradient(145deg, #FF6B6B, #FF4757',
+    background: 'linear-gradient(145deg, #FF6B6B, #FF4757)',
     "&:hover": {
       background: `linear-gradient(145deg, #FF4757, #FF6B6B)`,
       transform: `translateY(-2px)`,
