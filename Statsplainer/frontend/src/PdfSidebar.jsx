@@ -43,6 +43,13 @@ export const PdfSidebar = ({ file, setTaskCompletion, isFromDashboard = false })
     localStorage.setItem("hasSeenTour", "true");
   }, [isFromDashboard]);
 
+  useEffect(() => {
+    if (isFromDashboard) {
+      setSideBarTriggered(true);
+    }
+    localStorage.setItem("hasSeenTour", "true");
+  }, [isFromDashboard]);
+
   // 1 highlight, all modes have been checked, another highlight, all modes checked again
   // passes true value back to route file to render feedback popup
   useEffect(() => {
@@ -61,9 +68,7 @@ export const PdfSidebar = ({ file, setTaskCompletion, isFromDashboard = false })
   localStorage.setItem("hasSeenTour", "false");
 
   //set tooltips state
-  const [open,setOpen] = useState(true);
-  const [tooltipState, setTooltipState] = useState("highlight");
-
+  const [open,setOpen] = useState(false);
 
   //handle open/close tooltip
   const handleOpenTooltip = () => {
@@ -90,7 +95,7 @@ export const PdfSidebar = ({ file, setTaskCompletion, isFromDashboard = false })
         const pdfFiles = JSON.parse(localStorage.getItem("pdf_files") || '[]');
         if(pdfFiles.includes(file.name)) {
           //fetch pdf chat history from backend
-          const response = await fetch(`http://localhost:5000/retrieve_history/${encodeURIComponent(file.name)}`, {
+          const response = await fetch(`http://localhost:6000/retrieve_history/${encodeURIComponent(file.name)}`, {
             method: "GET", credentials: "include"
           });
 
@@ -125,7 +130,7 @@ export const PdfSidebar = ({ file, setTaskCompletion, isFromDashboard = false })
         ELI5: messageELI5,
       };
 
-      fetch(`http://localhost:5000/upload_history/${encodeURIComponent(file.name)}`, {
+      fetch(`http://localhost:6000/upload_history/${encodeURIComponent(file.name)}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
