@@ -8,7 +8,7 @@ def prompt_builder(mode):
                 2. If statistics are highlighted focus on explaining what these statistics mean including their implications and significance (e.g if
                 P values are said explain in a short sentence what a P value is then continue on with explaining the implications and significance of the statistics).
                 
-                3. Use clear, precise language and be concise (under 200 words). Implement markdown in your response and structure it with either paragraphs and/or dot-points and numbering and ensure the paragraph is aligned to the left. Also make sure to include a title of your response too.
+                3. Use clear, precise language and be concise. Implement markdown in your response and structure it with either paragraphs and/or dot-points and numbering and ensure the paragraph is aligned to the left. Also make sure to include a title of your response too.
                     For markdown use:
                     **Bold** for bolding
                     *Italics* for emphasis
@@ -16,6 +16,8 @@ def prompt_builder(mode):
                 4. Ensure you bold important sections and add emojis in your response to help the response look more inviting.
                 
                 5. Include a summary at the bottom of the explaination
+                
+                6. Ensure the whole explaination with the summary is under 200 words altogether.
                 
                 Note that the user can also send queries, answer these naturally using the same rules provided previously without restating the highlighted text or telling the user how their query is a query.
             """
@@ -61,7 +63,7 @@ def prompt_builder(mode):
                     
                 5. Ensure you bold important sections and add emojis in your response to help the response look more inviting. Also make sure to include a title of your response too.
                 
-                6. Include a summary at the bottom of the explaination
+                6. Include a summary at the bottom of the explaination and ensure the whole explaination including the summary is under 150 words.
                 
                 What your explaination must not do:
                 1. Do not use complicated words and do not use jargon.
