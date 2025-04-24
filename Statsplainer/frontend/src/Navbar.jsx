@@ -2,8 +2,6 @@ import { Link } from 'react-router-dom';
 import { AppBar, Toolbar, Button, Box, Typography, IconButton } from '@mui/material';
 import HistoryRoundedIcon from '@mui/icons-material/HistoryRounded';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
-import { transform } from 'html2canvas/dist/types/css/property-descriptors/transform';
-import { boxShadow } from 'html2canvas/dist/types/css/property-descriptors/box-shadow';
 
 export const NavBar = ({ page, pdfUploaded, setPdfUploaded, setUploadedFile, feedBackButton, setPopUpDisplay }) => {
   const buttonStyles = { 
@@ -27,7 +25,7 @@ export const NavBar = ({ page, pdfUploaded, setPdfUploaded, setUploadedFile, fee
 
   const feedbackButtonStyles = {
     ...buttonStyles,
-    background: 'linear-gradient(145deg, #FF6B6B, #FF4757',
+    background: 'linear-gradient(145deg, #FF6B6B, #FF4757)',
     "&:hover": {
       background: `linear-gradient(145deg, #FF4757, #FF6B6B)`,
       transform: `translateY(-2px)`,
