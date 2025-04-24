@@ -11,7 +11,7 @@ import {
 } from "react-resizable-panels";
 import { apiCallPostText } from './ApiCalls'; // Import API call function
 
-export const PdfSidebar = ({ file, setTaskCompletion }) => {
+export const PdfSidebar = ({ file, setTaskCompletion, isFromDashboard = false }) => {
   const [sideBarTriggered, setSideBarTriggered] = useState(false);
   const [chatType, setChatType] = useState("Definition"); // Mode selected
   const [isLoading, setIsLoading] = useState(false); // State for loading indicator
@@ -35,6 +35,13 @@ export const PdfSidebar = ({ file, setTaskCompletion }) => {
 
   // tracks if user has gone into every mode
   const [chatTaskArray, setChatTaskArray] = useState([chatType]);
+
+  useEffect(() => {
+    if (isFromDashboard) {
+      setSideBarTriggered(true);
+    }
+    localStorage.setItem("hasSeenTour", "true");
+  }, [isFromDashboard]);
 
   // 1 highlight, all modes have been checked, another highlight, all modes checked again
   // passes true value back to route file to render feedback popup
