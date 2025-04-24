@@ -1,6 +1,6 @@
 import { PdfUpload } from "./PdfUpload";
 import Sidebar from './Sidebar';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Typography, Button, Box } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import Tooltip from './Tooltips';
@@ -11,10 +11,11 @@ import {
 } from "react-resizable-panels";
 import { apiCallPostText } from './ApiCalls'; // Import API call function
 
-export const PdfSidebar = ({ file, setTaskCompletion }) => {
+export const PdfSidebar = ({ file, setTaskCompletion, isFromDashboard = false }) => {
   const [sideBarTriggered, setSideBarTriggered] = useState(false);
   const [chatType, setChatType] = useState("Definition"); // Mode selected
   const [isLoading, setIsLoading] = useState(false); // State for loading indicator
+  const isInitialMount = useRef(true); // check if user click from history page to access PdfSidebar
 
   // Lifted state for chat messages
   const [messageDefinition, setMessageDefinition] = useState([]);
@@ -34,6 +35,13 @@ export const PdfSidebar = ({ file, setTaskCompletion }) => {
 
   // tracks if user has gone into every mode
   const [chatTaskArray, setChatTaskArray] = useState([chatType]);
+
+  useEffect(() => {
+    if (isFromDashboard) {
+      setSideBarTriggered(true);
+    }
+    localStorage.setItem("hasSeenTour", "true");
+  }, [isFromDashboard]);
 
   // 1 highlight, all modes have been checked, another highlight, all modes checked again
   // passes true value back to route file to render feedback popup
@@ -58,6 +66,81 @@ export const PdfSidebar = ({ file, setTaskCompletion }) => {
   //handle open/close tooltip
   const handleOpenTooltip = () => setOpen(true);
   const handleCloseTooltip = () => setOpen(false);
+
+
+  // add current file to the localStorage
+  useEffect(() => {
+    if (file?.name) {
+      const existingFiles = JSON.parse(localStorage.getItem("pdf_files") || '[]');
+      if (!existingFiles.includes(file.name)) {
+        localStorage.setItem('pdf_files', JSON.stringify([...existingFiles, file?.name]));
+      }
+    }
+  }, [file]);
+
+  //Load chat history of the uploaded pdf
+  useEffect(() => {
+    const fetchHistory = async () => {
+      try{
+        const pdfFiles = JSON.parse(localStorage.getItem("pdf_files") || '[]');
+        if(pdfFiles.includes(file.name)) {
+          //fetch pdf chat history from backend
+          const response = await fetch(`http://localhost:5000/retrieve_history/${encodeURIComponent(file.name)}`, {
+            method: "GET", credentials: "include"
+          });
+
+          if (response.status !== 404) {
+            const data = await response.json();
+            console.log("Successfully loaded chat history", data);
+            setMessageDefinition(data.Definition);
+            setMessageRealWorldAnalogy(data["Real world analogy"]);
+            setMessageELI5(data.ELI5);
+          }
+
+        }
+      } catch (error) {
+        console.error("Error loading chat history", error);
+      }
+
+      isInitialMount.current = false;
+    };
+
+    fetchHistory();
+
+    
+  }, [file]);
+
+
+  // update chathistory to the backend everytime user interact in the sidebar message 
+  useEffect(() => {
+    if (file?.name && messageDefinition.length > 0) {
+      const history ={
+        Definition: messageDefinition,
+        "Real world analogy": messageRealWorldAnalogy,
+        ELI5: messageELI5,
+      };
+
+      fetch(`http://localhost:5000/upload_history/${encodeURIComponent(file.name)}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({content:history})
+      })
+      .then( response => {
+        if(!response.ok) {
+          throw new Error (`HTTP error ! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .catch(error => {
+        console.error(error);
+      })
+    }
+  }, [file?.name, messageDefinition,messageRealWorldAnalogy,messageELI5]);
+
+
 
   useEffect (() => {
       const hasSeenTour = localStorage.getItem("hasSeenTour");

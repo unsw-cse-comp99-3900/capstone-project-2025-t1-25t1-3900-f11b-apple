@@ -78,7 +78,7 @@ def explain_highlight():
             temperature=ai_temperature_control(mode))
 
         log_insert(user_id, highlighted_text, explanation, mode, filename)
-        pass_to_google_forms(user_id, highlighted_text, explanation, mode, filename)
+        #pass_to_google_forms(user_id, highlighted_text, explanation, mode, filename)
         
         return jsonify({
             "explanation": explanation
