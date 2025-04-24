@@ -47,11 +47,15 @@ def explain_highlight():
         combined_text = f"""This query is related to the user input and thus there is no highlight text, 
                             replace all explainations for the highlighted text for this user query: {highlighted_text}.
                             
-                            Ensure that the user query is related to the pdf, if it isnt related to the pdf ask the user politely to ask a
-                            question related to the pdf. (Do not state the bottom line if the user asks an off topic question).
+                            Ensure that:
+                            1. The user query is related to the pdf, if it isnt related to the pdf (such as random text or off topic requests) ask the user politely to ask a
+                            question related to the pdf.
                             
-                            If the off topic question relates to anything dangerous or inflicts self harm tell the user politely to refrain from such
-                            requests and to seek help.
+                            2. If the off topic question relates to anything dangerous or inflicts self harm tell the user politely to refrain from such requests and to seek help.
+                            
+                            3. If the question is off topic do not state a summary
+                            End of user query preferences for the response
+                            
                         """
     elif image_base64:
         combined_text = """This query is related to the image attached and thus there is no highlighted text, replace all explainations for the highlighted text for the image provided.\n"""
