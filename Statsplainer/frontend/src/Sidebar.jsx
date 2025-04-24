@@ -1,7 +1,6 @@
 import { Box, Button, Paper, TextField, IconButton, keyframes, Menu, MenuItem } from '@mui/material'; // Added keyframes
 import Grid from '@mui/material/Grid2';
 import React, {useState, useRef, useEffect} from "react";
-import Tooltip from './Tooltips';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import SendIcon from "@mui/icons-material/Send";
 import MicIcon from '@mui/icons-material/Mic';
@@ -26,7 +25,11 @@ export default function Sidebar({
   // Add loading state props
   isLoading,
   setIsLoading,
+<<<<<<< HEAD
   onHelpClick,
+=======
+  onHelpClick
+>>>>>>> main
 }) {
     // intialised the state of hasSeenTour
     localStorage.setItem("hasSeenTour", "false");
@@ -113,7 +116,7 @@ export default function Sidebar({
             <PromptButtonSelector selectedChat={selectedChat} setSelectedChat={setSelectedChat} setChatType={setChatType}/>
 
             <IconButton
-                onClick={handleOpenTooltip}
+                onClick={onHelpClick}
                 sx={{
                     color: "white",
                     "&:hover": {
@@ -431,7 +434,7 @@ const ChatMessageInput = ({addMessage, onTranslateClick, selectedChat, activePdf
             setUserMessageInput("");
             setIsLoading(true); // Set loading before fetch
 
-            fetch("http://localhost:5000/explain-highlight", { // This fetch remains for typed input
+            fetch("http://localhost:6000/explain-highlight", { // This fetch remains for typed input
                 method: "post",
                 credentials: 'include',
                 headers: {
