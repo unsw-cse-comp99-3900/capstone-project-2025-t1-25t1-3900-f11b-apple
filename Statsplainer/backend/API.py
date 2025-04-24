@@ -65,13 +65,29 @@ def API_text_input(messages, dev_msg, image_base64=None, temperature=0.7):
                   
                   """}
   
+  chat_history_hint = {
+        "role": "system",
+        "content": (
+            "The conversation history contains previously highlighted texts and user queries marked as '(Highlighted Text / user query)', "
+            "and your earlier replies marked as '(Explanation)'. When the user asks follow-up questions, "
+            "refer back to those highlights and your responses as needed."
+        )
+  }
+  
+  final_messages = [system_intro]
+  
   if dev_msg:
-        messages.insert(0, {"role": "user", "content": dev_msg})
-  messages.insert(0, system_intro)
+        final_messages.append({
+            "role": "system",
+            "content": dev_msg
+        })
+        
+  final_messages.append(chat_history_hint)
+  final_messages.extend(messages)
 
   completion = client.chat.completions.create(
       model=ai_model,
-      messages=messages,
+      messages=final_messages,
       temperature=temperature
   )
     
