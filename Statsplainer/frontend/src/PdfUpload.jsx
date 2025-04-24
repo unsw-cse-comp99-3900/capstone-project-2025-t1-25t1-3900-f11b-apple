@@ -204,6 +204,7 @@ export const PdfUpload = ({ file, setSideBarTriggered, onHighlightConfirm, highl
         >
           <IconButton
             size="small"
+            aria-label="confirm highlight"
             sx={{ backgroundColor: "lightgreen", '&:hover': { backgroundColor: 'darkgreen'}}}
             onMouseDown={(e) => e.stopPropagation()}
             onMouseUp={(e) => e.stopPropagation()}
@@ -267,3 +268,4 @@ export const PdfUpload = ({ file, setSideBarTriggered, onHighlightConfirm, highl
 };
 
 // Remove the old result function as its logic is now handled in PdfSidebar
+
