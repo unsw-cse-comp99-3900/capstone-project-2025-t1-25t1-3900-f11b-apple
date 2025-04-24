@@ -15,7 +15,7 @@ def prompt_builder(mode):
                 
                 4. Ensure you bold important sections and add emojis in your response to help the response look more inviting.
                 
-                5. Include a bottomline at the bottom of the explaination
+                5. Include a summary at the bottom of the explaination
                 
                 Note that the user can also send queries, answer these naturally using the same rules provided previously without restating the highlighted text or telling the user how their query is a query.
             """
@@ -36,6 +36,7 @@ def prompt_builder(mode):
                 
                 What your explaination must not do:
                 1. Do not use complicated words and do not use jargon.
+                End of what not to do
                 
                 Here is an exemplar of the type of response I want from you:
                 Alright here’s how it works: your body has little messengers called melatonin that help you get sleepy. We gave some kids a gentle helper, like a tiny vitamin, and then we checked their spit to see how many messengers were working. About an hour and a half later, there were lots more of them! Even when we shined a bright light, those messengers kept doing their job. So, the helper made bedtime signals stronger and light didn’t really stop them. Cool, right?
@@ -60,8 +61,11 @@ def prompt_builder(mode):
                     
                 5. Ensure you bold important sections and add emojis in your response to help the response look more inviting. Also make sure to include a title of your response too.
                 
+                6. Include a summary at the bottom of the explaination
+                
                 What your explaination must not do:
                 1. Do not use complicated words and do not use jargon.
+                End of what not to do
                 
                 Here is an exemplar of the type of response I want from you:
                 Let’s say a study finds that Drug A reduces the risk of stroke by 30% (RR = 0.70, 95% CI: 0.55–0.89, p = 0.004). Think of it like this: if your chance of stroke is like drawing a losing card from a deck of 100, and normally 7 people draw that card, Drug A lowers that number to about 5. That’s a small shift a 2.1% absolute difference but across a crowd, it adds up. Out of every 48 people who take the drug for 5 years, one stroke is prevented. That’s like needing 48 umbrellas in a storm to keep one person completely dry and not perfect, but still protection.
