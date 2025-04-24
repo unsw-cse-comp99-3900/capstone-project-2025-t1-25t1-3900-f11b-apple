@@ -5,7 +5,7 @@ import {PdfSidebar} from './PdfSidebar';
 import {useLocation} from 'react-router-dom';
 
 
-export const DashboardPage = () => {
+export const DashboardPage = ( {setTaskCompletion} ) => {
   const location = useLocation();
   const {file} = location.state || {};
 
@@ -27,6 +27,6 @@ export const DashboardPage = () => {
     )
   }
   return (
-    <PdfSidebar file={file} isFromDashboard={true}/>
+    <PdfSidebar file={file} isFromDashboard={true} setTaskCompletion={setTaskCompletion}/>
   )
 }

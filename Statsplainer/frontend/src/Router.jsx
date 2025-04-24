@@ -50,7 +50,7 @@ export default function Router() {
         <Route path='/' element={<LandingPage setPdfUploaded={setPdfUploaded} setUploadedFile={setUploadedFile} uploadedFile={uploadedFile} setTaskCompletion={setTaskCompletion}/>}/>
 
         <Route path='/history' element={<HistoryPage />}/>
-        <Route path='/dashboard' element={<DashboardPage />} />
+        <Route path='/dashboard' element={<DashboardPage setTaskCompletion={setTaskCompletion}/>} />
       </Routes>
     </Grid>
   )
