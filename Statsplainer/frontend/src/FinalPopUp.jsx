@@ -60,7 +60,7 @@ export const FinalPopUp = ({ setPopUpDisplay, setFeedbackButton }) => {
         top: '50%', 
         left: '50%', 
         transform: `translate(-50%,-50%)`, 
-        backgroundColor: 'rgba(0, 128, 255, 1)', 
+        backgroundColor: 'rgb(233, 233, 233)', 
         borderRadius: 2, 
         zIndex: 100, 
         width: '30vw',
