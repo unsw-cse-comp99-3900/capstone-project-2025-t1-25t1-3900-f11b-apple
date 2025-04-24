@@ -34,53 +34,76 @@ export const PdfSidebar = ({ file }) => {
   const handleOpenTooltip = () => setOpen(true);
   const handleCloseTooltip = () => setOpen(false);
 
-  //Load chat history of the uploaded pdf
+
+  // add current file to the localStorage
   useEffect(() => {
-    if (isInitialMount.current && file?.name) {
-      try {
-        const storedHistory = localStorage.getItem(file.name);
-        if(storedHistory) {
-          const history = JSON.parse(storedHistory);
-          if (history.Definition) {
-            setMessageDefinition(history.Definition);
-          }
-
-          if (history["Real world analogy"]) {
-            setMessageRealWorldAnalogy(history["Real world analogy"]);
-          }
-
-          if (history.ELI5) {
-            setMessageELI5(history.ELI5);
-          }
-        } else {
-          try{
-            const existingFiles = JSON.parse(localStorage.getItem("pdf_files") || '[]');
-
-            if (!existingFiles.includes(file.name)) {
-              localStorage.setItem("pdf_files", JSON.stringify([...existingFiles, file.name]));
-            }
-          } catch (error) {
-            console.error("error loading chat history:", error);
-          }
-        }
-      } catch (error) {
-        console.error("error loading chat history:", error);
+    if (file?.name) {
+      const existingFiles = JSON.parse(localStorage.getItem("pdf_files") || '[]');
+      if (!existingFiles.includes(file.name)) {
+        localStorage.setItem('pdf_files', JSON.stringify([...existingFiles. file?.name]));
       }
-
-      isInitialMount.current = false;
     }
   }, [file]);
 
-
-  // update localstorage everytime user interact in the sidebar message 
+  //Load chat history of the uploaded pdf
   useEffect(() => {
-    if (file?.name) {
+    const fetchHistory = async () => {
+      try{
+        const pdfFiles = JSON.parse(localStorage.getItem("pdf_files") || '[]');
+        if(pdfFiles.includes(file.name)) {
+          //fetch pdf chat history from backend
+          const response = await fetch(`http://localhost:5000/retrieve_history/${encodeURIComponent(file.name)}`, {
+            method: "GET", credentials: "incldue"
+          });
+
+          if (response.status !== 404) {
+            const data = await response.json();
+            console.log("Successfully loaded chat history", data);
+            setMessageDefinition(data.Definition);
+            setMessageRealWorldAnalogy(data["Real world analogy"]);
+            setMessageELI5(data.ELI5);
+          }
+
+        }
+      } catch (error) {
+        console.error("Error loading chat history", error);
+      }
+
+      isInitialMount.current = false;
+    };
+
+    fetchHistory();
+
+    
+  }, [file]);
+
+
+  // update chathistory to the backend everytime user interact in the sidebar message 
+  useEffect(() => {
+    if (file?.name && messageDefinition.length > 0) {
       const history ={
         Definition: messageDefinition,
         "Real world analogy": messageRealWorldAnalogy,
         ELI5: messageELI5,
       };
-      localStorage.setItem(file.name, JSON.stringify(history));
+
+      fetch(`http://locahost:5000/upload_history/${encodeURIComponent(file.name)}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({content:history})
+      })
+      .then( response => {
+        if(!response.ok) {
+          throw new Error (`HTTP error ! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .catch(error => {
+        console.error(error);
+      })
     }
   }, [file?.name, messageDefinition,messageRealWorldAnalogy,messageELI5]);
 
