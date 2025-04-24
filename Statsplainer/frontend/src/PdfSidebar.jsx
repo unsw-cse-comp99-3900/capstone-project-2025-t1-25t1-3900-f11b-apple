@@ -61,10 +61,20 @@ export const PdfSidebar = ({ file, setTaskCompletion, isFromDashboard = false })
   localStorage.setItem("hasSeenTour", "false");
 
   //set tooltips state
-  const [open,setOpen] = useState(false);
+<<<<<<< HEAD
+  const [open,setOpen] = useState(true);
+  const [tooltipState, setTooltipState] = useState("highlight");
 
+
+=======
+  const [open,setOpen] = useState(false);
+  const[tooltipState, setTooltipState] = useState("highlight");
+>>>>>>> main
   //handle open/close tooltip
-  const handleOpenTooltip = () => setOpen(true);
+  const handleOpenTooltip = () => {
+    setTooltipState("tourGuide");
+    setOpen(true);
+  };
   const handleCloseTooltip = () => setOpen(false);
 
 
@@ -85,7 +95,7 @@ export const PdfSidebar = ({ file, setTaskCompletion, isFromDashboard = false })
         const pdfFiles = JSON.parse(localStorage.getItem("pdf_files") || '[]');
         if(pdfFiles.includes(file.name)) {
           //fetch pdf chat history from backend
-          const response = await fetch(`http://localhost:5000/retrieve_history/${encodeURIComponent(file.name)}`, {
+          const response = await fetch(`http://localhost:6000/retrieve_history/${encodeURIComponent(file.name)}`, {
             method: "GET", credentials: "include"
           });
 
@@ -120,7 +130,7 @@ export const PdfSidebar = ({ file, setTaskCompletion, isFromDashboard = false })
         ELI5: messageELI5,
       };
 
-      fetch(`http://localhost:5000/upload_history/${encodeURIComponent(file.name)}`, {
+      fetch(`http://localhost:6000/upload_history/${encodeURIComponent(file.name)}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -145,8 +155,8 @@ export const PdfSidebar = ({ file, setTaskCompletion, isFromDashboard = false })
   useEffect (() => {
       const hasSeenTour = localStorage.getItem("hasSeenTour");
       console.log(hasSeenTour);
+      setOpen(true);
       if (hasSeenTour === "false") {
-          handleOpenTooltip();
           localStorage.setItem("hasSeenTour", "true");
       }
   }, []);
@@ -266,12 +276,13 @@ export const PdfSidebar = ({ file, setTaskCompletion, isFromDashboard = false })
                   // Pass loading state and setter
                   isLoading={isLoading}
                   setIsLoading={setIsLoading}
+                  onHelpClick={handleOpenTooltip}
                 />
           </Panel>
           </PanelGroup>
         </Box>
       )}
-      <Tooltip state= "highlight" open={open} handleClose={handleCloseTooltip}/>
+      <Tooltip state={tooltipState} open={open} handleClose={handleCloseTooltip}/>
     </>
   );
 };

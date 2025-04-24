@@ -57,8 +57,9 @@ const highlight = [
     {
         target: "highlight-feature",
         content: "you can select between highlighting and image-snip, once you highlight or snipped an image from the pdf you've uploaded the sidebar will pop up on the right hand side",
-        slideDirection: "right",
+        slideDirection: "left",
         position: {top: "18%", left: "30%"},
+        arrowDirecton: "left",
     },
 ];
 
@@ -74,7 +75,7 @@ export default function Tooltip({state,open, handleClose }) {
  // check the state whether the tooltip guide is on or off
   const [isTourActive, setTourActive] = useState(false);
   const steps = (state === "highlight") ? highlight : tourGuide;
-
+  console.log(steps);
   useEffect(() => {
     if (open) {
       setShowBackdrop(true);
