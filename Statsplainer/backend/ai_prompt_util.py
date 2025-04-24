@@ -23,6 +23,14 @@ def prompt_builder(mode):
             """
     elif mode == "ELI5":
         return """
+                Ensure that for answering to user queries:
+                1. The user query is related to the pdf, if it isnt related to the pdf (such as random text or off topic requests) ask the user politely to ask a question related to the pdf.
+                
+                2. If the off topic question relates to anything dangerous or inflicts self harm tell the user politely to refrain from such requests and to seek help.
+                
+                3. If the question is off topic do not state a summary
+                End of user query preferences for the response
+    
                 Explain the given text/user request using the text of the PDF provided previously.
                 Your explaination must:
                 1. Act as an expert in the field of the provided pdf with 20 years of experience explaining the highlighted text to a five year old, be creative and interesting (do not state that you are a professional in your response just answer the user). 

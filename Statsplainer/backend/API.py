@@ -52,10 +52,21 @@ def API_text_input(messages, dev_msg, image_base64=None, temperature=0.7):
     string representing the explanation
   """
 
-  system_intro = {"role": "system", "content": "Please format your response using Markdown."}
+  system_intro = {"role": "system", "content": """
+                  Please format your response using Markdown.
+                  
+                  Ensure that for answering to user queries:
+                  1. The user query is related to the pdf, if it isnt related to the pdf (such as random text or off topic requests) ask the user politely to ask a question related to the pdf.
+                  
+                  2. If the off topic question relates to anything dangerous or inflicts self harm tell the user politely to refrain from such requests and to seek help.
+                  
+                  3. If the question is off topic do not state a summary
+                  End of user query preferences for the response
+                  
+                  """}
   
   if dev_msg:
-        messages.insert(0, {"role": "system", "content": dev_msg})
+        messages.insert(0, {"role": "user", "content": dev_msg})
   messages.insert(0, system_intro)
 
   completion = client.chat.completions.create(

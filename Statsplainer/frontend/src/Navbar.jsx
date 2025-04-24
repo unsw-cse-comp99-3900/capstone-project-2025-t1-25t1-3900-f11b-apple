@@ -33,15 +33,9 @@ export const NavBar = ({ page, pdfUploaded, setPdfUploaded, setUploadedFile, fee
         <IconButton color="inherit" variant="contained" onClick={() => reset()} component={Link} to="/" sx={buttonStyles} aria-label="Add New">
           <AddRoundedIcon />
         </IconButton>
-<<<<<<< HEAD
       <IconButton color="inherit" variant="contained" component={Link} to="/history" sx={buttonStyles} aria-label="View History">
         <HistoryRoundedIcon />
       </IconButton>
-=======
-        <IconButton color="inherit" variant="contained" component={Link} to="/history" sx={buttonStyles} aria-label="View History">
-          <HistoryRoundedIcon />
-        </IconButton>
->>>>>>> main
       </>
     );
   } else {
