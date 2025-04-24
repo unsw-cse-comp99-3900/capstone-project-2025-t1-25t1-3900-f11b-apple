@@ -42,7 +42,7 @@ def user_query(query):
 #                   API WRAPPERS
 #------------------------------------------------------------------------------------
 
-def API_text_input(text, dev_msg, image_base64=None, temperature=0.7):
+def API_text_input(messages, dev_msg, image_base64=None, temperature=0.7):
   """
   Returns generated text from LLM with text argument
   Arguments:
@@ -52,59 +52,18 @@ def API_text_input(text, dev_msg, image_base64=None, temperature=0.7):
     string representing the explanation
   """
 
-  if image_base64:
-    msg=[
-      {
-        "role": "system",
-        "content": "Please format your response using Markdown."
-      },
-      {
-        "role": "system",
-        "content": dev_msg
-      },
-      {
-        "role": "user",
-        "content": [
-          {
-              "type": "text",
-              "text": text,
-          },
-          {
-            "type": "image_url",
-            "image_url": {
-                "url": f"data:image/png;base64,{image_base64}",
-            },
-          },
-        ]
-      }
-    ]
-    
-  else:
-      msg = [
-          {
-            "role": "system",
-            "content": "Please format your response using Markdown."
-          },
-          {
-              "role": "user",
-              "content": [
-                  {
-                      "type": "text",
-                      "text": text,
-                  }
-              ]
-          },
-          {
-              "role": "system",
-              "content": dev_msg
-          }
-      ]
+  system_intro = {"role": "system", "content": "Please format your response using Markdown."}
+  
+  if dev_msg:
+        messages.insert(0, {"role": "system", "content": dev_msg})
+  messages.insert(0, system_intro)
 
   completion = client.chat.completions.create(
-    model=ai_model,
-    messages=msg,
-    temperature=temperature
+      model=ai_model,
+      messages=messages,
+      temperature=temperature
   )
+    
   return completion.choices[0].message.content
 
 

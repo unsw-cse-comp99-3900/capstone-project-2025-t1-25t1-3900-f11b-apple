@@ -3,37 +3,6 @@ import EmailRoundedIcon from '@mui/icons-material/EmailRounded';
 import { useState, useEffect } from "react";
 
 export const FinalPopUp = ({ setPopUpDisplay, setFeedbackButton }) => {
-  const [submissionReady, setSubmissionReady] = useState(false);
-  const [rating, setRating] = useState(false);
-  const [email, setEmail] = useState('');
-  const [feedback, setFeedback] = useState('');
-
-  const reset = () => {
-    setRating(false);
-    setEmail('');
-    setFeedback('');
-    setPopUpDisplay(false);
-  }
-
-  useEffect(() => {
-    if (rating != false && RegExp(/^.+@.+\..+$/).test(email) && feedback.length > 0) {
-      setSubmissionReady(true);
-    } else {
-      setSubmissionReady(false);
-    }
-  }, [rating, email, feedback]);
-
-  const handleSubmit = () => {
-    const feedbackData = {
-        rating: rating,
-        email: email,
-        feedback: feedback,
-    };
-
-    setFeedbackButton(false);
-    reset();
-    console.log("Submitting Feedback:", feedbackData);
-  };
 
   return (
     <>
@@ -60,7 +29,7 @@ export const FinalPopUp = ({ setPopUpDisplay, setFeedbackButton }) => {
         top: '50%', 
         left: '50%', 
         transform: `translate(-50%,-50%)`, 
-        backgroundColor: 'rgb(233, 233, 233)', 
+        backgroundColor: 'rgb(31, 29, 29)', 
         borderRadius: 2, 
         zIndex: 100, 
         width: '30vw',
@@ -71,51 +40,20 @@ export const FinalPopUp = ({ setPopUpDisplay, setFeedbackButton }) => {
         How was your experience?
       </Typography >
 
-      <Box sx={{ width: '100%',  display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
-        <Rating 
-          size="large" 
-          precision={0.5}
-          value={rating}
-          onChange={(e) => setRating(e.target.value)}
-          sx={{ fontSize: '3rem' }}
-        />
-      </Box>
-
-      <FormControl variant="standard">
-        <Input
-          id="feedback-email"
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          startAdornment={
-            <InputAdornment position="start">
-              <EmailRoundedIcon fontSize="small" />
-            </InputAdornment>
-          }
-        />
-      </FormControl>
-
-      <Input
-        id="feedback"
-        placeholder='Tell us what you think...'
-        multiline
-        rows={4}
-        value={feedback}
-        onChange={(e) => setFeedback(e.target.value)}
-      />
-
 
       <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%', gap: 1, mt: 2 }}>
-        <Button variant="contained" onClick={() => {reset(); setFeedbackButton(true);}} >
+        <Button variant="contained" onClick={() => {setPopUpDisplay(false); setFeedbackButton(true);}} >
             Complete Later
         </Button>
         <Button
             variant="contained"
-            onClick={handleSubmit}
-            disabled={!submissionReady}
+            component="a"
+            href="https://docs.google.com/forms/d/e/1FAIpQLSdWEFlG2ciIRUB7LchAd1K-ka8UUF8htg6ikMpG65t15E3dBA/formResponse"
+            target="_blank"
+            rel="noopener noreferrer"
+            disabled={false}
         >
-            Submit Feedback
+            Go to Feedback Form
         </Button>
       </Box>
     </Box>
