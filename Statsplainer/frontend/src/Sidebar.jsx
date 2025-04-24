@@ -92,7 +92,11 @@ export default function Sidebar({
                 flexDirection:"column",
                 p:1,
                 position:"relative",
-                background: `linear-gradient(135deg, transparent 48% rgba(30,32,40,0.95) 0%, rgba(20,22,30,0.95) 100%)`
+                borderRadius: "40px",
+                boxShadow: `0 8px 32px rgba(0,0,0,0.3)`,
+                backdropFilter: `blur(10px)`,
+                background: `linear-gradient(145deg, #2c2c2c, #1a1a1a)`,
+                border: `1px solid rgba(255,255,255,0.1)`,
             }}
             spacing={2}
         >
@@ -213,9 +217,8 @@ const ChatResponseSection = ({
                 height: "calc(100% - 40px)",
                 padding: "16px",
                 position: "relative",
-                backgroundColor: `rgba(75,76,80,0.6)`,
+                background: `linear-gradient(145deg, rgba(75,76,80,0.8), rgba(55,56,60,0.6))`,
                 backdropFilter: `blur(8px)`,
-                border: `1px solid rgba(255,255,255,0.1)`,
                 boxShadow: `0 4px 30px rgba(0,0,0,0.1)`,
             }}
         >
@@ -248,10 +251,9 @@ const ChatResponseSection = ({
                         maxWidth: "75%",
                         borderRadius: message.sender === "AI" ? "12px 12px 12px 4px" : "12px 12px 4px 12px",
                         padding: '12px 16px',
-                        backgroundColor: message.sender === "AI" ? `rgba(240,240,240,0.9)` : `rgba(147, 197, 253, 0.9)`,
+                        background: message.sender === "AI" ? `linear-gradient(145deg, rgba(240,240,240,0.95), rgba(220,220,220,0.85))` : `linear-gradient(145deg, rgba(147,197,253,0.95), rgba(100,170,250,0.85))`,
                         backdropFilter: `blur(8px)`,
                         boxShadow: message.sender === "AI" ? `0 2px 8px rgba(0,0,0,0.1)` : `0 4px 15px rgba(147,197,253, 0.3)`,
-                        border: message.sender ==="AI" ? `1px solid rgba(255,255,255, 0.1)` : `1px solid rgba(255,255,255,0.2)`,
                         color: message.sender === "AI" ? "#000000" : "#ffffff",
                         position: "relative",
                         textAlign: message.sender === "AI" ? "left" : "right",
@@ -262,7 +264,7 @@ const ChatResponseSection = ({
                             bottom: "-2px",
                             width: "8px",
                             height: "8px",
-                            backgroundColor: `rgba(147,197,253,0.9)`,
+                            background: `linear-gradient(145deg, rgba(147,197,253,0.95), rgba(100,170,250,0.85))`,
                             borderRadius: "50%",
                             boxShadow: `0 0 10px rgba(147,197,253, 0.5)`,
                             display:"flex",
@@ -653,6 +655,8 @@ const PromptButtonSelector = ({ selectedChat, setSelectedChat, setChatType }) =>
                 display:"flex",
                 flexDirection:"row",
                 gap:1,
+                padding: "0 16px",
+                marginBottom: "8px",
               }}
         >
            <Button 
@@ -661,7 +665,7 @@ const PromptButtonSelector = ({ selectedChat, setSelectedChat, setChatType }) =>
                 fullWidth
                 sx={{
                     color: "#ffffff",
-                    backgroundColor: selectedChat === "Definition" ? `rgba(217,217,217, 0.8)`: `rgba(217,217,217, 0.4)`,
+                    background: selectedChat === "Definition" ? `linear-gradient(145deg, rgba(217,217,217,0.9),rgba(180,180,180,0.7))`: `linear-gradient(145deg, rgba(217,217,217,0.4), rgba(180,180,180,0.2))`,
                     width: "33.33%",
                     display: "inherit",
                     minWidth: 10,
@@ -677,7 +681,7 @@ const PromptButtonSelector = ({ selectedChat, setSelectedChat, setChatType }) =>
                     lineHeight: "1.2",
                     padding: "8px 4px",
                     "&:hover": {
-                        backgroundColor: `rgba(217,217,217,0.6)`,
+                        background: `linear-gradient(145deg, rgba(217,217,217,0.8), rgba(180,180,180,0.6))`,
                         transform: `translateY(-2px)`,
                         boxShadow: `0 6px 25px rgba(217,217,217,0.4), 0 0 0 1px rgba(255,255,255, 0.2)`,
                     },
@@ -692,7 +696,7 @@ const PromptButtonSelector = ({ selectedChat, setSelectedChat, setChatType }) =>
                 fullWidth
                 sx={{
                     color: "#ffffff",
-                    backgroundColor: selectedChat === "Real world analogy" ? `rgba(217,217,217, 0.8)`: `rgba(217,217,217, 0.4)`,
+                    background: selectedChat === "Real world analogy" ? `linear-gradient(145deg, rgba(217,217,217,0.9),rgba(180,180,180,0.7))`: `linear-gradient(145deg, rgba(217,217,217,0.4), rgba(180,180,180,0.2))`,
                     width: "33.33%",
                     display: "inherit",
                     minWidth: 10,
@@ -708,7 +712,7 @@ const PromptButtonSelector = ({ selectedChat, setSelectedChat, setChatType }) =>
                     lineHeight: "1.2",
                     padding: "8px 4px",
                     "&:hover": {
-                        backgroundColor: `rgba(217,217,217,0.6)`,
+                        background: `linear-gradient(145deg, rgba(217,217,217,0.8), rgba(180,180,180,0.6))`,
                         transform: `translateY(-2px)`,
                         boxShadow: `0 6px 25px rgba(217,217,217,0.4), 0 0 0 1px rgba(255,255,255, 0.2)`,
                     },
@@ -722,7 +726,7 @@ const PromptButtonSelector = ({ selectedChat, setSelectedChat, setChatType }) =>
                 fullWidth
                 sx={{
                     color: "#ffffff",
-                    backgroundColor: selectedChat === "ELI5" ? `rgba(217,217,217, 0.8)`: `rgba(217,217,217, 0.4)`,
+                    background: selectedChat === "ELI5" ? `linear-gradient(145deg, rgba(217,217,217,0.9),rgba(180,180,180,0.7))`: `linear-gradient(145deg, rgba(217,217,217,0.4), rgba(180,180,180,0.2))`,
                     width: "33.33%",
                     display: "inherit",
                     minWidth: 10,
@@ -738,7 +742,7 @@ const PromptButtonSelector = ({ selectedChat, setSelectedChat, setChatType }) =>
                     lineHeight: "1.2",
                     padding: "8px 4px",
                     "&:hover": {
-                        backgroundColor: `rgba(217,217,217,0.6)`,
+                        background: `linear-gradient(145deg, rgba(217,217,217,0.8), rgba(180,180,180,0.6))`,
                         transform: `translateY(-2px)`,
                         boxShadow: `0 6px 25px rgba(217,217,217,0.4), 0 0 0 1px rgba(255,255,255, 0.2)`,
                     },
