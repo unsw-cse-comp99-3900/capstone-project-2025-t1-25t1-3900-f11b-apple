@@ -1,5 +1,6 @@
 import fitz
 import requests
+import os
 
 def extract_text_from_pdf(pdf_path):
     doc = fitz.open(pdf_path)
@@ -43,3 +44,10 @@ def pass_to_google_forms(user_id):
         #entry.526629025': app_response
     }
     requests.post(url, data=data)
+    
+def cleanup_history():
+    history_folder = os.path.abspath(os.path.join("..", "history_uploads"))
+    for filename in os.listdir(history_folder):
+        file_path = os.path.join(history_folder, filename)
+        if os.path.isfile(file_path):
+            os.remove(file_path)
