@@ -57,8 +57,9 @@ const highlight = [
     {
         target: "highlight-feature",
         content: "you can select between highlighting and image-snip, once you highlight or snipped an image from the pdf you've uploaded the sidebar will pop up on the right hand side",
-        slideDirection: "right",
+        slideDirection: "left",
         position: {top: "18%", left: "30%"},
+        arrowDirecton: "left",
     },
 ];
 

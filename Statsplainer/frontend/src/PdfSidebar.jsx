@@ -61,10 +61,15 @@ export const PdfSidebar = ({ file, setTaskCompletion, isFromDashboard = false })
   localStorage.setItem("hasSeenTour", "false");
 
   //set tooltips state
-  const [open,setOpen] = useState(false);
+  const [open,setOpen] = useState(true);
+  const [tooltipState, setTooltipState] = useState("highlight");
+
 
   //handle open/close tooltip
-  const handleOpenTooltip = () => setOpen(true);
+  const handleOpenTooltip = () => {
+    setTooltipState("tourGuide");
+    setOpen(true);
+  };
   const handleCloseTooltip = () => setOpen(false);
 
 
@@ -266,12 +271,13 @@ export const PdfSidebar = ({ file, setTaskCompletion, isFromDashboard = false })
                   // Pass loading state and setter
                   isLoading={isLoading}
                   setIsLoading={setIsLoading}
+                  onHelpClick={handleOpenTooltip}
                 />
           </Panel>
           </PanelGroup>
         </Box>
       )}
-      <Tooltip state= "highlight" open={open} handleClose={handleCloseTooltip}/>
+      <Tooltip state={tooltipState} open={open} handleClose={handleCloseTooltip}/>
     </>
   );
 };

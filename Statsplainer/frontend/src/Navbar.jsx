@@ -27,6 +27,17 @@ export const NavBar = ({ page, pdfUploaded, setPdfUploaded, setUploadedFile, fee
         <AddRoundedIcon />
       </IconButton>
     );
+  } else if (page === '/dashboard') {
+    nav = (
+      <>
+        <IconButton color="inherit" variant="contained" onClick={() => reset()} component={Link} to="/" sx={buttonStyles} aria-label="Add New">
+          <AddRoundedIcon />
+        </IconButton>
+      <IconButton color="inherit" variant="contained" component={Link} to="/history" sx={buttonStyles} aria-label="View History">
+        <HistoryRoundedIcon />
+      </IconButton>
+      </>
+    );
   } else {
     nav = (
       <>

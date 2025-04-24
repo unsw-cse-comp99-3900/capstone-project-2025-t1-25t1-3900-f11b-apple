@@ -25,24 +25,19 @@ export default function Sidebar({
   setMessageELI5,
   // Add loading state props
   isLoading,
-  setIsLoading
+  setIsLoading,
+  onHelpClick,
 }) {
     // intialised the state of hasSeenTour
     localStorage.setItem("hasSeenTour", "false");
     // Store which chat is currently selected (default Definition)
     const [selectedChat, setSelectedChat] = useState("Definition");
-    //set tooltips state
-    const [open,setOpen] = useState(false);
 
-    //handle open/close tooltip
-    const handleOpenTooltip = () => setOpen(true);
-    const handleCloseTooltip = () => setOpen(false);
 
     useEffect (() => {
         const hasSeenTour = localStorage.getItem("hasSeenTour");
         console.log(hasSeenTour);
         if (hasSeenTour === "false") {
-            handleOpenTooltip();
             localStorage.setItem("hasSeenTour", "true");
         }
     }, []);
@@ -178,7 +173,6 @@ export default function Sidebar({
         />
         </Box>
         
-        <Tooltip state= "sidebar" open={open} handleClose={handleCloseTooltip}/>
         </Grid>
     )
 };
