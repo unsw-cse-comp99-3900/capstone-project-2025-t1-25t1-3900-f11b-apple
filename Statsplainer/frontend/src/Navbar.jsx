@@ -7,13 +7,31 @@ export const NavBar = ({ page, pdfUploaded, setPdfUploaded, setUploadedFile, fee
   const buttonStyles = { 
     height: '80%',
     color: 'white',
-    bgcolor: '#0A85FF', 
+    background: `linear-gradient(145deg, #0A85FF, #0066CC)`,
     borderRadius: 1,
     mx: 1,
+    boxShadow: `0 4px 6px rgba(0,0,0,0.1)`,
+    transition: `all 0.3s ease`,
     '&:hover': {
-      bgcolor: 'primary.dark',
+      background: `linear-gradient(145deg, #0066CC, #004C99)`,
+      transform: `translateY(-2px)`,
+      boxShaodw: `0 6px 12px rgba(0,0,0,0.15)`,
+    },
+    "&:active": {
+      transform: `translateY(0)`,
+      boxShadow: `0 2px 4px rgba(0,0,0,0.1)`,
     }
   };
+
+  const feedbackButtonStyles = {
+    ...buttonStyles,
+    background: 'linear-gradient(145deg, #FF6B6B, #FF4757)',
+    "&:hover": {
+      background: `linear-gradient(145deg, #FF4757, #FF6B6B)`,
+      transform: `translateY(-2px)`,
+      boxShadow: `0 6px 12px rgba(0,0,0,0.15)`,
+    }
+  }
 
   const reset = () => {
     setPdfUploaded(false);
@@ -26,6 +44,17 @@ export const NavBar = ({ page, pdfUploaded, setPdfUploaded, setUploadedFile, fee
       <IconButton color="inherit" variant="contained" onClick={() => reset()} component={Link} to="/" sx={buttonStyles} aria-label="Add New">
         <AddRoundedIcon />
       </IconButton>
+    );
+  } else if (page === '/dashboard') {
+    nav = (
+      <>
+        <IconButton color="inherit" variant="contained" onClick={() => reset()} component={Link} to="/" sx={buttonStyles} aria-label="Add New">
+          <AddRoundedIcon />
+        </IconButton>
+      <IconButton color="inherit" variant="contained" component={Link} to="/history" sx={buttonStyles} aria-label="View History">
+        <HistoryRoundedIcon />
+      </IconButton>
+      </>
     );
   } else {
     nav = (
@@ -57,7 +86,7 @@ export const NavBar = ({ page, pdfUploaded, setPdfUploaded, setUploadedFile, fee
         </Typography>
         <Box sx={{ height: '6vh', display: 'flex', alignItems: 'center' }}>
           {feedBackButton && (
-            <IconButton color="inherit" variant="contained" onClick={() => setPopUpDisplay(true)} sx={buttonStyles} aria-label="Feedback">
+            <IconButton color="inherit" variant="contained" onClick={() => setPopUpDisplay(true)} sx={feedbackButtonStyles} aria-label="Feedback">
               feedback
             </IconButton>
           )}

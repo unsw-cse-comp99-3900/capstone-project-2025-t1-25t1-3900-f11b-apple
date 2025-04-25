@@ -1,7 +1,6 @@
 import { Box, Button, Paper, TextField, IconButton, keyframes, Menu, MenuItem } from '@mui/material'; // Added keyframes
 import Grid from '@mui/material/Grid2';
 import React, {useState, useRef, useEffect} from "react";
-import Tooltip from './Tooltips';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import SendIcon from "@mui/icons-material/Send";
 import MicIcon from '@mui/icons-material/Mic';
@@ -25,56 +24,54 @@ export default function Sidebar({
   setMessageELI5,
   // Add loading state props
   isLoading,
-  setIsLoading
+  setIsLoading,
+  onHelpClick,
 }) {
     // intialised the state of hasSeenTour
     localStorage.setItem("hasSeenTour", "false");
     // Store which chat is currently selected (default Definition)
     const [selectedChat, setSelectedChat] = useState("Definition");
-    //set tooltips state
-    const [open,setOpen] = useState(false);
-    
-    //handle open/close tooltip
-    const handleOpenTooltip = () => setOpen(true);
-    const handleCloseTooltip = () => setOpen(false);
+
 
     useEffect (() => {
         const hasSeenTour = localStorage.getItem("hasSeenTour");
         console.log(hasSeenTour);
         if (hasSeenTour === "false") {
-            handleOpenTooltip();
             localStorage.setItem("hasSeenTour", "true");
         }
     }, []);
 
-    const handleTranslate = (LanguageCode) => {
-        const currentMessages = selectedChat === "Definition" ? messageDefinition :
-                                selectedChat === "Real world analogy" ? messageRealWorldAnalogy : messageELI5;
-        
-        const setCurrentMessages = selectedChat === "Definition" ? setMessageDefinition :
-                                selectedChat === "Real world analogy" ? setMessageRealWorldAnalogy : setMessageELI5;
+    const handleTranslate = async (LanguageCode) => {
+        const modes = [
+            { messages: messageDefinition, setter: setMessageDefinition },
+            { messages: messageRealWorldAnalogy, setter: setMessageRealWorldAnalogy },
+            { messages: messageELI5, setter: setMessageELI5 },
+        ];
 
-        //create a new array with the selected language to be translated
-        const translatedMessages = [...currentMessages];
-        translatedMessages.forEach(async (message, index) => {
-            if (message.sender === "AI" && message.text && !message.image) {
-                try {
-                    let response = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${LanguageCode}&dt=t&q=${encodeURIComponent(message.text)}`);
-                    const data = await response.json();
-                    const translatedText = data[0].map(item => item[0]).join('');
-                    translatedMessages[index] = {
-                        ...message,
-                        text: translatedText,
-                        originalText: message.text,
+        try {
+            console.log("start translate for all modes");
+
+            for (const mode of modes) {
+                const translatedMessages = [...mode.messages];
+                for (let i = 0; i < translatedMessages.length; i++) {
+                    const message = translatedMessages[i];
+                    if (message.sender === "AI" && message.text && !message.image) {
+                        let response = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${LanguageCode}&dt=t&q=${encodeURIComponent(message.text)}`);
+                        const data = await response.json();
+                        const translatedText = data[0].map(item => item[0]).join('');
+                        translatedMessages[i] = {
+                            ...message,
+                            text: translatedText,
+                        };
                     }
-                    setCurrentMessages(translatedMessages);
-                } catch (error) {
-                    console.error("Translation error:", error);
                 }
+                mode.setter(translatedMessages);
             }
-        })
-
-    }
+            
+        } catch (error) {
+            console.error("Translation error:", error);
+        }
+    };
 
     return (
         
@@ -89,7 +86,11 @@ export default function Sidebar({
                 flexDirection:"column",
                 p:1,
                 position:"relative",
-                background: `linear-gradient(135deg, transparent 48% rgba(30,32,40,0.95) 0%, rgba(20,22,30,0.95) 100%)`
+                //borderRadius: "40px",
+                boxShadow: `0 8px 32px rgba(0,0,0,0.3)`,
+                backdropFilter: `blur(10px)`,
+                background: `linear-gradient(145deg, #2c2c2c, #1a1a1a)`,
+                border: `1px solid rgba(255,255,255,0.1)`,
             }}
             spacing={2}
         >
@@ -111,7 +112,7 @@ export default function Sidebar({
             <PromptButtonSelector selectedChat={selectedChat} setSelectedChat={setSelectedChat} setChatType={setChatType}/>
 
             <IconButton
-                onClick={handleOpenTooltip}
+                onClick={onHelpClick}
                 sx={{
                     color: "white",
                     "&:hover": {
@@ -171,7 +172,6 @@ export default function Sidebar({
         />
         </Box>
         
-        <Tooltip state= "sidebar" open={open} handleClose={handleCloseTooltip}/>
         </Grid>
     )
 };
@@ -210,9 +210,8 @@ const ChatResponseSection = ({
                 height: "calc(100% - 40px)",
                 padding: "16px",
                 position: "relative",
-                backgroundColor: `rgba(75,76,80,0.6)`,
+                background: `linear-gradient(145deg, rgba(75,76,80,0.8), rgba(55,56,60,0.6))`,
                 backdropFilter: `blur(8px)`,
-                border: `1px solid rgba(255,255,255,0.1)`,
                 boxShadow: `0 4px 30px rgba(0,0,0,0.1)`,
             }}
         >
@@ -245,10 +244,9 @@ const ChatResponseSection = ({
                         maxWidth: "75%",
                         borderRadius: message.sender === "AI" ? "12px 12px 12px 4px" : "12px 12px 4px 12px",
                         padding: '12px 16px',
-                        backgroundColor: message.sender === "AI" ? `rgba(240,240,240,0.9)` : `rgba(147, 197, 253, 0.9)`,
+                        background: message.sender === "AI" ? `linear-gradient(145deg, rgba(240,240,240,0.95), rgba(220,220,220,0.85))` : `linear-gradient(145deg, rgba(147,197,253,0.95), rgba(100,170,250,0.85))`,
                         backdropFilter: `blur(8px)`,
                         boxShadow: message.sender === "AI" ? `0 2px 8px rgba(0,0,0,0.1)` : `0 4px 15px rgba(147,197,253, 0.3)`,
-                        border: message.sender ==="AI" ? `1px solid rgba(255,255,255, 0.1)` : `1px solid rgba(255,255,255,0.2)`,
                         color: message.sender === "AI" ? "#000000" : "#ffffff",
                         position: "relative",
                         textAlign: message.sender === "AI" ? "left" : "right",
@@ -259,7 +257,7 @@ const ChatResponseSection = ({
                             bottom: "-2px",
                             width: "8px",
                             height: "8px",
-                            backgroundColor: `rgba(147,197,253,0.9)`,
+                            background: `linear-gradient(145deg, rgba(147,197,253,0.95), rgba(100,170,250,0.85))`,
                             borderRadius: "50%",
                             boxShadow: `0 0 10px rgba(147,197,253, 0.5)`,
                             display:"flex",
@@ -650,6 +648,8 @@ const PromptButtonSelector = ({ selectedChat, setSelectedChat, setChatType }) =>
                 display:"flex",
                 flexDirection:"row",
                 gap:1,
+                padding: "0 16px",
+                marginBottom: "8px",
               }}
         >
            <Button 
@@ -658,7 +658,7 @@ const PromptButtonSelector = ({ selectedChat, setSelectedChat, setChatType }) =>
                 fullWidth
                 sx={{
                     color: "#ffffff",
-                    backgroundColor: selectedChat === "Definition" ? `rgba(217,217,217, 0.8)`: `rgba(217,217,217, 0.4)`,
+                    background: selectedChat === "Definition" ? `linear-gradient(145deg, rgba(217,217,217,0.9),rgba(180,180,180,0.7))`: `linear-gradient(145deg, rgba(217,217,217,0.4), rgba(180,180,180,0.2))`,
                     width: "33.33%",
                     display: "inherit",
                     minWidth: 10,
@@ -674,7 +674,7 @@ const PromptButtonSelector = ({ selectedChat, setSelectedChat, setChatType }) =>
                     lineHeight: "1.2",
                     padding: "8px 4px",
                     "&:hover": {
-                        backgroundColor: `rgba(217,217,217,0.6)`,
+                        background: `linear-gradient(145deg, rgba(217,217,217,0.8), rgba(180,180,180,0.6))`,
                         transform: `translateY(-2px)`,
                         boxShadow: `0 6px 25px rgba(217,217,217,0.4), 0 0 0 1px rgba(255,255,255, 0.2)`,
                     },
@@ -689,7 +689,7 @@ const PromptButtonSelector = ({ selectedChat, setSelectedChat, setChatType }) =>
                 fullWidth
                 sx={{
                     color: "#ffffff",
-                    backgroundColor: selectedChat === "Real world analogy" ? `rgba(217,217,217, 0.8)`: `rgba(217,217,217, 0.4)`,
+                    background: selectedChat === "Real world analogy" ? `linear-gradient(145deg, rgba(217,217,217,0.9),rgba(180,180,180,0.7))`: `linear-gradient(145deg, rgba(217,217,217,0.4), rgba(180,180,180,0.2))`,
                     width: "33.33%",
                     display: "inherit",
                     minWidth: 10,
@@ -705,7 +705,7 @@ const PromptButtonSelector = ({ selectedChat, setSelectedChat, setChatType }) =>
                     lineHeight: "1.2",
                     padding: "8px 4px",
                     "&:hover": {
-                        backgroundColor: `rgba(217,217,217,0.6)`,
+                        background: `linear-gradient(145deg, rgba(217,217,217,0.8), rgba(180,180,180,0.6))`,
                         transform: `translateY(-2px)`,
                         boxShadow: `0 6px 25px rgba(217,217,217,0.4), 0 0 0 1px rgba(255,255,255, 0.2)`,
                     },
@@ -719,7 +719,7 @@ const PromptButtonSelector = ({ selectedChat, setSelectedChat, setChatType }) =>
                 fullWidth
                 sx={{
                     color: "#ffffff",
-                    backgroundColor: selectedChat === "ELI5" ? `rgba(217,217,217, 0.8)`: `rgba(217,217,217, 0.4)`,
+                    background: selectedChat === "ELI5" ? `linear-gradient(145deg, rgba(217,217,217,0.9),rgba(180,180,180,0.7))`: `linear-gradient(145deg, rgba(217,217,217,0.4), rgba(180,180,180,0.2))`,
                     width: "33.33%",
                     display: "inherit",
                     minWidth: 10,
@@ -735,7 +735,7 @@ const PromptButtonSelector = ({ selectedChat, setSelectedChat, setChatType }) =>
                     lineHeight: "1.2",
                     padding: "8px 4px",
                     "&:hover": {
-                        backgroundColor: `rgba(217,217,217,0.6)`,
+                        background: `linear-gradient(145deg, rgba(217,217,217,0.8), rgba(180,180,180,0.6))`,
                         transform: `translateY(-2px)`,
                         boxShadow: `0 6px 25px rgba(217,217,217,0.4), 0 0 0 1px rgba(255,255,255, 0.2)`,
                     },

@@ -8,6 +8,7 @@ import {
 import { NavBar } from './Navbar.jsx'
 import { LandingPage } from './Landingpage.jsx';
 import { HistoryPage } from './History.jsx';
+import { DashboardPage  } from './Dashboard.jsx';
 import { Box } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { FinalPopUp } from './FinalPopUp';
@@ -49,6 +50,7 @@ export default function Router() {
         <Route path='/' element={<LandingPage setPdfUploaded={setPdfUploaded} setUploadedFile={setUploadedFile} uploadedFile={uploadedFile} setTaskCompletion={setTaskCompletion}/>}/>
 
         <Route path='/history' element={<HistoryPage />}/>
+        <Route path='/dashboard' element={<DashboardPage setTaskCompletion={setTaskCompletion}/>} />
       </Routes>
     </Grid>
   )

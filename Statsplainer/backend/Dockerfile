@@ -13,6 +13,7 @@ COPY run.py .
 COPY app/ app/
 COPY pdf_uploads/ pdf_uploads/
 COPY img_uploads/ img_uploads/
+COPY history_uploads/ history_uploads/
 COPY API.py .
 COPY key.txt .
 COPY util.py .
