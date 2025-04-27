@@ -162,6 +162,13 @@ export const PdfSidebar = ({ file, setTaskCompletion, isFromDashboard = false })
       }
   }, []);
 
+  useEffect(() => {
+    if (sideBarTriggered) {
+      setTooltipState("tourGuide");
+      setOpen(true);
+    }
+  }, [sideBarTriggered]);
+
   // Function to get the correct setter based on chatType
   // const getAddMessageFunc = () => {
   //   if (chatType === "Definition") return setMessageDefinition;

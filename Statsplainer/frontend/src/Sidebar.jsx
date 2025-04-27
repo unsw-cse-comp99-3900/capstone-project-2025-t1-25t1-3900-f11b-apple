@@ -86,7 +86,7 @@ export default function Sidebar({
                 flexDirection:"column",
                 p:1,
                 position:"relative",
-                borderRadius: "40px",
+                //borderRadius: "40px",
                 boxShadow: `0 8px 32px rgba(0,0,0,0.3)`,
                 backdropFilter: `blur(10px)`,
                 background: `linear-gradient(145deg, #2c2c2c, #1a1a1a)`,
@@ -343,7 +343,7 @@ const ChatMessageInput = ({addMessage, onTranslateClick, selectedChat, activePdf
     const [anchorEl, setAnchorEl] = useState(null);
 
     // check the state of whether the translate button is being pressed
-    const [isTranslating, setIsTranslating] = useState(false);
+    const [isTranslating, ] = useState(false);
 
 
     // language code array
@@ -624,20 +624,20 @@ const ChatMessageInput = ({addMessage, onTranslateClick, selectedChat, activePdf
 // Toggleable AI Prompt Button 
 
 const PromptButtonSelector = ({ selectedChat, setSelectedChat, setChatType }) => {
-    const buttonStyle = (label) => ({
-        color: "#35343E",
-        backgroundColor: "#D9D9D9",
-        opacity: selectedChat === label ? 1 : 0.6,
-        flexGrow: 1,
-        padding: "6px 1px",
-        textAlign: "center",
-        whiteSpace: "normal",
-        overflowWrap: "break-word",
-        fontSize: "clamp(0.65rem, 1.5vw, 0.85rem)",
-        minHeight: "48px",
-        minWidth: '80px',
-        maxWidth: '160px',
-    });
+    // const buttonStyle = (label) => ({
+    //     color: "#35343E",
+    //     backgroundColor: "#D9D9D9",
+    //     opacity: selectedChat === label ? 1 : 0.6,
+    //     flexGrow: 1,
+    //     padding: "6px 1px",
+    //     textAlign: "center",
+    //     whiteSpace: "normal",
+    //     overflowWrap: "break-word",
+    //     fontSize: "clamp(0.65rem, 1.5vw, 0.85rem)",
+    //     minHeight: "48px",
+    //     minWidth: '80px',
+    //     maxWidth: '160px',
+    // });
 
     return (
         <Grid
@@ -681,7 +681,7 @@ const PromptButtonSelector = ({ selectedChat, setSelectedChat, setChatType }) =>
                 }}
 
             >
-              Defintion
+              Definition
            </Button>
 
            <Button  

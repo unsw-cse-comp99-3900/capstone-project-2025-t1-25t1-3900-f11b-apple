@@ -111,8 +111,7 @@ export const PdfUpload = ({ file, setSideBarTriggered, onHighlightConfirm, highl
       width: '100%', 
       height: '100%'
     }}>
-
-      <Box 
+      <Box
         sx={{
           flexGrow: 1,
           display: 'flex',
@@ -137,16 +136,16 @@ export const PdfUpload = ({ file, setSideBarTriggered, onHighlightConfirm, highl
           sx={{ display: 'flex', position: 'relative', flexDirection: 'column', alignItems: 'center', overflow: 'auto', width: '100%', height: '100%', userSelect: "none",}}
         >
           {Array.from({ length: numPages || 0 }, (_, index) => (
-             <Box
-                key={`page_container_${index + 1}`}
-                ref={(el) => { if (el) pageElementsRef.current[index] = el; }}
-                sx={{ marginBottom: '10px', position: 'relative', boxShadow: '0px 4px 8px rgba(0,0,0,0.2)' }}
-             >
+            <Box
+              key={`page_container_${index + 1}`}
+              ref={(el) => { if (el) pageElementsRef.current[index] = el; }}
+              sx={{ marginBottom: '10px', position: 'relative', boxShadow: '0px 4px 8px rgba(0,0,0,0.2)' }}
+            >
                 <Page
-                   pageNumber={index + 1}
-                   scale={pageScale}
-                   width={windowWidth}
-                   onRenderSuccess={(page) => onPageRenderSuccess(page)}
+                  pageNumber={index + 1}
+                  scale={pageScale}
+                  width={windowWidth}
+                  onRenderSuccess={(page) => onPageRenderSuccess(page)}
                 />
              </Box>
           ))}
@@ -204,6 +203,7 @@ export const PdfUpload = ({ file, setSideBarTriggered, onHighlightConfirm, highl
         >
           <IconButton
             size="small"
+            aria-label="confirm highlight"
             sx={{ backgroundColor: "lightgreen", '&:hover': { backgroundColor: 'darkgreen'}}}
             onMouseDown={(e) => e.stopPropagation()}
             onMouseUp={(e) => e.stopPropagation()}
@@ -236,15 +236,15 @@ export const PdfUpload = ({ file, setSideBarTriggered, onHighlightConfirm, highl
          <IconButton size="small" onClick={() => setSnipHighlightSwitch("Highlight")} disabled={snipHighlightSwitch === "Highlight"} title="Highlight Text">
            <HighlightAltRoundedIcon color={snipHighlightSwitch === "Highlight" ? "primary" : "action"} />
          </IconButton>
-         <IconButton size="small" onClick={() => setSnipHighlightSwitch("Snip")} disabled={snipHighlightSwitch === "Snip"} title="Snip Image">
+         <IconButton size="small" data-testid="snip" onClick={() => setSnipHighlightSwitch("Snip")} disabled={snipHighlightSwitch === "Snip"} title="Snip Image">
            <PhotoCameraRoundedIcon color={snipHighlightSwitch === "Snip" ? "primary" : "action"} />
          </IconButton>
       </Box>
        <Box sx={{ position: 'absolute', display: 'flex', gap: 1, zIndex: '10', top: '10px', right: '10px', backgroundColor: 'rgba(255,255,255,0.8)', padding: '4px', borderRadius: 1 }}>
-         <IconButton size="small" onClick={zoomIn} disabled={pageScale >= 3} title="Zoom In">
+         <IconButton size="small" data-testid="zoom-in-button" onClick={zoomIn} disabled={pageScale >= 3} title="Zoom In">
            <ZoomInRoundedIcon />
          </IconButton>
-         <IconButton size="small" onClick={zoomOut} disabled={pageScale <= 0.5} title="Zoom Out">
+         <IconButton size="small" data-testid="zoom-out-button" onClick={zoomOut} disabled={pageScale <= 0.5} title="Zoom Out">
            <ZoomOutRoundedIcon />
          </IconButton>
       </Box>
@@ -267,3 +267,4 @@ export const PdfUpload = ({ file, setSideBarTriggered, onHighlightConfirm, highl
 };
 
 // Remove the old result function as its logic is now handled in PdfSidebar
+
