@@ -681,7 +681,7 @@ const PromptButtonSelector = ({ selectedChat, setSelectedChat, setChatType }) =>
                 }}
 
             >
-              Defintion
+              Definition
            </Button>
 
            <Button  

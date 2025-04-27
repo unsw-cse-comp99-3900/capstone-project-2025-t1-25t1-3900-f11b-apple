@@ -35,6 +35,7 @@ export const LandingPage = ({ uploadedFile, setPdfUploaded, setUploadedFile, set
       {!uploadedFile ? (
         <Grid
           {...getRootProps()}
+          data-testid="dropzone"
           sx={{
             display: 'flex',
             flexDirection: 'column',
