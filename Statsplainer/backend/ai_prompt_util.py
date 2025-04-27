@@ -94,8 +94,8 @@ def prompt_builder(mode):
                 Note that the user can also send queries, answer these naturally using the same rules provided previously without restating the highlighted text or telling the user how their query is a query.
             """
     else:
-        prompt_builder("Definition")
-        
+        return prompt_builder("Definition") # Added return
+
 def ai_temperature_control(mode):
     temperature = 0.6
     if mode == "Definition":
