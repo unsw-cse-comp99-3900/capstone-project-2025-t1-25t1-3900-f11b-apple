@@ -18,6 +18,8 @@ services:
       - "5000:5000"
     environment:
       - FLASK_DEBUG=1
+    env_file:
+      - ./backend/.env
     volumes:
       - ./backend/img_uploads:/app/img_uploads
       - ./backend/pdf_uploads:/app/pdf_uploads

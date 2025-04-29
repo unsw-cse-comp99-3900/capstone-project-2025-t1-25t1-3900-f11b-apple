@@ -1,8 +1,7 @@
 import { PdfUpload } from "./PdfUpload";
 import Sidebar from './Sidebar';
 import { useEffect, useState, useRef } from 'react';
-import { Typography, Button, Box } from '@mui/material';
-import Grid from '@mui/material/Grid2';
+import { Box } from '@mui/material';
 import Tooltip from './Tooltips';
 import {
   Panel,

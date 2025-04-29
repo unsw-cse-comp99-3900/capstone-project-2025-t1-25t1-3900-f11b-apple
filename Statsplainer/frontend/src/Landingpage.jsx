@@ -1,7 +1,6 @@
 import { useCallback } from 'react';
-import { Typography, Button, Box } from '@mui/material';
+import { Typography, Button } from '@mui/material';
 import Grid from '@mui/material/Grid2';
-import { PdfUpload } from "./PdfUpload";
 import { useDropzone } from 'react-dropzone'
 import { PdfSidebar } from './PdfSidebar';
 import { apiCallPost } from './ApiCalls';

@@ -1,5 +1,10 @@
+import os
+from dotenv import load_dotenv
 from openai import OpenAI
 import base64
+
+# Load environment variables from .env file
+load_dotenv()
 
 ai_model = "openai/gpt-4.1"
 
@@ -7,14 +12,16 @@ ai_model = "openai/gpt-4.1"
 #                   SETTING UP API CLIENT/KEY
 #------------------------------------------------------------------------------------
 
-with open('key.txt','r') as file:
-    global key
-    key = " ".join(line.rstrip() for line in file)
-    
+# Get API key from environment variable
+api_key = os.getenv("OPENROUTER_API_KEY")
+
+if not api_key:
+    raise ValueError("OPENROUTER_API_KEY not found in .env file or environment variables.")
+
 client = OpenAI(
   base_url="https://openrouter.ai/api/v1",
-  api_key=key,
-) 
+  api_key=api_key,
+)
 
 #------------------------------------------------------------------------------------
 #                   STATSPLAINER FEATURE IMPLEMENTATIONS
