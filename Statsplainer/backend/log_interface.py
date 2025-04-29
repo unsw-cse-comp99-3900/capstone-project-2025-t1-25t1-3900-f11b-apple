@@ -2,6 +2,7 @@ import sqlite3 as sq
 
 log_path = "app_log.db"
 
+# Initialise empty data table
 def log_init():
     con = sq.connect(log_path)
     cur = con.cursor()
@@ -11,6 +12,7 @@ def log_init():
     con.commit()
     con.close()
 
+# Clear existing data table
 def log_clear():
     con = sq.connect(log_path)
     cur = con.cursor()
@@ -20,6 +22,7 @@ def log_clear():
     con.commit()
     con.close()
 
+# Insert data row into table
 def log_insert(user_id, user_provided_text, app_response, mode, uploaded_pdf):
     con = None # Initialize con to None
     try:
