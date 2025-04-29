@@ -1,21 +1,13 @@
 import { useNavigate } from 'react-router-dom';
-import { Typography, Stack, Button, Box, List, ListItem, ListItemText } from '@mui/material';
+import { Typography, Box, List, ListItem, ListItemText } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import {useState, useEffect} from 'react';
 
 export const HistoryPage = () => {
-  // const navigate = useNavigate();
 
-  // const buttonStyles = { 
-  //   flexGrow: 1,
-  //   paddingY: 2,
-  //   fontSize: '1.25rem',
-  
-  // };
-
-  // Used https://kovart.github.io/dashed-border-generator/ for dashed border
   const [pdfFiles, setPdfFiles] = useState([]);
   const navigate = useNavigate();
+
   const handlePdfClick = async (pdfName) => {
     try {
       //fetch pdf from backend api
@@ -48,7 +40,7 @@ export const HistoryPage = () => {
     }
   };
 
-
+  // check if current pdf file has already been stored in localStorage
   useEffect(() => {
     try{
       const storedFiles = localStorage.getItem('pdf_files');

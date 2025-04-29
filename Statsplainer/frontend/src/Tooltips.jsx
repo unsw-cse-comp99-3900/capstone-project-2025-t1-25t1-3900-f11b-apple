@@ -1,7 +1,5 @@
 import { Box, Button, Snackbar, Slide, Typography, Backdrop, IconButton } from '@mui/material';
 import { useState, useEffect } from "react";
-import Grid from '@mui/material/Grid2';
-import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import CloseIcon from '@mui/icons-material/Close';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 

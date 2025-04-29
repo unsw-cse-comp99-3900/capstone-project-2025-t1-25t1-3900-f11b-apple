@@ -22,42 +22,6 @@ export const apiCallPost = (path, pdfFile) => {
     })
 };
 
-// async function dataURLtoBlob(dataurl) {
-//     try {
-//         const response = await fetch(dataurl);
-//         if (!response.ok) {
-//             throw new Error(`Failed to fetch data URL: ${response.statusText}`);
-//         }
-//         const blob = await response.blob();
-//         return blob;
-//     } catch (error) {
-//         console.error("Error converting Data URL to Blob:", error);
-//         return null;
-//     }
-// }
-
-// export const apiCallPostImg = async (path, imageDataUrl, filename = "image.png") => {
-    
-//     // const imageBlob = await dataURLtoBlob(imageDataUrl);
-//     // const formData = new FormData();
-//     // formData.append("file", imageBlob, filename);
-
-//     return new Promise((resolve, reject) => {
-//         fetch(`http://localhost:${BACKEND_PORT}/` + path, {
-//             method: 'POST',
-//             body: JSON.stringify(imageDataUrl)
-//         })
-//         .then(response => {
-//             if (response.status !== 200) {
-//             reject('POST Promise reject error');
-//             }
-//             return response.json()
-//         })
-//         .then(data => {
-//             resolve(data);
-//         });
-//     })
-// };
 
 export const apiCallGet = (path, queryString) => {
     return new Promise((resolve, reject) => {
