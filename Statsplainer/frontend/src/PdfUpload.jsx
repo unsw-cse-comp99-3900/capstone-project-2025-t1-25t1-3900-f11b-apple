@@ -1,13 +1,11 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
-import { Typography, Button, Box, IconButton  } from '@mui/material';
+import { Box, IconButton  } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
 import ZoomInRoundedIcon from '@mui/icons-material/ZoomInRounded';
 import ZoomOutRoundedIcon from '@mui/icons-material/ZoomOutRounded';
-import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
-import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
 import { Highlight } from "./Highlight";
 import CheckRoundedIcon from '@mui/icons-material/CheckRounded';
 import HighlightAltRoundedIcon from '@mui/icons-material/HighlightAltRounded';
@@ -248,23 +246,6 @@ export const PdfUpload = ({ file, setSideBarTriggered, onHighlightConfirm, highl
            <ZoomOutRoundedIcon />
          </IconButton>
       </Box>
-
-      {/* {numPages && numPages > 1 && (
-        <Box sx={{ position: 'absolute', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 2, width: 'auto', zIndex: '10', bottom: '10px', backgroundColor: 'rgba(255,255,255,0.8)', padding: '4px 8px', borderRadius: 1 }}>
-          <IconButton size="small" onClick={goToPreviousPage} disabled={pageNumber <= 1} title="Previous Page">
-            <ArrowBackRoundedIcon />
-          </IconButton>
-          <Typography variant="body2" sx={{ userSelect: 'none' }}>
-            Page {pageNumber} of {numPages}
-          </Typography>
-          <IconButton size="small" onClick={goToNextPage} disabled={pageNumber >= numPages} title="Next Page">
-            <ArrowForwardRoundedIcon />
-          </IconButton>
-        </Box>
-      )} */}
     </Grid>
   );
 };
-
-// Remove the old result function as its logic is now handled in PdfSidebar
-

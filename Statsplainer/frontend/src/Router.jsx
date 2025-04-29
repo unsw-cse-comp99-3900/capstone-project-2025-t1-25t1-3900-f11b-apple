@@ -2,14 +2,12 @@ import { useState, useEffect } from 'react';
 import {
   Routes,
   Route,
-  // useNavigate,
   useLocation
 } from 'react-router-dom';
 import { NavBar } from './Navbar.jsx'
 import { LandingPage } from './Landingpage.jsx';
 import { HistoryPage } from './History.jsx';
 import { DashboardPage  } from './Dashboard.jsx';
-import { Box } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { FinalPopUp } from './FinalPopUp';
 

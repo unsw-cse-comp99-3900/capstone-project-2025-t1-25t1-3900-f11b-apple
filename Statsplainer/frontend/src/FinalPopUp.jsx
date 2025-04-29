@@ -1,6 +1,4 @@
-import { AppBar, Toolbar, Button, Box, Typography, IconButton, TextField, Input, InputAdornment, FormControl, Rating, InputLabel, Backdrop } from '@mui/material';
-import EmailRoundedIcon from '@mui/icons-material/EmailRounded';
-import { useState, useEffect } from "react";
+import { Button, Box, Typography, Backdrop } from '@mui/material';
 
 export const FinalPopUp = ({ setPopUpDisplay, setFeedbackButton }) => {
 
