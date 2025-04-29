@@ -1,3 +1,5 @@
+# This function dictates the prompt given to the AI based on the mode given
+# to the function
 def prompt_builder(mode):
     if mode == "Definition":
         return """
@@ -96,6 +98,10 @@ def prompt_builder(mode):
     else:
         return prompt_builder("Definition") # Added return
 
+
+# This function controls the temperature value given to the AI based on the mode
+# higher temperature = more creative explaination
+# lower temperature = more scientific explaination
 def ai_temperature_control(mode):
     temperature = 0.6
     if mode == "Definition":
